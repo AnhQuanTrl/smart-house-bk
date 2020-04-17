@@ -9,13 +9,14 @@ import javax.persistence.Entity;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 @Entity
-public class LightSensor extends BaseIdentity {
+public class LightSensor extends Sensor {
     private Integer light;
 
     public LightSensor(String name, Integer light) {
         super(name);
         this.light = light;
     }
+
+
 }
