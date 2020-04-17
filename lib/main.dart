@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:smarthouse/pages/living_room.dart';
+import 'package:smarthouse/pages/living_room.art';
 
-void main() => runApp(MaterialApp(
-  debugShowCheckedModeBanner: false,
-  initialRoute: "/living_room",
-  routes: {
-    "/living_room": (context) => LivingRoom(),
-  },
-));
+import 'presentations/pages/home_page.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      initialRoute: "/",
+      routes: {
+        HomePage.routeName: (context) => HomePage(),
+      },
+    );
+  }
+}

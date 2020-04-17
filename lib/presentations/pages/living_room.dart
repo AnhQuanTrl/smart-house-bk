@@ -14,9 +14,9 @@ class _LivingRoomState extends State<LivingRoom> {
       "Air Conditioner",
     ];
     return Scaffold(
-      backgroundColor: Colors.grey[900],
+      // backgroundColor: Colors.grey[900],
       appBar: AppBar(
-        backgroundColor: Colors.grey[850],
+        // backgroundColor: Colors.grey[850],
         title: Text(
             "Living room",
             style: TextStyle(
