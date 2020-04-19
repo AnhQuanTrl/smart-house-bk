@@ -1,3 +1,7 @@
+.gitignore
+key
+key.pub
+
 # Miscellaneous
 *.class
 *.log
