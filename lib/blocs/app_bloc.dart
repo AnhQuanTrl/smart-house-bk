@@ -1,7 +1,5 @@
 import 'dart:async';
-
-import 'package:demo_painter/services/data_provider.dart';
-import 'package:flutter/material.dart';
+import 'package:smarthouse/repositories/data_provider.dart';
 import 'base.dart';
 
 class AppBloc extends Bloc {
@@ -9,21 +7,15 @@ class AppBloc extends Bloc {
 
   AppBloc() {
     _dataProvider = DataProvider();
-    sink.add(_dataProvider.farmerList);
+    sink.add(_dataProvider.data);
   }
 
-  StreamController _streamController = StreamController();
-  Stream get stream => _streamController.stream;
-  StreamSink get sink => _streamController.sink;
-  
-  void add({@required String name, String address})  async {
-    await Future.delayed(Duration(seconds: 3));
-    _dataProvider.add(name: name, address: address);
-    sink.add(_dataProvider.farmerList);
-  }
+  StreamController _dataStreamController = StreamController();
+  Stream get stream => _dataStreamController.stream;
+  StreamSink get sink => _dataStreamController.sink;
   
   @override
   void dispose() {
-    _streamController.close();
+    _dataStreamController.close();
   }
 }
