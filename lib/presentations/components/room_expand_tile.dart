@@ -10,11 +10,15 @@ class RoomExpandTile extends StatelessWidget {
   const RoomExpandTile({Key key, this.room}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(title: Text(room.name), children: buildDeviceListTile(),);
+    return ExpansionTile(
+      title: Text(room.name),
+      children: buildDeviceListTile(),
+      initiallyExpanded: true,
+    );
   }
 
   List<Widget> buildDeviceListTile() {
-    List devicesTiles = [];
+    List<Widget> devicesTiles = [];
     for (Device d in room.devicesList) {
       devicesTiles.add(DeviceTile(device: d));
     }

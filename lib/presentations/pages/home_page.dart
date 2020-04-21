@@ -18,11 +18,11 @@ class _HomePageState extends State<HomePage> {
         title: Text('Rooms'),
       ),
       body: StreamBuilder(
-         stream: bloc.data,
+        stream: bloc.data,
         builder: (context, snapshot) {
           return ListView.builder(
             itemBuilder: (context, i) => RoomExpandTile(room: snapshot.data[i]),
-            itemCount: snapshot.data.length,
+            itemCount: snapshot.hasData ? snapshot.data.length : 0,
           );
         },
       ),

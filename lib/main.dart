@@ -1,11 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:smarthouse/repositories/data_provider.dart';
 import 'presentations/pages/home_page.dart';
 import 'presentations/pages/room_page.dart';
 
-void main() async {
-  DataProvider _provider = DataProvider();
-  await _provider.fetch();
+void main() {
   return runApp(MyApp());
 }
 
