@@ -1,8 +1,10 @@
 
-import 'package:smarthouse/models/device.dart';
+import 'package:smarthouse/models/devices/device.dart';
+
 
 class Room {
-  Room(this.name, this.devicesList);
+  int id;
+  Room(this.name, this.devicesList, {this.id});
   String name;
   List<Device> devicesList;
 }

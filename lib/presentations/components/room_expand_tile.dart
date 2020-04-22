@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
-import 'package:smarthouse/models/device.dart';
+import 'package:smarthouse/models/devices/device.dart';
+
 import 'package:smarthouse/models/room.dart';
+import 'package:smarthouse/presentations/pages/room_page.dart';
 
 import 'device_tile.dart';
 
@@ -11,7 +13,12 @@ class RoomExpandTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
-      title: Text(room.name),
+      title: GestureDetector(
+          child: Text(room.name),
+          onTap: () {
+            Navigator.of(context)
+                .pushNamed(RoomPage.routeName, arguments: room.id);
+          }),
       children: buildDeviceListTile(),
       initiallyExpanded: true,
     );

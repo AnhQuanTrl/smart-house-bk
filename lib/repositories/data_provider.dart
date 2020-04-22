@@ -1,13 +1,13 @@
 import 'dart:async';
 
 // import 'package:smarthouse/data.dart';
-import 'package:smarthouse/models/device.dart';
+import 'package:smarthouse/data.dart';
+import 'package:smarthouse/models/devices/device.dart';
 import 'package:smarthouse/models/room.dart';
 
 class DataProvider {
   DataProvider._() {
     fetch();
-    print(data);
   }
 
   static DataProvider _instance;
@@ -28,24 +28,19 @@ class DataProvider {
       StreamController<Room>.broadcast();
 
   Future<List<Room>> fetch() async {
-    data = [
-      Room("phong khach", [
-        Device(),
-        Device(),
-        Device(),
-      ]),
-      Room("phong ngu", []),
-      Room("phong bep", [
-        Device(),
-        Device(),
-        Device(),
-        Device(),
-      ])
-    ];
+    data = mockData;
 
     await Future.delayed(Duration(seconds: 3));
     _dataStreamController.add(data);
     return data;
+  }
+
+  Room findRoomById(int id) {
+    for (Room r in data) {
+      if (r.id == id) {
+        return r;
+      }
+    }
   }
 
   void dispose() {

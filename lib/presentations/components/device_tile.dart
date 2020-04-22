@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smarthouse/models/device.dart';
+import 'package:smarthouse/models/devices/device.dart';
+
 
 class DeviceTile extends StatefulWidget {
   final Device device;
