@@ -9,6 +9,8 @@
 class Device {
   int id;
   String name;
+  Function switchValueOnChange;
+  Function countValueOnChange;
   Device({this.id, this.name});
 }
 

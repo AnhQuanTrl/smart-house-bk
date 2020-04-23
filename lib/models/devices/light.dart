@@ -9,4 +9,10 @@ class Light implements Device {
 
   @override
   String name;
+
+  @override
+  Function countValueOnChange;
+
+  @override
+  Function switchValueOnChange;
 }

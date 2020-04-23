@@ -3,9 +3,8 @@ import 'package:smarthouse/models/devices/device.dart';
 
 class DeviceStatusWidget extends StatefulWidget {
   Device device;
-  Function onChanged;
 
-  DeviceStatusWidget(this.device, this.onChanged);
+  DeviceStatusWidget(this.device);
 
   @override
   _DeviceStatusWidgetState createState() => _DeviceStatusWidgetState();
@@ -39,7 +38,7 @@ class _DeviceStatusWidgetState extends State<DeviceStatusWidget> {
         child: Row(
           children: <Widget>[
             Text('Value'),
-            Switch(value: device2.boolValue, onChanged: widget.onChanged)
+            Switch(value: device2.boolValue, onChanged: widget.device.switchValueOnChange)
           ],
         ),
       ));
