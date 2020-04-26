@@ -15,12 +15,12 @@ function resetProperties(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('/chat-websocket');
+    var socket = new SockJS('/messaging');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         resetProperties(true);
         console.log("reset...");
-        stompClient.subscribe('/topic/result', function (greeting) {
+        stompClient.subscribe('/topic/test/subscription', function (greeting) {
             showMessageOnPage(greeting.body);
         });
     });
@@ -34,7 +34,7 @@ function disconnect() {
 }
 
 function sendMessage() {
-    stompClient.send("/app/sensors", {}, JSON.stringify({'message': $("#message-input").val()}));
+    stompClient.send("/app/test/endpoints", {}, JSON.stringify({'message': $("#message-input").val()}));
 }
 
 function showMessageOnPage(message) {

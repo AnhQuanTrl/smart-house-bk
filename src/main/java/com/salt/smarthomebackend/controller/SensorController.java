@@ -16,9 +16,10 @@ public class SensorController {
         this.sensorRepository = sensorRepository;
     }
 
-    @MessageMapping("/sensors")
-    @SendTo("/topic/result")
-    public List<Sensor> all() {
-        return sensorRepository.findAll();
+    @MessageMapping("/test/endpoints")
+    @SendTo("/topic/test/subscription")
+    public String all() {
+        System.out.println("OK");
+        return "Success";
     }
 }
