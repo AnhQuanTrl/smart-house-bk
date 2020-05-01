@@ -13,10 +13,9 @@ import javax.persistence.Entity;
 public class LightSensor extends Sensor {
     private Integer light;
 
-    public LightSensor(String name, Integer light) {
-        super(name);
+    public LightSensor(String name, String location, Boolean status, Integer light) {
+        super(name, location, status);
         this.light = light;
     }
-
 
 }

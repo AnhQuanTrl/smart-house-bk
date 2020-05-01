@@ -21,6 +21,16 @@ import javax.persistence.MappedSuperclass;
 })
 public abstract class Sensor extends BaseIdentity {
     private String name;
+    private String location; // bedroom, living room, garden, ...
+    private Boolean status; // 0: off - 1 : on
+
+    public Sensor(String _name, String _location, Boolean _status ) {
+        super();
+        this.name = _name;
+        this.location = _location;
+        this.status = _status;
+    }
+
     @Override
     public String toString() {
         return "Sensor{" +
@@ -28,4 +38,9 @@ public abstract class Sensor extends BaseIdentity {
                 ", name='" + name + '\'' +
                 '}';
     }
+
+    private String getId() {
+        return id.toString();
+    }
+
 }
