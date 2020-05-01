@@ -13,6 +13,6 @@ import java.io.Serializable;
 public abstract class BaseIdentity implements Serializable {
     @Id
     @GeneratedValue
-    private Long id;
+    protected Long id;
 
 }
