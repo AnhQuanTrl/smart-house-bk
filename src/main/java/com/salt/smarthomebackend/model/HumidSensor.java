@@ -9,10 +9,14 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 @Entity
 public class HumidSensor extends Sensor {
-    private Float humidity;  // percentage
+    private Double humidity;  // percentage
 
-    public HumidSensor(String name, String location, Boolean status, Float humid) {
+    public HumidSensor(String name, String location, Boolean status, Double humid) {
         super(name, location, status);
-        this.humidity = humid;
+        if (status)
+            this.humidity = humid;
+        else
+            this.humidity = 0.0;
+
     }
 }

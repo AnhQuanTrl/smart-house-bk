@@ -7,7 +7,7 @@ import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.MappedSuperclass;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,8 +17,12 @@ import javax.persistence.MappedSuperclass;
 @Inheritance(strategy = InheritanceType.JOINED)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
+        @JsonSubTypes.Type(value=HumidSensor.class, name="HS"),
+        @JsonSubTypes.Type(value=TempSensor.class, name="TS"),
         @JsonSubTypes.Type(value=LightSensor.class, name="LS")
 })
+
+
 public abstract class Sensor extends BaseIdentity {
     private String name;
     private String location; // bedroom, living room, garden, ...

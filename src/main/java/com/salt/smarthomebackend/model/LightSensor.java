@@ -15,7 +15,10 @@ public class LightSensor extends Sensor {
 
     public LightSensor(String name, String location, Boolean status, Integer light) {
         super(name, location, status);
-        this.light = light;
+        if (status)
+            this.light = light;
+        else
+            this.light = 0;
     }
 
 }

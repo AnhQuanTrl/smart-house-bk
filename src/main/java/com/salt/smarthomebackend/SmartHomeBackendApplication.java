@@ -9,5 +9,5 @@ public class SmartHomeBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SmartHomeBackendApplication.class, args);
 	}
-
+		
 }

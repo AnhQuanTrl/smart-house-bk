@@ -17,8 +17,8 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        LightSensor l1 = new LightSensor("LS1", 0);
-        LightSensor l2 = new LightSensor("LS2", 50);
+        LightSensor l1 = new LightSensor("LS1", "bedroom",false, 0);
+        LightSensor l2 = new LightSensor("LS2", "bedroom",false, 0);
         lightSensorRepository.save(l1);
         lightSensorRepository.save(l2);
     }

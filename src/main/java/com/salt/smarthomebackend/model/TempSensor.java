@@ -9,10 +9,13 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 @Entity
 public class TempSensor extends Sensor {
-    private Float temperature;
+    private Double temperature;
 
-    public TempSensor(String name, String location, Boolean status, Float temp) {
+    public TempSensor(String name, String location, Boolean status, Double temp) {
         super(name, location, status);
-        this.temperature = temp;
+        if (status)
+            this.temperature = temp;
+        else
+            this.temperature = 0.0;
     }
 }
