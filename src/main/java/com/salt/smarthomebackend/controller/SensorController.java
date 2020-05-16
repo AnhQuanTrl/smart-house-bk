@@ -3,10 +3,13 @@ package com.salt.smarthomebackend.controller;
 import com.salt.smarthomebackend.model.*;
 import com.salt.smarthomebackend.repository.SensorRepository;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.stereotype.Controller;
 
 import java.util.List;
 
-@RestController
+@Controller
 public class SensorController {
     SensorRepository sensorRepository;
 
@@ -38,6 +41,12 @@ public class SensorController {
     @GetMapping("/sensors")
     List<Sensor> all() {
         return (List<Sensor>) sensorRepository.findAll();
+    }
+    @MessageMapping("/test/endpoints")
+    @SendTo("/topic/test/subscription")
+    public String test() {
+        System.out.println("OK");
+        return "Success";
     }
 }
 
