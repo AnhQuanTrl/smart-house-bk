@@ -10,7 +10,6 @@ import javax.persistence.InheritanceType;
 
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -43,8 +42,5 @@ public abstract class Sensor extends BaseIdentity {
                 '}';
     }
 
-    private String getId() {
-        return id.toString();
-    }
 
 }
