@@ -50,7 +50,8 @@ spring-test/test-output/
 .gradle
 argfile*
 activemq-data/
-
+*.pyc
+__pycache__/
 classes/
 /build
 buildSrc/build
