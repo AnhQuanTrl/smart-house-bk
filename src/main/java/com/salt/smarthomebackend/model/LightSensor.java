@@ -10,15 +10,12 @@ import javax.persistence.Entity;
 @Setter
 @NoArgsConstructor
 @Entity
-public class LightSensor extends Sensor {
+public class LightSensor extends Device {
     private Integer light;
 
-    public LightSensor(String name, String location, Boolean status, Integer light) {
-        super(name, location, status);
-        if (status)
-            this.light = light;
-        else
-            this.light = 0;
+    public LightSensor(String name, Integer light) {
+        super(name);
+        this.light = light;
     }
 
 }

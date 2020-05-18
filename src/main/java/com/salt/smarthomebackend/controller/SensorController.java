@@ -21,7 +21,7 @@ public class SensorController {
     public @ResponseBody String addNewSensor(@RequestParam String _type, @RequestParam String _name, @RequestParam String _location, @RequestParam Boolean _status ) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
-        Sensor s = null;
+        Device s = null;
         switch(_type){
             case "Light":
                 s = new LightSensor(_name, _location, _status, null);
@@ -39,8 +39,8 @@ public class SensorController {
     }
 
     @GetMapping("/sensors")
-    List<Sensor> all() {
-        return (List<Sensor>) sensorRepository.findAll();
+    List<Device> all() {
+        return (List<Device>) sensorRepository.findAll();
     }
     @MessageMapping("/test/endpoints")
     @SendTo("/topic/test/subscription")
