@@ -1,7 +1,6 @@
 package com.salt.smarthomebackend.model;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,11 +17,12 @@ import javax.persistence.*;
         @JsonSubTypes.Type(value=LightSensor.class, name="LS"),
         @JsonSubTypes.Type(value= LightBulb.class, name="LB")
 })
-
-
 public abstract class Device extends BaseIdentity {
     private String name;
     @ManyToOne(optional = true, cascade = CascadeType.MERGE)
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
     private Room room;
     @ManyToOne(optional = true, cascade = CascadeType.MERGE)
     private Client client;
