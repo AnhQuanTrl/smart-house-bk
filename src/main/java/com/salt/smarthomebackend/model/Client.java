@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,14 +15,14 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Entity
-public class User extends BaseIdentity{
+public class Client extends BaseIdentity{
     private String username;
     private String password;
-    @OneToMany(mappedBy = "user", cascade ={CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "client")
     private List<Device> devices = new ArrayList<>();
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<User> relatives = new ArrayList<>();
-    public User(String username, String password) {
+    @OneToMany
+    private List<Client> relatives = new ArrayList<>();
+    public Client(String username, String password) {
         this.username = username;
         this.password = password;
     }

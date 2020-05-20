@@ -1,14 +1,13 @@
 package com.salt.smarthomebackend.boostrap;
 
+import com.salt.smarthomebackend.model.Device;
+import com.salt.smarthomebackend.model.LightBulb;
 import com.salt.smarthomebackend.model.LightSensor;
-import com.salt.smarthomebackend.repository.LightBulbRepository;
-import com.salt.smarthomebackend.repository.LightSensorRepository;
-import com.salt.smarthomebackend.repository.RoomRepository;
-import com.salt.smarthomebackend.repository.UserRepository;
+import com.salt.smarthomebackend.model.Room;
+import com.salt.smarthomebackend.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,34 +15,48 @@ import org.springframework.stereotype.Component;
 public class DataLoader implements CommandLineRunner {
     private LightSensorRepository lightSensorRepository;
     private LightBulbRepository lightBulbRepository;
-    private UserRepository userRepository;
+    private ClientRepository clientRepository;
     private RoomRepository roomRepository;
-
+    private DeviceRepository deviceRepository;
     @Autowired
-    public LightSensorRepository getLightSensorRepository() {
-        return lightSensorRepository;
+    public void setLightSensorRepository(LightSensorRepository lightSensorRepository) {
+        this.lightSensorRepository = lightSensorRepository;
     }
 
     @Autowired
-    public LightBulbRepository getLightBulbRepository() {
-        return lightBulbRepository;
+    public void setLightBulbRepository(LightBulbRepository lightBulbRepository) {
+        this.lightBulbRepository = lightBulbRepository;
     }
 
     @Autowired
-    public UserRepository getUserRepository() {
-        return userRepository;
+    public void setClientRepository(ClientRepository clientRepository) {
+        this.clientRepository = clientRepository;
     }
 
     @Autowired
-    public RoomRepository getRoomRepository() {
-        return roomRepository;
+    public void setRoomRepository(RoomRepository roomRepository) {
+        this.roomRepository = roomRepository;
     }
+
+    @Autowired
+    public void setDeviceRepository(DeviceRepository deviceRepository) {
+        this.deviceRepository = deviceRepository;
+    }
+
 
     @Override
     public void run(String... args) throws Exception {
+        Room r1 = new Room("r1");
+        roomRepository.save(r1);
         LightSensor l1 = new LightSensor("ls1", 100);
         LightSensor l2 = new LightSensor("ls2", 200);
+        LightBulb lb1 = new LightBulb("lb1", false);
         lightSensorRepository.save(l1);
         lightSensorRepository.save(l2);
+        lightBulbRepository.save(lb1);
+        Device dev = deviceRepository.findByName("ls1");
+        r1 = roomRepository.findByName("r1");
+        dev.setRoom(r1);
+        deviceRepository.save(dev);
     }
 }

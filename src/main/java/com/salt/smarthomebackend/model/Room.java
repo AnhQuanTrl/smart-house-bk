@@ -15,7 +15,7 @@ import java.util.List;
 @Setter
 @Entity
 public class Room extends BaseIdentity{
-    @OneToMany(mappedBy = "room", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "room")
     private List<Device> devices = new ArrayList<>();
     private String name;
 

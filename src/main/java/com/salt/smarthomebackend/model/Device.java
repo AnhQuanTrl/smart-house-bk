@@ -22,10 +22,10 @@ import javax.persistence.*;
 
 public abstract class Device extends BaseIdentity {
     private String name;
-    @ManyToOne(optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(optional = true, cascade = CascadeType.MERGE)
     private Room room;
-    @ManyToOne(optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private User user;
+    @ManyToOne(optional = true, cascade = CascadeType.MERGE)
+    private Client client;
     public Device(String name) {
         super();
         this.name = name;
