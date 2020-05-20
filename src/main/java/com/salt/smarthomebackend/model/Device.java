@@ -10,6 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
@@ -21,20 +22,13 @@ import javax.persistence.*;
 
 public abstract class Device extends BaseIdentity {
     private String name;
-    @ManyToOne(optional = true, cascade = CascadeType.PERSIST)
+    @ManyToOne(optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Room room;
+    @ManyToOne(optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private User user;
     public Device(String name) {
         super();
         this.name = name;
     }
-
-    @Override
-    public String toString() {
-        return "Sensor{" +
-                "id=" + getId() +
-                ", name='" + name + '\'' +
-                '}';
-    }
-
 
 }
