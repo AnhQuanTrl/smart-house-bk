@@ -17,7 +17,7 @@ def on_message(client, userdata, msg):
         print(m_decode)
         light_value = json.loads(m_decode)
         light = next(filter(lambda x: x.id == light_value['id'], lights))
-        light.toggle(light_value['value'])
+        light.toggle(light_value['mode'])
 
 
 client = mqtt.Client()
