@@ -1,8 +1,7 @@
-package com.salt.smarthomebackend.websocket;
+package com.salt.smarthomebackend.configuration;
 
-import com.salt.smarthomebackend.controller.SocketHandler;
+import com.salt.smarthomebackend.messaging.SocketHandler;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
 
 @Configuration

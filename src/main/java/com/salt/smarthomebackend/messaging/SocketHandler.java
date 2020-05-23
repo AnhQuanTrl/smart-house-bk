@@ -1,4 +1,4 @@
-package com.salt.smarthomebackend.controller;
+package com.salt.smarthomebackend.messaging;
 
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;

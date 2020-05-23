@@ -1,14 +1,13 @@
 package com.salt.smarthomebackend.boostrap;
 
-import com.salt.smarthomebackend.model.Device;
-import com.salt.smarthomebackend.model.LightBulb;
-import com.salt.smarthomebackend.model.LightSensor;
-import com.salt.smarthomebackend.model.Room;
+import com.salt.smarthomebackend.model.*;
 import com.salt.smarthomebackend.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalTime;
 
 @Component
 @Slf4j
@@ -18,6 +17,7 @@ public class DataLoader implements CommandLineRunner {
     private ClientRepository clientRepository;
     private RoomRepository roomRepository;
     private DeviceRepository deviceRepository;
+    private AutomationRepository automationRepository;
     @Autowired
     public void setLightSensorRepository(LightSensorRepository lightSensorRepository) {
         this.lightSensorRepository = lightSensorRepository;
@@ -43,6 +43,12 @@ public class DataLoader implements CommandLineRunner {
         this.deviceRepository = deviceRepository;
     }
 
+    @Autowired
+    public void setAutomationRepository(AutomationRepository automationRepository) {
+        this.automationRepository = automationRepository;
+    }
+
+
 
     @Override
     public void run(String... args) throws Exception {
@@ -58,5 +64,7 @@ public class DataLoader implements CommandLineRunner {
         r1 = roomRepository.findByName("r1");
         dev.setRoom(r1);
         deviceRepository.save(dev);
+        Automation a1 = new Automation(LocalTime.of(0, 30, 0), null, null);
+        automationRepository.save(a1);
     }
 }

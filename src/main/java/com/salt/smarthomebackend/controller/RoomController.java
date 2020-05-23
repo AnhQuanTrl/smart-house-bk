@@ -15,25 +15,20 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
-public class ApiController {
-    private DeviceRepository deviceRepository;
+@RequestMapping("/api/room")
+public class RoomController {
     private RoomRepository roomRepository;
-    public ApiController(DeviceRepository deviceRepository, RoomRepository roomRepository) {
-        this.deviceRepository = deviceRepository;
+    public RoomController(DeviceRepository deviceRepository, RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
     }
-    @GetMapping(value = "/rooms")
+    @GetMapping(value = "/all")
     public List<Room> allRoom() {
         return roomRepository.findAll();
     }
 
-    @GetMapping(value = "/devices")
-    public List<Device> allDevice() {
-        return deviceRepository.findAll();
-    }
 
-    @GetMapping(value = "/room/{id}")
+
+    @GetMapping(value = "/{id}")
     public ResponseEntity<Room> oneRoom(@PathVariable Long id) {
         Optional<Room> res = roomRepository.findById(id);
         if (res.isPresent()) {
@@ -42,7 +37,7 @@ public class ApiController {
             return ResponseEntity.notFound().build();
         }
     }
-    @PostMapping(value = "/create-room")
+    @PostMapping(value = "/create")
     public ResponseEntity<Map<String, Long>> createRoom(@RequestBody Room roomInfo) {
         Room room = roomRepository.save(roomInfo);
         if (room == null) {
@@ -55,7 +50,7 @@ public class ApiController {
         }
     }
 
-    @PutMapping(value = "/update-room/{id}")
+    @PutMapping(value = "/{id}/update")
     public ResponseEntity<?> editRoom(@PathVariable Long id, @RequestBody Room roomInfo) {
         Optional<Room> res = roomRepository.findById(id);
         if (res.isPresent()) {
@@ -68,7 +63,7 @@ public class ApiController {
         }
     }
 
-    @DeleteMapping(value = "/delete-room/{id}")
+    @DeleteMapping(value = "/{id}/delete")
     public ResponseEntity<?> deleteRoom(@PathVariable Long id) {
         try {
             System.out.println(id);

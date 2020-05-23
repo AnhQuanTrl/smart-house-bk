@@ -26,6 +26,7 @@ public abstract class Device extends BaseIdentity {
     private Room room;
     @ManyToOne(optional = true, cascade = CascadeType.MERGE)
     private Client client;
+    
     public Device(String name) {
         super();
         this.name = name;
