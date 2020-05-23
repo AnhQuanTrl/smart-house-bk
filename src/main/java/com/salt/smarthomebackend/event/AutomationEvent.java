@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationEvent;
 public class AutomationEvent extends ApplicationEvent {
     public enum Command {
         ADD,
+        UPDATE,
         REMOVE
     }
     private Command command;

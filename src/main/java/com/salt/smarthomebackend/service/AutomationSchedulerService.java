@@ -24,10 +24,17 @@ public class AutomationSchedulerService {
     public void addTaskToScheduler(long id, LocalTime time) {
         CronTrigger cronTrigger = new CronTrigger("0 " + time.getMinute() + " * * * ?",
                 TimeZone.getDefault());
-        ScheduledFuture<?> scheduledTask = taskScheduler.schedule(() -> System.out.println("Yay" +
-                "!"), cronTrigger
-                );
+        ScheduledFuture<?> scheduledTask =
+                taskScheduler.schedule(() -> System.out.println("Yay!"), cronTrigger);
         jobsMap.put(id, scheduledTask);
+    }
+    public void updateTaskForScheduler(Long id, LocalTime time) {
+        CronTrigger cronTrigger = new CronTrigger("0 " + time.getMinute() + " * * * ?",
+                TimeZone.getDefault());
+        jobsMap.get(id).cancel(true);
+        ScheduledFuture<?> newScheduledTask =
+                taskScheduler.schedule(() -> System.out.println("Yay!"), cronTrigger);
+        jobsMap.put(id, newScheduledTask);
     }
     public void removeTaskFromScheduler(Long id) {
         ScheduledFuture<?> scheduledTask = jobsMap.get(id);
@@ -45,6 +52,9 @@ public class AutomationSchedulerService {
         switch (automationEvent.getCommand()) {
             case ADD:
                 addTaskToScheduler(automation.getId(), automation.getTriggerTime());
+                break;
+            case UPDATE:
+                updateTaskForScheduler(automation.getId(), automation.getTriggerTime());
                 break;
             case REMOVE:
                 removeTaskFromScheduler(automation.getId());

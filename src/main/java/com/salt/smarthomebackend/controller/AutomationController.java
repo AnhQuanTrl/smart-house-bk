@@ -2,6 +2,7 @@ package com.salt.smarthomebackend.controller;
 
 import com.salt.smarthomebackend.model.Automation;
 import com.salt.smarthomebackend.model.LightBulb;
+import com.salt.smarthomebackend.model.Room;
 import com.salt.smarthomebackend.repository.AutomationRepository;
 import com.salt.smarthomebackend.repository.LightBulbRepository;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,16 @@ public class AutomationController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+    @PutMapping("/{id}/update")
+    public ResponseEntity<?> updateAutomation(@PathVariable Long id,
+                                              @RequestBody Automation automation) {
+        Optional<Automation> res = automationRepository.findById(id);
+        return res.map(auto -> {
+            auto.setTriggerTime(automation.getTriggerTime());
+            automationRepository.save(auto);
+            return ResponseEntity.ok().build();
+        }).orElseGet(() ->  ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}/delete")

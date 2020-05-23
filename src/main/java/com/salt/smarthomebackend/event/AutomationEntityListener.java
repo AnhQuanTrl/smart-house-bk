@@ -14,11 +14,17 @@ public class AutomationEntityListener {
     private ApplicationEventPublisher publisher;
 
     @PostPersist
-    @PostUpdate
     //spring cannot autowire entity listener, need a custom autowire helper class
-    public void onPersistAndUpdate(Automation automation) {
+    public void onPersist(Automation automation) {
         AutowireHelper.autowire(this, this.publisher);
         this.publisher.publishEvent(new AutomationEvent(automation, AutomationEvent.Command.ADD));
+    }
+
+    @PostUpdate
+    public void onUpdate(Automation automation) {
+        AutowireHelper.autowire(this, this.publisher);
+        this.publisher.publishEvent(new AutomationEvent(automation,
+                AutomationEvent.Command.UPDATE));
     }
 
     @PostRemove
