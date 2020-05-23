@@ -15,6 +15,7 @@ import javax.persistence.OneToOne;
 public class LightBulb extends Device{
     private boolean mode;
     @OneToOne(cascade = CascadeType.ALL)
+
     private Automation automation = null;
     public LightBulb(String name, boolean mode) {
         super(name);

@@ -1,14 +1,18 @@
 package com.salt.smarthomebackend.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.salt.smarthomebackend.event.AutomationEntityListener;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.OneToOne;
 import java.time.LocalTime;
 
 @Setter
@@ -25,6 +29,9 @@ public class Automation extends BaseIdentity {
     @Column(columnDefinition = "TIME")
     private LocalTime releaseTime;
     @OneToOne(mappedBy = "automation")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
     private LightBulb lightBulb;
     public Automation(LocalTime triggerTime, LocalTime releaseTime, LightBulb lightBulb) {
         this.triggerTime = triggerTime;

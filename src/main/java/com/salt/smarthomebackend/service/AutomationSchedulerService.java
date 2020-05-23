@@ -2,7 +2,6 @@ package com.salt.smarthomebackend.service;
 
 import com.salt.smarthomebackend.event.AutomationEvent;
 import com.salt.smarthomebackend.model.Automation;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
@@ -25,13 +24,8 @@ public class AutomationSchedulerService {
     public void addTaskToScheduler(long id, LocalTime time) {
         CronTrigger cronTrigger = new CronTrigger("0 " + time.getMinute() + " * * * ?",
                 TimeZone.getDefault());
-        ScheduledFuture<?> scheduledTask = taskScheduler.schedule(new Runnable() {
-                                                                      @Override
-                                                                      public void run() {
-                                                                          System.out.println("Yay" +
-                                                                                  "!");
-                                                                      }
-                                                                  }, cronTrigger
+        ScheduledFuture<?> scheduledTask = taskScheduler.schedule(() -> System.out.println("Yay" +
+                "!"), cronTrigger
                 );
         jobsMap.put(id, scheduledTask);
     }

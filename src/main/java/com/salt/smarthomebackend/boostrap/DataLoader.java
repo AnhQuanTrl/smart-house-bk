@@ -66,5 +66,7 @@ public class DataLoader implements CommandLineRunner {
         deviceRepository.save(dev);
         Automation a1 = new Automation(LocalTime.of(0, 30, 0), null, null);
         automationRepository.save(a1);
+        lb1.setAutomation(a1);
+        lightBulbRepository.save(lb1);
     }
 }
