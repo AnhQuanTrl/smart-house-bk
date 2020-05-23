@@ -2,7 +2,6 @@ package com.salt.smarthomebackend.controller;
 
 import com.salt.smarthomebackend.model.Automation;
 import com.salt.smarthomebackend.model.LightBulb;
-import com.salt.smarthomebackend.model.Room;
 import com.salt.smarthomebackend.repository.AutomationRepository;
 import com.salt.smarthomebackend.repository.LightBulbRepository;
 import org.springframework.http.ResponseEntity;
@@ -37,10 +36,18 @@ public class AutomationController {
     @PostMapping("/create")
     public ResponseEntity<Map<String, Long>> addAutomation(@RequestBody Automation auto) {
         try {
-            Automation automation = automationRepository.save(auto);
-            Map<String, Long> response = new HashMap<>();
-            response.put("id", automation.getId());
-            return ResponseEntity.ok(response);
+            Optional<LightBulb> res =
+                    lightBulbRepository.findById(auto.getLightBulb().getId());
+            if (res.isPresent()) {
+                Automation automation = automationRepository.save(auto);
+                res.get().setAutomation(automation);
+                lightBulbRepository.save(res.get());
+                Map<String, Long> response = new HashMap<>();
+                response.put("id", automation.getId());
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }

@@ -64,9 +64,9 @@ public class DataLoader implements CommandLineRunner {
         r1 = roomRepository.findByName("r1");
         dev.setRoom(r1);
         deviceRepository.save(dev);
-        Automation a1 = new Automation(LocalTime.of(0, 30, 0), null, null);
-        automationRepository.save(a1);
-        lb1.setAutomation(a1);
-        lightBulbRepository.save(lb1);
+//        LightBulb lb = lightBulbRepository.findById(lb1.getId()).get();
+//        Automation a1 = new Automation(LocalTime.of(0, 30, 0), null);
+//        a1.setLightBulb(lb);
+//        automationRepository.save(a1);
     }
 }

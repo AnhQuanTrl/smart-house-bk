@@ -17,14 +17,14 @@ public class SmartHomeBackendApplication {
 		ConfigurableApplicationContext context =
 				SpringApplication.run(SmartHomeBackendApplication.class,
 				args);
-		MessageGateway messageGateway = context.getBean(MessageGateway.class);
-		Map<String, Object> test = new HashMap<>();
-		test.put("id", 3);
-		test.put("mode", true);
-		try {
-			messageGateway.sendToMqtt(new ObjectMapper().writeValueAsString(test));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		MessageGateway messageGateway = context.getBean(MessageGateway.class);
+//		Map<String, Object> test = new HashMap<>();
+//		test.put("id", 3);
+//		test.put("mode", true);
+//		try {
+//			messageGateway.sendToMqtt(new ObjectMapper().writeValueAsString(test));
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 }

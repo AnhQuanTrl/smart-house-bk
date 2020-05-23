@@ -14,9 +14,8 @@ import javax.persistence.OneToOne;
 @Entity
 public class LightBulb extends Device{
     private boolean mode;
-    @OneToOne(cascade = CascadeType.ALL)
-
-    private Automation automation = null;
+    @OneToOne(mappedBy = "lightBulb", cascade = CascadeType.ALL)
+    private Automation automation;
     public LightBulb(String name, boolean mode) {
         super(name);
         this.mode = mode;
