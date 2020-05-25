@@ -40,7 +40,7 @@ public class MainController {
         }
     }
 
-    @RequestMapping(path = "/getOne", method = RequestMethod.POST)
+    @RequestMapping(path = "/makeChange", method = RequestMethod.POST)
     public void makeChange(@RequestParam Long id, @RequestParam(defaultValue = "") String feature,
                            @RequestParam(defaultValue = "") String value) {
         Map<Long, Device> deviceMap = (new DeviceTmpInfo()).getInfoMap();
