@@ -1,9 +1,7 @@
 import 'dart:async';
 
-// import 'package:smarthouse/data.dart';
-import 'package:smarthouse/data.dart';
-import 'package:smarthouse/models/devices/device.dart';
 import 'package:smarthouse/models/room.dart';
+import 'package:smarthouse/services/roomService.dart' as rService;
 
 class DataProvider {
   DataProvider._() {
@@ -18,33 +16,41 @@ class DataProvider {
     return _instance;
   }
 
-  List<Room> data;
-  StreamController _dataStreamController = StreamController.broadcast();
-  Stream get dataStream => _dataStreamController.stream;
-  StreamSink get dataSink => _dataStreamController.sink;
+  List<Room> roomList;
+
 
   Room selectedRoom;
-  StreamController<Room> _selectedRoomStreamController =
-      StreamController<Room>.broadcast();
 
   Future<List<Room>> fetch() async {
-    data = mockData;
+    roomList = await rService.fetchRoomRequest();
 
-    await Future.delayed(Duration(seconds: 3));
-    _dataStreamController.add(data);
-    return data;
+    return roomList;
   }
 
   Room findRoomById(int id) {
-    for (Room r in data) {
+    for (Room r in roomList) {
       if (r.id == id) {
         return r;
       }
     }
   }
 
-  void dispose() {
-    _dataStreamController.close();
-    _selectedRoomStreamController.close();
+  Future addRoom(String name) async {
+    Room newRoom = await rService.addRoomRequest(name);
+    if (newRoom != null) roomList.add(newRoom);
+  }
+
+  Future<bool> removeRoom(id) async  {
+    return rService.removeRoomRequest(id);
+  }
+
+  Future updateRoom(int id, String newName) async {
+    bool success = await rService.updateRoomRequest(id, newName);
+    if (success) {
+      Room room = findRoomById(id);
+      room.name = newName;
+    }
+
+    return success;
   }
 }

@@ -36,7 +36,7 @@ List<Widget> buildRoomPageWidget(RoomPageBloc bloc)
 {
   List<Widget> ret = [];
   ret.add(RoomInfo(bloc: bloc));
-  for(Device d in bloc.room.devicesList)
+  for(Device d in bloc.room.deviceList)
   {
     ret.add(DeviceRoomPageCard(device: d));
   }

@@ -5,17 +5,19 @@ import 'base.dart';
 class AppBloc extends Bloc {
   DataProvider _dataProvider;
 
+  StreamController _dataStreamController = StreamController();
+  Stream get dataStream => _dataStreamController.stream;
+  StreamSink get dataSink => _dataStreamController.sink;
+
   AppBloc() {
     _dataProvider = DataProvider();
-    sink.add(_dataProvider.data);
+    dataSink.add(_dataProvider.roomList);
   }
 
-  StreamController _dataStreamController = StreamController();
-  Stream get stream => _dataStreamController.stream;
-  StreamSink get sink => _dataStreamController.sink;
-  
   @override
   void dispose() {
     _dataStreamController.close();
   }
+
+  // void createRoom() async ()
 }
