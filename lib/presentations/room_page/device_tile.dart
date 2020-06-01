@@ -1,31 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:smarthouse/models/devices/device.dart';
-import 'package:smarthouse/models/devices/light.dart';
 
-class DeviceRoomPageCard extends StatefulWidget {
+class DeviceTile extends StatefulWidget {
   final Device device;
-  DeviceRoomPageCard({this.device});
+  DeviceTile({this.device});
   @override
-  _DeviceRoomPageCardState createState() => _DeviceRoomPageCardState();
+  _DeviceTileState createState() => _DeviceTileState();
 }
 
-class _DeviceRoomPageCardState extends State<DeviceRoomPageCard> {
+class _DeviceTileState extends State<DeviceTile> {
   @override
   Widget build(BuildContext context) {
     String asset;
-    dynamic switchableDevice = widget.device as SwitchValue;
-    if (widget.device is Light)
-    {
-      asset = "assets/images/bulb.png";
-    }
-//    else if (this.widget.device.compareTo("Air conditioner") == 0)
-//    {
-//      asset = "assets/images/air_conditioning_indoor.png";
-//    }
-//    else
-//    {
-//      asset = "assets/images/fan.png";
-//    }
+    asset = widget.device.assetDir;
+
     return Container(
       padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
       margin: EdgeInsets.all(5.0),
@@ -43,7 +31,7 @@ class _DeviceRoomPageCardState extends State<DeviceRoomPageCard> {
                 onPressed: () {},
               ),
               Switch(
-                value: switchableDevice.value,
+                value: widget.device.value == 0 ? false : true,
                 activeTrackColor: Colors.blue[900],
                 activeColor: Colors.grey[100],
                 inactiveTrackColor: Colors.grey[400],
@@ -55,10 +43,6 @@ class _DeviceRoomPageCardState extends State<DeviceRoomPageCard> {
             children: <Widget>[
               Text(
                 widget.device.name,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
-                ),
               ),
             ],
           )

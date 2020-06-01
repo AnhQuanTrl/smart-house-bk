@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import 'package:smarthouse/models/devices/device.dart';
 
 import 'package:smarthouse/models/room.dart';
-import 'package:smarthouse/presentations/pages/room_page.dart';
+import 'package:smarthouse/presentations/room_page/room_page.dart';
 
 import 'device_tile.dart';
 

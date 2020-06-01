@@ -12,7 +12,11 @@ class RoomPageBloc extends Bloc {
   RoomPageBloc({this.roomId}) {
     room = _provider.findRoomById(roomId);
   }
-  
+
+  void fetch() async {
+
+  }
+
   @override
   void dispose() {
 

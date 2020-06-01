@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'presentations/pages/home_page.dart';
-import 'presentations/pages/room_page.dart';
+import 'presentations/home_page/home_page.dart';
+import 'presentations/room_page/room_page.dart';
 
 void main() {
   return runApp(MyApp());
@@ -14,6 +14,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        textTheme: TextTheme(
+          body1: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
+        )
+      ),
+      debugShowCheckedModeBanner: false,
       onGenerateRoute: (settings) {
         if (settings.name == RoomPage.routeName) {
           final room = settings.arguments;
@@ -24,9 +30,9 @@ class MyApp extends StatelessWidget {
           );
         }
       },
-      initialRoute: "/",
+      initialRoute: "/room_page",
       routes: {
-        HomePage.routeName: (context) => HomePage(),
+        HomePage.routeName: (context) => RoomPage(roomId: 1),
       },
     );
   }
