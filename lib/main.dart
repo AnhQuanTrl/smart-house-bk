@@ -30,9 +30,9 @@ class MyApp extends StatelessWidget {
           );
         }
       },
-      initialRoute: "/room_page",
+      initialRoute: "/",
       routes: {
-        HomePage.routeName: (context) => RoomPage(roomId: 1),
+        HomePage.routeName: (context) => HomePage(),
       },
     );
   }
