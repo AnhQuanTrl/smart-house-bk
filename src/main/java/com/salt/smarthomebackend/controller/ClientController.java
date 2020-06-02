@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -26,12 +27,12 @@ class ClientController {
     }
 
     @PostMapping("/signup")
-    ResponseEntity<Object> clientSignup(@RequestBody String username, @RequestBody String password ) {
+    ResponseEntity<Object> clientSignup(@RequestBody Client _client ) {
         Map<String, String> res = new HashMap<>();
 
-        Client client = clientRepository.findByUsername(username);
+        Client client = clientRepository.findByUsername(_client.getUsername());
         if (client == null) {
-            clientRepository.save(new Client(username,password));
+            clientRepository.save(_client);
             res.put("signup", "succeeded");
         }
         else {
@@ -41,11 +42,11 @@ class ClientController {
     }
 
     @PostMapping("/login")
-    ResponseEntity<Object> clientLogin(@RequestBody String username, @RequestBody String password ) {
+    ResponseEntity<Object> clientLogin(@RequestBody Client _client ) {
         Map<String, String> res = new HashMap<>();
 
-        Client client = clientRepository.findByUsername(username);
-        if (client.getPassword().equals(password)) {
+        Client client = clientRepository.findByUsername(_client.getUsername());
+        if (client != null && client.getPassword().equals(_client.getPassword())) {
             res.put("login", "succeeded");
         }
         else {
@@ -62,9 +63,10 @@ class ClientController {
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
-    @PostMapping("/device/{id}/register")
-    Device registerDevice(@PathVariable Long device_id, @RequestBody Long usr_id) throws Exception {
-        Client client = clientRepository.findById(usr_id).orElseThrow(()->new ClientNotFoundException(usr_id));
+    @PostMapping("device/{device_id}/register")
+    Device registerDevice(@PathVariable(value="device_id") Long device_id, @RequestBody Map<String, String> usr_id) throws Exception {
+        Long usrId = Long.parseLong(usr_id.get("usr_id"));
+        Client client = clientRepository.findById(usrId).orElseThrow(()->new ClientNotFoundException(usrId));
         return deviceRepository.findById(device_id)
                 .map(device -> {
                     device.setClient(client);
@@ -73,12 +75,13 @@ class ClientController {
                 .orElseThrow(() -> new DeviceNotFoundException(device_id));
     }
 
-    @PostMapping("/device/{id}/unregister")
-    Device unregisterDevice(@PathVariable Long device_id, @RequestBody Long usr_id) throws Exception {
-        Client client = clientRepository.findById(usr_id).orElseThrow(()->new ClientNotFoundException(usr_id));
+    @PostMapping("/device/{device_id}/unregister")
+    Device unregisterDevice(@PathVariable Long device_id, @RequestBody Map<String, String> usr_id) throws Exception {
+        Long usrId = Long.parseLong(usr_id.get("usr_id"));
+        Client client = clientRepository.findById(usrId).orElseThrow(()->new ClientNotFoundException(usrId));
         return deviceRepository.findById(device_id)
                 .map(device -> {
-                    device.setClient(client);
+                    device.setClient(null);
                     return deviceRepository.save(device);
                 })
                 .orElseThrow(() -> new DeviceNotFoundException(device_id));
