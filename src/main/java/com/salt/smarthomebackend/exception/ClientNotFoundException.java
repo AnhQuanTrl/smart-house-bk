@@ -1,4 +1,4 @@
-package com.salt.smarthomebackend.Exception;
+package com.salt.smarthomebackend.exception;
 
 public class ClientNotFoundException extends RuntimeException {
     public ClientNotFoundException(Long id) {
