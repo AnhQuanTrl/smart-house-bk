@@ -39,6 +39,7 @@ public class AutomationController {
             Optional<LightBulb> res =
                     lightBulbRepository.findById(auto.getLightBulb().getId());
             if (res.isPresent()) {
+                auto.setLightBulb(res.get());
                 Automation automation = automationRepository.save(auto);
                 res.get().setAutomation(automation);
                 lightBulbRepository.save(res.get());
