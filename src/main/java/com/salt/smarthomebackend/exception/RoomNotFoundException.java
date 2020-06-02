@@ -1,4 +1,4 @@
-package com.salt.smarthomebackend.Exception;
+package com.salt.smarthomebackend.exception;
 
 public class RoomNotFoundException extends RuntimeException {
     public RoomNotFoundException(Long id) {

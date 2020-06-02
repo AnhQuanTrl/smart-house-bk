@@ -31,6 +31,7 @@ public class AutomationSchedulerService {
         ScheduledFuture<?> scheduledTask =
                 taskScheduler.schedule(() -> {
                             try {
+
                                 deviceMessagePublisher.publishMessage(lightBulb.getName(), true);
                             } catch (JsonProcessingException e) {
                                 e.printStackTrace();

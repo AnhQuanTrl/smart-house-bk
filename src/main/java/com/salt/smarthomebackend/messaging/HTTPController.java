@@ -1,7 +1,7 @@
 package com.salt.smarthomebackend.messaging;
 
-import com.salt.smarthomebackend.Exception.DeviceNotFoundException;
-import com.salt.smarthomebackend.Exception.RoomNotFoundException;
+import com.salt.smarthomebackend.exception.DeviceNotFoundException;
+import com.salt.smarthomebackend.exception.RoomNotFoundException;
 import com.salt.smarthomebackend.model.Device;
 import com.salt.smarthomebackend.model.Room;
 import com.salt.smarthomebackend.repository.DeviceRepository;
