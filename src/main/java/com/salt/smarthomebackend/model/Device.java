@@ -24,7 +24,7 @@ public abstract class Device extends BaseIdentity {
             property = "id")
     @JsonIdentityReference(alwaysAsId = true)
     private Room room;
-    @ManyToOne(optional = true, cascade = CascadeType.MERGE)
+    @ManyToOne(optional = true)
     private Client client;
     
     public Device(String name) {

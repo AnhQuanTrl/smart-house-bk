@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.List;
 public class Client extends BaseIdentity{
     private String username;
     private String password;
-    @OneToMany(mappedBy = "client")
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<Device> devices = new ArrayList<>();
     @OneToMany
     private List<Client> relatives = new ArrayList<>();

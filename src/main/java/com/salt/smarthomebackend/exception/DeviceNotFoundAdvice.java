@@ -1,4 +1,4 @@
-package com.salt.smarthomebackend.Exception;
+package com.salt.smarthomebackend.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
