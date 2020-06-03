@@ -56,7 +56,7 @@ public class DataLoader implements CommandLineRunner {
         roomRepository.save(r1);
         LightSensor l1 = new LightSensor("ls1", 100);
         LightSensor l2 = new LightSensor("ls2", 200);
-        LightBulb lb1 = new LightBulb("lb1", false);
+        LightBulb lb1 = new LightBulb("lb3", false);
         lightSensorRepository.save(l1);
         lightSensorRepository.save(l2);
         lightBulbRepository.save(lb1);
