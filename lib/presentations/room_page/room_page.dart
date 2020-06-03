@@ -3,9 +3,7 @@ import 'package:smarthouse/blocs/room_page_bloc.dart';
 import 'package:smarthouse/models/devices/device.dart';
 import 'package:smarthouse/presentations/room_page/device_tile.dart';
 import 'package:smarthouse/presentations/room_page/room_info.dart';
-import 'package:smarthouse/models/devices/light.dart';
-import 'package:smarthouse/models/devices/air_conditioner.dart';
-import 'package:smarthouse/models/devices/fan.dart';
+
 
 class RoomPage extends StatefulWidget {
   static const String routeName = '/room_page';
@@ -44,17 +42,17 @@ class RoomPageState extends State<RoomPage> {
 //List<Widget> buildRoomPageWidget(RoomPageBloc bloc)
 List<Widget> buildRoomPageWidget()
 {
-  List<Device> deviceList = [
-    Light(value: 1, name: "Light", id: 1),
-    AirConditioner(value: 0, name: "Air Conditioner", id: 2),
-    Fan(value: 1, name: "Fan", id: 3),
-  ];
+  // List<Device> deviceList = [
+  //   Light(value: 1, name: "Light", id: 1),
+  //   AirConditioner(value: 0, name: "Air Conditioner", id: 2),
+  //   Fan(value: 1, name: "Fan", id: 3),
+  // ];
 
-  List<Widget> ret = [];
-  ret.add(RoomInfo(temperature: 30, humidity: 80, brightness: 1000));
-  for(Device d in deviceList)
-  {
-    ret.add(DeviceTile(device: d));
-  }
-  return ret;
+  // List<Widget> ret = [];
+  // ret.add(RoomInfo(temperature: 30, humidity: 80, brightness: 1000));
+  // for(Device d in deviceList)
+  // {
+  //   ret.add(DeviceTile(device: d));
+  // }
+  // return ret;
 }

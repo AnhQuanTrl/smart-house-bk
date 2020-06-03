@@ -5,7 +5,6 @@ class Room {
   int id;
   Room(this.name, this.deviceList, {this.id});
   String name;
-  bool isOn = false;
   List<Device> deviceList;
 
   factory Room.fromJson(String source) {

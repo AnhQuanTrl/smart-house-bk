@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:smarthouse/providers/device_provider.dart';
+import 'package:smarthouse/providers/room_provider.dart';
 import 'presentations/home_page/home_page.dart';
+import 'presentations/room_page/room_page.dart';
 import 'presentations/room_page/room_page.dart';
 
 void main() {
@@ -13,11 +17,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => RoomProvider()),
+        ChangeNotifierProvider(create: (_) => DeviceProvider())
+      ],
+      child: MaterialApp(
       theme: ThemeData(
         textTheme: TextTheme(
           body1: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
-        )
+        ),
+        primaryColor: Colors.blue,
+        backgroundColor: Colors.blue[50],
+        accentColor: Colors.deepOrangeAccent,
       ),
       debugShowCheckedModeBanner: false,
       onGenerateRoute: (settings) {
@@ -33,7 +45,8 @@ class MyApp extends StatelessWidget {
       initialRoute: "/",
       routes: {
         HomePage.routeName: (context) => HomePage(),
+        RoomPage.routeName: (context) => RoomPage(),
       },
-    );
+    ),);
   }
 }
