@@ -19,13 +19,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => RoomProvider()),
-        ChangeNotifierProvider(create: (_) => DeviceProvider())
+        ChangeNotifierProvider(create: (_) => DeviceProvider()),
+        ChangeNotifierProxyProvider<DeviceProvider, RoomProvider>(
+          create: (_) => RoomProvider(),
+          update: (_, deviceProvider, previous) => previous..updateDeviceProvider(deviceProvider),
+          ),
       ],
       child: MaterialApp(
       theme: ThemeData(
         textTheme: TextTheme(
-          body1: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
+          bodyText2: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)
         ),
         primaryColor: Colors.blue,
         backgroundColor: Colors.blue[50],

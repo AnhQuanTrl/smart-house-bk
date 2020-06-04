@@ -1,7 +1,11 @@
+import '../room.dart';
+
 class Device {
   int id;
   String name;
   String assetDir;
-  Device({this.id, this.name});
+  Room room;
+  Device({this.id, this.name, this.assetDir});
+
 }
 

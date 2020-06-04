@@ -1,11 +1,9 @@
 
 import 'package:flutter/material.dart';
+import 'package:smarthouse/models/devices/device.dart';
 
-class LightBulb {
-  int id;
-  String name;
-  String assetDir = "assets/images/bulb.png";
+class LightBulb extends Device {
   bool mode;
+  LightBulb({this.mode, @required String name, @required int id}): super(name: name, id: id, assetDir: "assets/images/bulb.png");
 
-  LightBulb({@required this.id,@required this.name, this.mode = true});
 }

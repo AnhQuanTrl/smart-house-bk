@@ -1,5 +1,5 @@
 
-final server = "http://192.168.3.43:8080/api";
+final server = "http://192.168.3.175:8080/";
 
 String request(String url) {
   print(server + url);

@@ -1,10 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:smarthouse/models/devices/device.dart';
 
-class LightSensor {
-  int id;
-  String name;
+class LightSensor extends Device{
   int value;
-  String assetDir =  "assets/images/fan.png";
-  LightSensor({this.value, @required this.name, @required this.id});
+  LightSensor({this.value, @required String name, @required int id}): super(name: name, id: id, assetDir: "assets/images/fan.png");
 }
