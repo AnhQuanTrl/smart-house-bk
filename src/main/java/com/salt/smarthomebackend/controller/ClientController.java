@@ -26,35 +26,35 @@ class ClientController {
         this.deviceRepository = deviceRepository;
     }
 
-    @PostMapping("/signup")
-    ResponseEntity<Object> clientSignup(@RequestBody Client _client ) {
-        Map<String, String> res = new HashMap<>();
-
-        Client client = clientRepository.findByUsername(_client.getUsername());
-        if (client == null) {
-            clientRepository.save(_client);
-            res.put("signup", "succeeded");
-        }
-        else {
-            res.put("error", "username already exists");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(res);
-    }
-
-    @PostMapping("/login")
-    ResponseEntity<Object> clientLogin(@RequestBody Client _client ) {
-        Map<String, String> res = new HashMap<>();
-
-        Client client = clientRepository.findByUsername(_client.getUsername());
-        if (client != null && client.getPassword().equals(_client.getPassword())) {
-            res.put("login", "succeeded");
-        }
-        else {
-            res.put("login", "failed");
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(res);
-    }
+//    @PostMapping("/signup")
+//    ResponseEntity<Object> clientSignup(@RequestBody Client _client ) {
+//        Map<String, String> res = new HashMap<>();
+//
+//        Client client = clientRepository.findByUsername(_client.getUsername());
+//        if (client == null) {
+//            clientRepository.save(_client);
+//            res.put("signup", "succeeded");
+//        }
+//        else {
+//            res.put("error", "username already exists");
+//        }
+//        return ResponseEntity.status(HttpStatus.OK).body(res);
+//    }
+//
+//    @PostMapping("/login")
+//    ResponseEntity<Object> clientLogin(@RequestBody Client _client ) {
+//        Map<String, String> res = new HashMap<>();
+//
+//        Client client = clientRepository.findByUsername(_client.getUsername());
+//        if (client != null && client.getPassword().equals(_client.getPassword())) {
+//            res.put("login", "succeeded");
+//        }
+//        else {
+//            res.put("login", "failed");
+//        }
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(res);
+//    }
 
     @PostMapping("/logout")
     ResponseEntity<Object>  clientLogout(@RequestBody String username) {
