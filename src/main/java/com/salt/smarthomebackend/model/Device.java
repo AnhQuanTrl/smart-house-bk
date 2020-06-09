@@ -18,7 +18,10 @@ import javax.persistence.*;
         @JsonSubTypes.Type(value= LightBulb.class, name="LB")
 })
 public abstract class Device extends BaseIdentity {
+    @Column(unique = true, nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private Boolean status;
     @ManyToOne(optional = true, cascade = CascadeType.MERGE)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
