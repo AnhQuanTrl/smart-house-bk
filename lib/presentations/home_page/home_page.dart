@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
-import 'package:smarthouse/blocs/home_page_bloc.dart';
 import 'package:smarthouse/presentations/components/room_expand_tile.dart';
 import 'package:smarthouse/models/room.dart';
 import 'package:smarthouse/presentations/home_page/heading_tile.dart';
@@ -8,7 +7,6 @@ import 'package:smarthouse/presentations/home_page/room_tile.dart';
 import 'package:smarthouse/providers/device_provider.dart';
 import 'package:smarthouse/providers/room_provider.dart';
 
-import '../../blocs/home_page_bloc.dart';
 import 'device_tile.dart';
 
 //class HomePage extends StatefulWidget {
@@ -142,31 +140,43 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-
 class _HomePageState extends State<HomePage> {
+  bool _isLoading = true;
   @override
   void initState() {
     super.initState();
-    Provider.of<DeviceProvider>(context, listen: false).fetch();
-    Provider.of<RoomProvider>(context, listen: false).fetch();
+    Provider.of<DeviceProvider>(context, listen: false).fetch().then((value) {
+      Provider.of<RoomProvider>(context, listen: false).fetch().then((value) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    });
   }
+
   @override
   Widget build(BuildContext context) {
-    RoomProvider roomProvider =  Provider.of<RoomProvider>(context);
-    DeviceProvider deviceProvider =  Provider.of<DeviceProvider>(context);
+    RoomProvider roomProvider = Provider.of<RoomProvider>(context);
+    DeviceProvider deviceProvider = Provider.of<DeviceProvider>(context);
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      appBar: AppBar(
-        title: Text(
-          "Smart house",
+        backgroundColor: Theme.of(context).backgroundColor,
+        appBar: AppBar(
+          title: Text(
+            "Smart house",
+          ),
         ),
-      ),
-      body: ListView(children: <Widget>[
-        HeadingTile("Rooms"),
-        ...roomProvider.rooms.map((room) => RoomTile(room)).toList(),
-        HeadingTile("Unassigned Devices"),
-        ...deviceProvider.unassginedDevices.map((device) => DeviceTile(device.name)).toList()
-      ],)
-    );
+        body: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : ListView(
+                children: <Widget>[
+                  HeadingTile("Rooms"),
+                  ...roomProvider.rooms.map((room) => RoomTile(room)).toList(),
+                  HeadingTile("Unassigned Devices"),
+                  ...deviceProvider.devices
+                      .where((element) => element.room == null)
+                      .map((device) => DeviceTile(device))
+                      .toList()
+                ],
+              ));
   }
 }

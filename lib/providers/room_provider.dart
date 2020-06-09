@@ -17,25 +17,27 @@ class RoomProvider with ChangeNotifier {
 
   void addRoom(Room room) {}
 
-  void fetch() async {
+  Future<void> fetch() async {
     rooms = new List<Room>();
     var res = await http.get(api.server + "api/rooms/");
     List<dynamic> roomList = json.decode(res.body);
     print(roomList);
     roomList.forEach((element) {
-      rooms.add(new Room(
-          element['name'], populateDevice(List<int>.from(element['devices'])),
-          id: element['id']));
+      Room room = new Room(element['name'], null, id: element['id']);
+      room.deviceList =
+          populateDevice(List<int>.from(element['devices']), room);
+      print(room.deviceList);
+      rooms.add(room);
     });
     notifyListeners();
   }
 
-  List<Device> populateDevice(List<int> deviceIds) {
+  List<Device> populateDevice(List<int> deviceIds, Room room) {
     return deviceIds.map((id) {
       Device device = deviceProvider.findById(id);
+      print(deviceProvider.devices);
       if (device != null) {
-        deviceProvider.assignedDevices.add(device);
-        deviceProvider.unassginedDevices.remove(device);
+        device.room = room;
       }
       return device;
     }).toList();

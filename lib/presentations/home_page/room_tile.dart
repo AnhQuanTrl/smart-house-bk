@@ -10,10 +10,11 @@ class RoomTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return room.deviceList.isEmpty ? ListTile(
+      leading: Icon(Icons.room),
       title: Text(room.name),
-      onTap: () => Navigator.of(context).pushNamed(RoomPage.routeName),
-    ) : ExpansionTile(title: Text(room.name), children:
-      room.deviceList.map((device) => DeviceTile(device.name)).toList());
+      //onTap: () => Navigator.of(context).pushNamed(RoomPage.routeName),
+    ) : ExpansionTile(leading: Icon(Icons.room),title: Text(room.name), children:
+      room.deviceList.map((device) => DeviceTile(device)).toList());
   }
 }
 

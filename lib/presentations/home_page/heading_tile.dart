@@ -5,6 +5,11 @@ class HeadingTile extends StatelessWidget {
   const HeadingTile(this.heading);
   @override
   Widget build(BuildContext context) {
-    return ListTile(title: Text(heading, style: Theme.of(context).textTheme.headline5,),);
+    return ListTile(
+      title: Text(
+        heading,
+        style: Theme.of(context).textTheme.headline5,
+      ),
+    );
   }
 }

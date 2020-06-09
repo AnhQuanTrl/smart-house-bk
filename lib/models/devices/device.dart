@@ -1,11 +1,13 @@
+import 'package:flutter/material.dart';
 import '../room.dart';
-
-class Device {
+abstract class Device{
   int id;
   String name;
-  String assetDir;
   Room room;
-  Device({this.id, this.name, this.assetDir});
-
+  Device({this.id, this.name});
+  Widget buildLeading();
+  Widget buildTitle();
+  Widget buildTrailing();
+  void onTap(BuildContext context);
 }
 
