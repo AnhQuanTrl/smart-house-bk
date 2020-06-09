@@ -16,6 +16,7 @@ public class ExceptionConfiguration extends ResponseEntityExceptionHandler {
     @Override
     public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
                                                           HttpHeaders headers, HttpStatus status, WebRequest request) {
+        System.out.println(request);
         Map<String, String> res = new HashMap<>();
         res.put("error", "wrong format");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);

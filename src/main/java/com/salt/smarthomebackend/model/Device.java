@@ -19,6 +19,7 @@ import javax.persistence.*;
 })
 public abstract class Device extends BaseIdentity {
     private String name;
+    private Boolean status;
     @ManyToOne(optional = true, cascade = CascadeType.MERGE)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
@@ -30,6 +31,6 @@ public abstract class Device extends BaseIdentity {
     public Device(String name) {
         super();
         this.name = name;
+        this.status = false;
     }
-
 }
