@@ -3,18 +3,19 @@ package com.salt.smarthomebackend.response;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.util.ArrayList;
 
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
-public class AddDeviceToRoomResponse {
+public class RemoveDeviceFromRoomResponse {
     private Long id;
     private ArrayList<Long> devices;
 
-    public AddDeviceToRoomResponse(Long id) {
+    public RemoveDeviceFromRoomResponse(Long id) {
         this.id = id;
-        devices = new ArrayList<Long>();
+        this.devices = new ArrayList<Long>();
     }
 
     public void addDevice(Long id){

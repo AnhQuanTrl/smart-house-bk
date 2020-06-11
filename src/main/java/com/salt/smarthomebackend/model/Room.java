@@ -7,9 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.PreRemove;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +24,30 @@ public class Room extends BaseIdentity{
     private List<Device> devices = new ArrayList<>();
     private String name;
 
-    public Room(String name) {
+    @ManyToOne(optional = true, cascade = CascadeType.MERGE)
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
+    private Client client;
+
+    @ManyToMany
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
+    private List<Client> controllers = new ArrayList<Client>();
+
+    public Room(String name, Client client) {
         this.name = name;
+        this.client = client;
+        this.controllers.add(client);
+    }
+
+    public Boolean addController(Client client){
+        if(!controllers.contains(client)){
+            controllers.add(client);
+            return true;
+        }
+        return false;
     }
 
     @PreRemove

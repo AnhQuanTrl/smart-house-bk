@@ -1,11 +1,19 @@
 package com.salt.smarthomebackend.controller;
 
+import com.salt.smarthomebackend.model.Client;
 import com.salt.smarthomebackend.model.Device;
 import com.salt.smarthomebackend.model.Room;
+import com.salt.smarthomebackend.repository.ClientRepository;
 import com.salt.smarthomebackend.repository.DeviceRepository;
 import com.salt.smarthomebackend.repository.RoomRepository;
+import com.salt.smarthomebackend.request.AddControllerRequest;
 import com.salt.smarthomebackend.request.AddDeviceToRoomRequest;
+import com.salt.smarthomebackend.request.AddRoomRequest;
+import com.salt.smarthomebackend.request.RemoveDeviceFromRoomRequest;
+import com.salt.smarthomebackend.response.AddControllerResponse;
 import com.salt.smarthomebackend.response.AddDeviceToRoomResponse;
+import com.salt.smarthomebackend.response.AddRoomResponse;
+import com.salt.smarthomebackend.response.RemoveDeviceFromRoomResponse;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,16 +28,16 @@ import java.util.Optional;
 public class RoomController {
     private RoomRepository roomRepository;
     private DeviceRepository deviceRepository;
-    public RoomController(DeviceRepository deviceRepository, RoomRepository roomRepository) {
+    private ClientRepository clientRepository;
+    public RoomController(DeviceRepository deviceRepository, RoomRepository roomRepository, ClientRepository clientRepository) {
         this.roomRepository = roomRepository;
         this.deviceRepository = deviceRepository;
+        this.clientRepository = clientRepository;
     }
     @GetMapping(value = "/")
     public List<Room> allRoom() {
         return roomRepository.findAll();
     }
-
-
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<Room> oneRoom(@PathVariable Long id) {
@@ -37,15 +45,18 @@ public class RoomController {
         return res.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
     @PostMapping(value = "/create")
-    public ResponseEntity<Map<String, Long>> createRoom(@RequestBody Room roomInfo) {
-        try {
-            Room room = roomRepository.save(roomInfo);
-            Map<String, Long> res = new HashMap<>();
-            res.put("id", room.getId());
-            return ResponseEntity.ok(res);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<AddRoomResponse> createRoom(@RequestBody AddRoomRequest request) {
+        Optional<Client> client = clientRepository.findByUsername(request.getClientName());
+        if (client.isPresent()){
+            Room newRoom = new Room(request.getName(), client.get());
+            try {
+                newRoom = roomRepository.save(newRoom);
+            }
+            catch (Exception e){ e.printStackTrace(); }
+            AddRoomResponse response = new AddRoomResponse(newRoom.getId(), newRoom.getName(), newRoom.getClient().getUsername());
+            return ResponseEntity.ok(response);
         }
+        return ResponseEntity.notFound().build();
     }
 
     @PatchMapping(value = "/{id}/update")
@@ -89,7 +100,46 @@ public class RoomController {
         return ResponseEntity.notFound().build();
     }
 
-//    @PatchMapping(value = "/remove-device")
+    @PatchMapping(value = "/remove-device")
+    public ResponseEntity<RemoveDeviceFromRoomResponse> removeDeviceFromRoom(@RequestBody RemoveDeviceFromRoomRequest request){
+        Optional<Room> res = roomRepository.findById(request.getId());
+        RemoveDeviceFromRoomResponse response = new RemoveDeviceFromRoomResponse(request.getId());
+        if(res.isPresent()){
+            for(Long deviceId:request.getDevices()){
+                Optional<Device> device = deviceRepository.findById(deviceId);
+                if(device.isPresent()){
+                    device.get().setRoom(null);
+                }
+                try{
+                    deviceRepository.save(device.get());
+                    response.addDevice(deviceId);
+                }
+                catch (Exception e){ e.printStackTrace(); }
+            }
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.notFound().build();
+    }
 
-
+    @PatchMapping(value = "/add-controller")
+    public ResponseEntity<AddControllerResponse> addController(@RequestBody AddControllerRequest request){
+        Optional<Room> room = roomRepository.findById(request.getRoomId());
+        Optional<Client> owner = clientRepository.findByUsername(request.getOwnerName());
+        AddControllerResponse response = new AddControllerResponse(request.getRoomId(), request.getOwnerName());
+        if(room.isPresent() && owner.isPresent() && room.get().getClient().getId() == owner.get().getId()){
+            for(String controllerName:request.getControllerNames()){
+                Optional<Client> controller = clientRepository.findByUsername(controllerName);
+                if(controller.isPresent()){
+                    if(room.get().addController(controller.get()))
+                        response.addControllerName(controllerName);
+                } else return ResponseEntity.notFound().build();
+            }
+            try {
+                roomRepository.save(room.get());
+            }
+            catch (Exception e){ e.printStackTrace(); }
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.notFound().build();
+    }
 }

@@ -53,8 +53,8 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Room r1 = new Room("r1");
-        roomRepository.save(r1);
+//        Room r1 = new Room("r1");
+//        roomRepository.save(r1);
         LightSensor l1 = new LightSensor("ls1", 100);
         LightSensor l2 = new LightSensor("ls2", 200);
         LightBulb lb1 = new LightBulb("lb3", false);
@@ -63,14 +63,14 @@ public class DataLoader implements CommandLineRunner {
         lightSensorRepository.save(l2);
         lightBulbRepository.save(lb1);
         lightBulbRepository.save(lb2);
-        Optional<Device> dev = deviceRepository.findByName("ls1");
-        r1 = roomRepository.findByName("r1");
-        dev.get().setRoom(r1);
-        Client client = new Client("abc", "123");
-        clientRepository.save(client);
-        Client c2 = clientRepository.findByUsername("abc").orElse(null);
-        dev.get().setClient(c2);
-        deviceRepository.save(dev.get());
+//        Optional<Device> dev = deviceRepository.findByName("ls1");
+//        r1 = roomRepository.findByName("r1");
+//        dev.get().setRoom(r1);
+//        Client client = new Client("abc", "123");
+//        clientRepository.save(client);
+//        Client c2 = clientRepository.findByUsername("abc").orElse(null);
+//        dev.get().setClient(c2);
+//        deviceRepository.save(dev.get());
 //        LightBulb lb = lightBulbRepository.findById(lb1.getId()).get();
 //        Automation a1 = new Automation(LocalTime.of(0, 30, 0), null);
 //        a1.setLightBulb(lb);
