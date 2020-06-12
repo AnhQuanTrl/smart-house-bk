@@ -2,30 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:smarthouse/models/devices/device.dart';
 import 'package:http/http.dart' as http;
 import 'package:smarthouse/models/devices/light_bulb.dart';
-import 'package:smarthouse/models/room.dart';
+import 'package:smarthouse/services/secure_storage.dart';
 import 'dart:convert';
 import '../utils/api.dart' as api;
-
 import 'package:smarthouse/models/devices/light_sensor.dart';
 
 class DeviceProvider with ChangeNotifier {
   List<Device> devices;
+  final storage = SecureStorage.instance.storage;
 
   Future<void> fetch() async {
     devices = new List<Device>();
-    var res = await http.get(api.server + "api/devices/");
-    print(res.body);
-    List<dynamic> deviceList = json.decode(res.body);
-    deviceList.forEach((element) {
-      if (element['type'] == 'LB') {
-        devices.add((new LightBulb(
-            id: element['id'], name: element['name'], mode: element['mode'])));
-      } else {
-        devices.add(new LightSensor(
-            id: element['id'], name: element['name'], value: element['light']));
-      }
-    });
-    notifyListeners();
+    try {
+      var jwt = await storage.read(key: 'jwt');
+      var res = await http
+          .get(api.server + "api/devices/", headers: {"Authorization": jwt});
+      List<dynamic> deviceList = json.decode(res.body);
+      deviceList.forEach((element) {
+        if (element['type'] == 'LB') {
+          devices.add((new LightBulb(
+              id: element['id'],
+              name: element['name'],
+              mode: element['mode'])));
+        } else {
+          devices.add(new LightSensor(
+              id: element['id'],
+              name: element['name'],
+              value: element['light']));
+        }
+        notifyListeners();
+      });
+    } catch (e) {
+      print(e);
+      throw e;
+    }
   }
 
   Future<void> changeMode(int id, bool mode) async {

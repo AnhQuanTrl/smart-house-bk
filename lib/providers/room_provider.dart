@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:smarthouse/models/devices/device.dart';
 import 'package:smarthouse/models/room.dart';
 import 'package:http/http.dart' as http;
+import 'package:smarthouse/services/secure_storage.dart';
 import '../utils/api.dart' as api;
 import 'device_provider.dart';
 
 class RoomProvider with ChangeNotifier {
   List<Room> rooms;
   DeviceProvider deviceProvider;
+  final storage = SecureStorage.instance.storage;
 
   void updateDeviceProvider(DeviceProvider deviceProvider) {
     this.deviceProvider = deviceProvider;
@@ -19,17 +21,22 @@ class RoomProvider with ChangeNotifier {
 
   Future<void> fetch() async {
     rooms = new List<Room>();
-    var res = await http.get(api.server + "api/rooms/");
-    List<dynamic> roomList = json.decode(res.body);
-    print(roomList);
-    roomList.forEach((element) {
-      Room room = new Room(element['name'], null, id: element['id']);
-      room.deviceList =
-          populateDevice(List<int>.from(element['devices']), room);
-      print(room.deviceList);
-      rooms.add(room);
-    });
-    notifyListeners();
+    var jwt = await storage.read(key: 'jwt');
+    var res = await http
+        .get(api.server + "api/rooms/", headers: {"Authorization": jwt});
+    try {
+      List<dynamic> roomList = json.decode(res.body);
+      roomList.forEach((element) {
+        Room room = new Room(element['name'], null, id: element['id']);
+        room.deviceList =
+            populateDevice(List<int>.from(element['devices']), room);
+        print(room.deviceList);
+        rooms.add(room);
+      });
+      notifyListeners();
+    } catch (e) {
+      throw e;
+    }
   }
 
   List<Device> populateDevice(List<int> deviceIds, Room room) {

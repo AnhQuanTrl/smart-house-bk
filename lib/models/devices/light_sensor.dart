@@ -1,11 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:smarthouse/models/devices/device.dart';
-import 'package:smarthouse/presentations/device_page/light_sensor_details_page.dart';
+import 'package:smarthouse/presentations/pages/light_sensor_details_page.dart';
 
-class LightSensor extends Device{
+class LightSensor extends Device {
   int value;
-  LightSensor({this.value, @required String name, @required int id}): super(name: name, id: id);
+  LightSensor({this.value, @required String name, @required int id})
+      : super(name: name, id: id);
 
   @override
   Widget buildLeading() {

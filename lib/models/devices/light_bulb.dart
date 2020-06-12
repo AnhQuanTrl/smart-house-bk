@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smarthouse/models/devices/device.dart';
-import 'package:smarthouse/presentations/device_page/light_bulb_details_page.dart';
+import 'package:smarthouse/presentations/pages/light_bulb_details_page.dart';
 
 class LightBulb extends Device {
   bool mode;

@@ -32,19 +32,24 @@ class _LightBulbDetailsPageState extends State<LightBulbDetailsPage> {
         appBar: AppBar(
           title: Text("Light Bulb " + title),
         ),
-        body: SwitchListTile(
-          title: Text("State"),
-          value: mode,
-          onChanged: (value) async {
-            setState(() {
-              mode = value;
-              try {
-                deviceProvider.changeMode(widget.id, mode);
-              } catch (error) {
-                showDialog(context: context, child: Text(error.toString()));
-              }
-            });
-          },
+        body: ListView(
+          children: <Widget>[
+            SwitchListTile(
+              contentPadding: EdgeInsets.symmetric(vertical: 8.0),
+              title: Text("State"),
+              value: mode,
+              onChanged: (value) async {
+                setState(() {
+                  mode = value;
+                  try {
+                    deviceProvider.changeMode(widget.id, mode);
+                  } catch (error) {
+                    showDialog(context: context, child: Text(error.toString()));
+                  }
+                });
+              },
+            ),
+          ],
         ));
   }
 }
