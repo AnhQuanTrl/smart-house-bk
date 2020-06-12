@@ -46,7 +46,7 @@ public class InboundMqttConfiguration {
     public MessageProducer inbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
                 new MqttPahoMessageDrivenChannelAdapter("testClient", mqttClientFactory,
-                        input);
+                        "Topic/LightD");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);

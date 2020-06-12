@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -14,9 +16,15 @@ public class DeviceMessagePublisher {
     private MessageGateway messageGateway;
 
     public void publishMessage(String deviceId, boolean mode) throws JsonProcessingException {
+        List<Map<String, Object>> lst = new LinkedList<>();
         Map<String, Object> message = new HashMap<>();
-        message.put("id", deviceId);
-        message.put("mode", mode);
-        messageGateway.sendToMqtt(new ObjectMapper().writeValueAsString(message));
+        message.put("device_id", deviceId);
+        if (mode)
+            message.put("values", new String[]{"1", "255"});
+        else
+            message.put("values", new String[]{"0", "255"});
+        lst.add(message);
+        String messageToSent = new ObjectMapper().writeValueAsString(lst);
+        messageGateway.sendToMqtt(messageToSent);
     }
 }

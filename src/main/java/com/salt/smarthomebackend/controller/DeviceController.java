@@ -7,6 +7,7 @@ import com.salt.smarthomebackend.model.LightBulb;
 import com.salt.smarthomebackend.repository.DeviceRepository;
 import com.salt.smarthomebackend.repository.LightBulbRepository;
 import com.salt.smarthomebackend.request.ControlDeviceRequest;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,16 @@ public class DeviceController {
     public List<Device> all() {
         return deviceRepository.findAll();
     }
-
+    @PostMapping(value = "/test/{mode}")
+    public ResponseEntity<?> test(@PathVariable String mode) {
+       try {
+           Boolean toggle = Boolean.parseBoolean(mode);
+           deviceMessagePublisher.publishMessage("LightD", toggle);
+       } catch (JsonProcessingException e) {
+           System.out.println(e.getStackTrace());
+       }
+       return ResponseEntity.ok().build();
+    }
     @PostMapping(value = "/control")
     public ResponseEntity<Map<String, Object>> controlLightBulb(@RequestBody ControlDeviceRequest request){
         try{
