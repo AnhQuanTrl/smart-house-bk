@@ -1,6 +1,7 @@
 package com.salt.smarthomebackend.configuration;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.IntegrationComponentScan;
@@ -15,14 +16,21 @@ import org.springframework.messaging.MessageHandler;
 @IntegrationComponentScan
 @Configuration
 public class OutboundMqttConfiguration {
-
+    @Value("${app.mqtt.server}")
+    private String server;
+    @Value("${app.mqtt.username}")
+    private String username;
+    @Value("${app.mqtt.password}")
+    private String password;
+    @Value("${app.mqtt.output}")
+    private String output;
     @Bean
     public MqttPahoClientFactory mqttClientFactory() {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
-        options.setServerURIs(new String[] { "tcp://localhost:1883"} );
-//        options.setUserName("username");
-//        options.setPassword("password".toCharArray());
+        options.setServerURIs(new String[] {server} );
+        options.setUserName(username);
+        options.setPassword(password.toCharArray());
         factory.setConnectionOptions(options);
         return factory;
     }
@@ -33,7 +41,7 @@ public class OutboundMqttConfiguration {
         MqttPahoMessageHandler messageHandler =
                 new MqttPahoMessageHandler("testClient1", mqttClientFactory());
         messageHandler.setAsync(true);
-        messageHandler.setDefaultTopic("topic/app");
+        messageHandler.setDefaultTopic(output);
         return messageHandler;
     }
 
