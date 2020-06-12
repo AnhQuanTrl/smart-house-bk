@@ -13,8 +13,8 @@ class LightSensor:
 
 class Light:
     def __init__(self, id):
-        self.mode = False
         self.id = id
+        self.mode = False
 
     def toggle(self, value):
         self.mode = value

@@ -4,6 +4,7 @@ import com.salt.smarthomebackend.exception.ClientNotFoundException;
 import com.salt.smarthomebackend.exception.DeviceNotFoundException;
 import com.salt.smarthomebackend.model.Client;
 import com.salt.smarthomebackend.model.Device;
+import com.salt.smarthomebackend.model.Room;
 import com.salt.smarthomebackend.repository.ClientRepository;
 import com.salt.smarthomebackend.repository.DeviceRepository;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,10 @@ class ClientController {
         this.deviceRepository = deviceRepository;
     }
 
+    @GetMapping(value = "/")
+    public List<Client> allClient() {
+        return clientRepository.findAll();
+    }
 //    @PostMapping("/signup")
 //    ResponseEntity<Object> clientSignup(@RequestBody Client _client ) {
 //        Map<String, String> res = new HashMap<>();
