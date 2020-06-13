@@ -14,8 +14,10 @@ import com.salt.smarthomebackend.response.AddControllerResponse;
 import com.salt.smarthomebackend.response.AddDeviceToRoomResponse;
 import com.salt.smarthomebackend.response.AddRoomResponse;
 import com.salt.smarthomebackend.response.RemoveDeviceFromRoomResponse;
+import com.salt.smarthomebackend.security.ClientPrincipal;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -122,10 +124,10 @@ public class RoomController {
     }
 
     @PatchMapping(value = "/add-controller")
-    public ResponseEntity<AddControllerResponse> addController(@RequestBody AddControllerRequest request){
+    public ResponseEntity<AddControllerResponse> addController(@RequestBody AddControllerRequest request,  @AuthenticationPrincipal ClientPrincipal clientPrincipal){
         Optional<Room> room = roomRepository.findById(request.getRoomId());
-        Optional<Client> owner = clientRepository.findByUsername(request.getOwnerName());
-        AddControllerResponse response = new AddControllerResponse(request.getRoomId(), request.getOwnerName());
+        Optional<Client> owner = clientRepository.findByUsername(clientPrincipal.getUsername());
+        AddControllerResponse response = new AddControllerResponse(request.getRoomId(), clientPrincipal.getUsername());
         if(room.isPresent() && owner.isPresent() && room.get().getClient().getId() == owner.get().getId()){
             for(String controllerName:request.getControllerNames()){
                 Optional<Client> controller = clientRepository.findByUsername(controllerName);

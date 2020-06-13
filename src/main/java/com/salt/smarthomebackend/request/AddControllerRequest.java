@@ -9,12 +9,10 @@ import java.util.List;
 @NoArgsConstructor
 public class AddControllerRequest {
     private Long roomId;
-    private String ownerName;
     private List<String> controllerNames;
 
     public AddControllerRequest(Long roomId, String ownerName, List<String> controllerNames) {
         this.roomId = roomId;
-        this.ownerName = ownerName;
         this.controllerNames = controllerNames;
     }
 }

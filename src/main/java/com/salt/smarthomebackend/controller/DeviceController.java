@@ -7,8 +7,10 @@ import com.salt.smarthomebackend.model.LightBulb;
 import com.salt.smarthomebackend.repository.DeviceRepository;
 import com.salt.smarthomebackend.repository.LightBulbRepository;
 import com.salt.smarthomebackend.request.ControlDeviceRequest;
+import com.salt.smarthomebackend.security.ClientPrincipal;
 import com.salt.smarthomebackend.security.JwtTokenProvider;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -27,10 +29,8 @@ public class DeviceController {
     }
 
     @GetMapping(value = "/")
-    public List<Device> all(@RequestHeader(value = "Authorization") String token) {
-        token = token.replace("Bearer ", "");
-        JwtTokenProvider tokenProvider = new JwtTokenProvider();
-        Long usr_id = tokenProvider.getClientIdFromJWT(token);
+    public List<Device> all(@AuthenticationPrincipal ClientPrincipal clientPrincipal) {
+        Long usr_id = clientPrincipal.getId();
         List<Device> deviceLst = new ArrayList<>();
 
         for (Device d : deviceRepository.findAll()) {
@@ -52,7 +52,7 @@ public class DeviceController {
             Optional<LightBulb> res = lightBulbRepository.findById(request.getId());
             Map<String, Object> response = new HashMap<>();
             if(res.isPresent()){
-                if (request.getMode() == true) {
+                if (request.getMode()) {
                     try {
                         deviceMessagePublisher.publishMessage(res.get().getName(), true);
                     } catch (JsonProcessingException e) {
