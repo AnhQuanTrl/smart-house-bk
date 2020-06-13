@@ -1,5 +1,6 @@
 package com.salt.smarthomebackend.boostrap;
 
+import com.salt.smarthomebackend.messaging.DeviceMessagePublisher;
 import com.salt.smarthomebackend.model.*;
 import com.salt.smarthomebackend.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ public class DataLoader implements CommandLineRunner {
     private RoomRepository roomRepository;
     private DeviceRepository deviceRepository;
     private AutomationRepository automationRepository;
+    private DeviceMessagePublisher deviceMessagePublisher;
     @Autowired
     public void setLightSensorRepository(LightSensorRepository lightSensorRepository) {
         this.lightSensorRepository = lightSensorRepository;
@@ -53,27 +55,11 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        Room r1 = new Room("r1");
-//        roomRepository.save(r1);
-        LightSensor l1 = new LightSensor("ls1", 100);
-        LightSensor l2 = new LightSensor("ls2", 200);
-        LightBulb lb1 = new LightBulb("lb3", false);
-        LightBulb lb2 = new LightBulb("lb4", false);
-        lightSensorRepository.save(l1);
-        lightSensorRepository.save(l2);
-        lightBulbRepository.save(lb1);
-        lightBulbRepository.save(lb2);
-//        Optional<Device> dev = deviceRepository.findByName("ls1");
-//        r1 = roomRepository.findByName("r1");
-//        dev.get().setRoom(r1);
-//        Client client = new Client("abc", "123");
-//        clientRepository.save(client);
-//        Client c2 = clientRepository.findByUsername("abc").orElse(null);
-//        dev.get().setClient(c2);
-//        deviceRepository.save(dev.get());
-//        LightBulb lb = lightBulbRepository.findById(lb1.getId()).get();
-//        Automation a1 = new Automation(LocalTime.of(0, 30, 0), null);
-//        a1.setLightBulb(lb);
-//        automationRepository.save(a1);
+        LightBulb lightD = new LightBulb("LightD", false);
+        deviceMessagePublisher.publishMessage(lightD.getName(), lightD.getMode());
+    }
+    @Autowired
+    public void setDeviceMessagePublisher(DeviceMessagePublisher deviceMessagePublisher) {
+        this.deviceMessagePublisher = deviceMessagePublisher;
     }
 }
