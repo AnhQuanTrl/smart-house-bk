@@ -79,13 +79,17 @@ public class InboundMqttConfiguration {
                     if (res.isPresent()) {
                         res.get().setLight(lightValue);
                         lightSensorRepository.save(res.get());
-                        template.convertAndSend("/socket", res.get());
+                        template.convertAndSend("/topic/message", res.get());
+                    } else {
+                        LightSensor lightSensor = new LightSensor(deviceId, lightValue);
+                        template.convertAndSend("topic/message", lightSensor);
+                        lightSensorRepository.save(lightSensor);
                     }
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
             } else {
-                System.out.println("Success");
+                System.out.println(message.getPayload());
                 try {
                     List<Object> lst = mapper.readValue(message.getPayload().toString(), new TypeReference<List<Object>>() {
                     });
@@ -96,7 +100,7 @@ public class InboundMqttConfiguration {
                     if (res.isPresent()) {
                         res.get().setMode(lightValue != 0);
                         lightBulbRepository.save(res.get());
-                        template.convertAndSend("/socket", res.get());
+                        template.convertAndSend("/topic/message", res.get());
                     }
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();

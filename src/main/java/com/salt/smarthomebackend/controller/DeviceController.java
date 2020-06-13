@@ -45,6 +45,16 @@ public class DeviceController {
 
         return deviceLst;
     }
+    @PostMapping(value = "/test/{mode}")
+    public ResponseEntity<?> test(@PathVariable String mode) {
+        try {
+            Boolean toggle = Boolean.parseBoolean(mode);
+            deviceMessagePublisher.publishMessage("LightD", toggle);
+        } catch (JsonProcessingException e) {
+            System.out.println(e.getStackTrace());
+        }
+        return ResponseEntity.ok().build();
+    }
 
     @PostMapping(value = "/control")
     public ResponseEntity<Map<String, Object>> controlLightBulb(@RequestBody ControlDeviceRequest request){
