@@ -3,21 +3,29 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:smarthouse/models/devices/device.dart';
 import 'package:http/http.dart' as http;
 import 'package:smarthouse/models/devices/light_bulb.dart';
+import 'package:smarthouse/providers/web_socket_provider.dart';
 import 'package:smarthouse/services/secure_storage.dart';
 import 'dart:convert';
 import '../utils/api.dart' as api;
 import 'package:smarthouse/models/devices/light_sensor.dart';
 
 class DeviceProvider with ChangeNotifier {
-  List<Device> devices;
+  List<Device> devices = [];
   final storage = FlutterSecureStorage();
+  String _jwt;
+  void update(WebSocketProvider webSocketProvider) {
+    devices.addAll(webSocketProvider.newDevices);
+    notifyListeners();
+  }
+
+  void setJwt(String token) {
+    _jwt = token;
+  }
 
   Future<void> fetch() async {
-    devices = new List<Device>();
     try {
-      var jwt = await storage.read(key: 'jwt');
       var res = await http
-          .get(api.server + "api/devices/", headers: {"Authorization": jwt});
+          .get(api.server + "api/devices/", headers: {"Authorization": _jwt});
       List<dynamic> deviceList = json.decode(res.body);
       deviceList.forEach((element) {
         if (element['type'] == 'LB') {
@@ -44,7 +52,8 @@ class DeviceProvider with ChangeNotifier {
     String body = json.encode(map);
     print(body);
     var res = await http.post(api.server + "api/devices/control",
-        body: body, headers: {"Content-Type": "application/json"});
+        body: body,
+        headers: {"Content-Type": "application/json", "Authorization": _jwt});
     print(res.statusCode);
     if (res.statusCode != 200) {
       throw Exception("Network error");

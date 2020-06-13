@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smarthouse/exception/authentication_exception.dart';
+import 'package:smarthouse/models/devices/device.dart';
 import 'package:smarthouse/providers/auth_provider.dart';
 
 import 'device_overview_page.dart';
+import 'home_page.dart';
 
 class AuthPage extends StatefulWidget {
   static const String routeName = "/login";

@@ -12,7 +12,10 @@ import 'device_provider.dart';
 class RoomProvider with ChangeNotifier {
   List<Room> rooms;
   DeviceProvider deviceProvider;
-  final storage = FlutterSecureStorage();
+  String _jwt;
+  void setJwt(String token) {
+    _jwt = token;
+  }
 
   void updateDeviceProvider(DeviceProvider deviceProvider) {
     this.deviceProvider = deviceProvider;
@@ -22,9 +25,8 @@ class RoomProvider with ChangeNotifier {
 
   Future<void> fetch() async {
     rooms = new List<Room>();
-    var jwt = await storage.read(key: 'jwt');
     var res = await http
-        .get(api.server + "api/rooms/", headers: {"Authorization": jwt});
+        .get(api.server + "api/rooms/", headers: {"Authorization": _jwt});
     try {
       List<dynamic> roomList = json.decode(res.body);
       roomList.forEach((element) {

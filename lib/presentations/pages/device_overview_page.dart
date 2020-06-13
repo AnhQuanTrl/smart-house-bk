@@ -1,8 +1,13 @@
 import "package:flutter/material.dart";
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:smarthouse/exception/authentication_exception.dart';
 import 'package:smarthouse/presentations/components/device_overview_list.dart';
 import 'package:smarthouse/providers/device_provider.dart';
 import 'package:smarthouse/providers/room_provider.dart';
+import 'package:smarthouse/providers/web_socket_provider.dart';
+
+import 'auth_page.dart';
 
 class DeviceOverviewPage extends StatefulWidget {
   static const String routeName = "/devices";
@@ -13,6 +18,7 @@ class DeviceOverviewPage extends StatefulWidget {
 class _DeviceOverviewPageState extends State<DeviceOverviewPage> {
   bool _isLoading;
   bool _isInit = true;
+  final storage = FlutterSecureStorage();
 
   @override
   void didChangeDependencies() {
@@ -23,18 +29,40 @@ class _DeviceOverviewPageState extends State<DeviceOverviewPage> {
     _refresh();
   }
 
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('An Error Occurred!'),
+        content: Text(message),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Okay'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   Future<void> _attempRefresh() async {
     try {
-      await Provider.of<DeviceProvider>(context, listen: false).fetch();
-      await (Provider.of<RoomProvider>(context, listen: false).fetch());
+      var jwt = await storage.read(key: 'jwt');
+      Provider.of<WebSocketProvider>(context, listen: false)
+        ..close()
+        ..setStompClient(jwt)
+        ..open();
+      await (Provider.of<DeviceProvider>(context, listen: false)..setJwt(jwt))
+          .fetch();
+      await ((Provider.of<RoomProvider>(context, listen: false)..setJwt(jwt))
+          .fetch());
+    } on AuthenticationException {
+      Navigator.of(context).pushReplacementNamed(AuthPage.routeName);
     } catch (e) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text(e.toString()),
-        ),
-      );
+      print(e);
+      _showErrorDialog("Something Wrong");
     } finally {
       setState(() {
         _isLoading = false;

@@ -3,43 +3,60 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:smarthouse/presentations/pages/auth_page.dart';
 import 'package:smarthouse/presentations/pages/device_overview_page.dart';
-import 'package:smarthouse/presentations/pages/home_page.dart';
 import 'package:smarthouse/presentations/pages/light_bulb_details_page.dart';
 import 'package:smarthouse/providers/auth_provider.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:smarthouse/providers/web_socket_provider.dart';
+import './utils/api.dart' as api;
 import 'package:smarthouse/providers/device_provider.dart';
 import 'package:smarthouse/providers/room_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  return runApp(MyApp());
-}
-
-void init() async {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
+  String initialRoute = AuthPage.routeName;
   if (prefs.getBool('first_run') ?? true) {
     FlutterSecureStorage storage = FlutterSecureStorage();
 
     await storage.deleteAll();
 
     prefs.setBool('first_run', false);
+  } else {
+    final storage = FlutterSecureStorage();
+    String jwt = await storage.read(key: 'jwt');
+    if (jwt != null) {
+      try {
+        var response = await http
+            .get(api.server + "api/rooms/", headers: {"Authorization": jwt});
+        if (response.statusCode == 200) {
+          initialRoute = DeviceOverviewPage.routeName;
+        }
+      } catch (e) {}
+    }
   }
+  print(initialRoute);
+  return runApp(MyApp(
+    initialRoute: initialRoute,
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({
-    Key key,
-  }) : super(key: key);
+  final String initialRoute;
+  const MyApp({Key key, this.initialRoute}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    init();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
           create: (_) => AuthProvider(),
         ),
         ChangeNotifierProvider(
+          create: (_) => WebSocketProvider(),
+        ),
+        ChangeNotifierProxyProvider<WebSocketProvider, DeviceProvider>(
           create: (_) => DeviceProvider(),
+          update: (_, value, previous) => previous..update(value),
         ),
         ChangeNotifierProxyProvider<DeviceProvider, RoomProvider>(
           create: (_) => RoomProvider(),
@@ -69,10 +86,9 @@ class MyApp extends StatelessWidget {
             );
           }
         },
-        initialRoute: "/",
+        initialRoute: initialRoute,
         routes: {
           DeviceOverviewPage.routeName: (context) => DeviceOverviewPage(),
-          HomePage.routeName: (context) => HomePage(),
           AuthPage.routeName: (context) => AuthPage()
         },
       ),
