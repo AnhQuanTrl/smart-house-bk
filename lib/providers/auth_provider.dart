@@ -53,7 +53,7 @@ class AuthProvider with ChangeNotifier {
     try {
       var res = await http.post(api.server + 'api/auth/signup',
           headers: {"Content-Type": "application/json"}, body: body);
-      if (res.statusCode != 200) {
+      if (res.statusCode != 201) {
         throw AuthenticationException(json.decode(res.body)['message']);
       }
     } catch (error) {
