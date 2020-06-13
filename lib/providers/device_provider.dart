@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:smarthouse/models/devices/device.dart';
 import 'package:http/http.dart' as http;
 import 'package:smarthouse/models/devices/light_bulb.dart';
@@ -9,7 +10,7 @@ import 'package:smarthouse/models/devices/light_sensor.dart';
 
 class DeviceProvider with ChangeNotifier {
   List<Device> devices;
-  final storage = SecureStorage.instance.storage;
+  final storage = FlutterSecureStorage();
 
   Future<void> fetch() async {
     devices = new List<Device>();

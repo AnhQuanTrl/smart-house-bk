@@ -17,7 +17,6 @@ void main() {
 
 void init() async {
   final prefs = await SharedPreferences.getInstance();
-
   if (prefs.getBool('first_run') ?? true) {
     FlutterSecureStorage storage = FlutterSecureStorage();
 

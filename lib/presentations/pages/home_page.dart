@@ -1,31 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smarthouse/presentations/pages/device_overview_page.dart';
-import 'package:smarthouse/services/secure_storage.dart';
-import 'package:http/http.dart' as http;
+import 'package:smarthouse/providers/auth_provider.dart';
 import 'auth_page.dart';
-import '../../utils/api.dart' as api;
 
 class HomePage extends StatelessWidget {
   static const String routeName = "/";
-  final storage = SecureStorage.instance.storage;
-
-  Future<bool> get isValidToken async {
-    var token = await storage.read(key: "jwt");
-    if (token == null) {
-      return false;
-    }
-    var response = await http
-        .get(api.server + "api/rooms/", headers: {"Authorization": token});
-    if (response.statusCode == 200) {
-      return true;
-    }
-    return false;
-  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: isValidToken,
+      future: Provider.of<AuthProvider>(context, listen: false).autoLogin(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(

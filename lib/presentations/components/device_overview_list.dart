@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smarthouse/models/devices/light_bulb.dart';
+import 'package:smarthouse/models/room.dart';
 import 'package:smarthouse/providers/device_provider.dart';
 import 'package:smarthouse/providers/room_provider.dart';
 
@@ -20,9 +22,11 @@ class DeviceOverviewList extends StatelessWidget {
       child: ListView(
         children: <Widget>[
           HeadingTile("Rooms"),
-          ...roomProvider.rooms.map((room) => RoomTile(room)).toList(),
+          ...(roomProvider.rooms ?? <Room>[])
+              .map((room) => RoomTile(room))
+              .toList(),
           HeadingTile("Unassigned Devices"),
-          ...deviceProvider.devices
+          ...(deviceProvider.devices ?? <LightBulb>[])
               .where((element) => element.room == null)
               .map((device) => DeviceTile(device))
               .toList()

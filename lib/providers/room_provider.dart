@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:smarthouse/models/devices/device.dart';
 import 'package:smarthouse/models/room.dart';
 import 'package:http/http.dart' as http;
@@ -11,7 +12,7 @@ import 'device_provider.dart';
 class RoomProvider with ChangeNotifier {
   List<Room> rooms;
   DeviceProvider deviceProvider;
-  final storage = SecureStorage.instance.storage;
+  final storage = FlutterSecureStorage();
 
   void updateDeviceProvider(DeviceProvider deviceProvider) {
     this.deviceProvider = deviceProvider;
