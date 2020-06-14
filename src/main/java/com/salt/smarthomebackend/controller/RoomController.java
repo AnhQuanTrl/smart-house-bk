@@ -16,6 +16,7 @@ import com.salt.smarthomebackend.response.AddRoomResponse;
 import com.salt.smarthomebackend.response.RemoveDeviceFromRoomResponse;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -121,6 +122,7 @@ public class RoomController {
         return ResponseEntity.notFound().build();
     }
 
+
     @PatchMapping(value = "/add-controller")
     public ResponseEntity<AddControllerResponse> addController(@RequestBody AddControllerRequest request){
         Optional<Room> room = roomRepository.findById(request.getRoomId());
@@ -142,4 +144,7 @@ public class RoomController {
         }
         return ResponseEntity.notFound().build();
     }
+
+//    @PatchMapping(value = "/remove-controller")
+
 }
