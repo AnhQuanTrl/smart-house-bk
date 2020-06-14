@@ -121,6 +121,7 @@ public class RoomController {
         return ResponseEntity.notFound().build();
     }
 
+
     @PatchMapping(value = "/add-controller")
     public ResponseEntity<AddControllerResponse> addController(@RequestBody AddControllerRequest request,  @AuthenticationPrincipal ClientPrincipal clientPrincipal){
         Optional<Room> room = roomRepository.findById(request.getRoomId());
@@ -142,4 +143,7 @@ public class RoomController {
         }
         return ResponseEntity.notFound().build();
     }
+
+//    @PatchMapping(value = "/remove-controller")
+
 }
