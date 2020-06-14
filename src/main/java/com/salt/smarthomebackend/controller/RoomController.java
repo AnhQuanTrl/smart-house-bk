@@ -84,7 +84,7 @@ public class RoomController {
         Optional<Room> res = roomRepository.findById(request.getId());
         AddDeviceToRoomResponse response = new AddDeviceToRoomResponse(request.getId());
         if(res.isPresent()){
-            for (Long deviceId:request.getDevices()) {
+            for (Long deviceId:request.getDeviceIds()) {
                 Optional<Device> device = deviceRepository.findById(deviceId);
                 if(device.isPresent()){
                     device.get().setRoom(res.get());
@@ -105,7 +105,7 @@ public class RoomController {
         Optional<Room> res = roomRepository.findById(request.getId());
         RemoveDeviceFromRoomResponse response = new RemoveDeviceFromRoomResponse(request.getId());
         if(res.isPresent()){
-            for(Long deviceId:request.getDevices()){
+            for(Long deviceId:request.getDeviceIds()){
                 Optional<Device> device = deviceRepository.findById(deviceId);
                 if(device.isPresent()){
                     device.get().setRoom(null);
