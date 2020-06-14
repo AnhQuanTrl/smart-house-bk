@@ -23,9 +23,10 @@ class DeviceProvider with ChangeNotifier {
   }
 
   Future<void> fetch() async {
+    devices = [];
     try {
-      var res = await http
-          .get(api.server + "api/devices/", headers: {"Authorization": _jwt});
+      var res = await http.get(api.server + "api/devices/",
+          headers: {"Authorization": _jwt}).timeout(const Duration(seconds: 5));
       List<dynamic> deviceList = json.decode(res.body);
       deviceList.forEach((element) {
         if (element['type'] == 'LB') {
@@ -50,10 +51,12 @@ class DeviceProvider with ChangeNotifier {
   Future<void> changeMode(int id, bool mode) async {
     Map<String, Object> map = {"id": id, "mode": mode};
     String body = json.encode(map);
-    print(body);
     var res = await http.post(api.server + "api/devices/control",
         body: body,
-        headers: {"Content-Type": "application/json", "Authorization": _jwt});
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _jwt
+        }).timeout(const Duration(seconds: 5));
     print(res.statusCode);
     if (res.statusCode != 200) {
       throw Exception("Network error");
@@ -63,5 +66,16 @@ class DeviceProvider with ChangeNotifier {
   Device findById(int id) {
     return devices.firstWhere((element) => element.id == id,
         orElse: () => null);
+  }
+
+  Future<void> registerDevice(String deviceId) async {
+    Map<String, String> map = {"name": deviceId};
+    String body = json.encode(map);
+    var res = await http.post(api.server + 'api/users/device_register',
+        body: body,
+        headers: {"Content-Type": "application/json", "Authorization": _jwt});
+    if (res.statusCode != 200) {
+      throw Exception("Something wrong");
+    }
   }
 }

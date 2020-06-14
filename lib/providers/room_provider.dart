@@ -10,7 +10,7 @@ import '../utils/api.dart' as api;
 import 'device_provider.dart';
 
 class RoomProvider with ChangeNotifier {
-  List<Room> rooms;
+  List<Room> rooms = [];
   DeviceProvider deviceProvider;
   String _jwt;
   void setJwt(String token) {
@@ -24,9 +24,9 @@ class RoomProvider with ChangeNotifier {
   void addRoom(Room room) {}
 
   Future<void> fetch() async {
-    rooms = new List<Room>();
-    var res = await http
-        .get(api.server + "api/rooms/", headers: {"Authorization": _jwt});
+    rooms = [];
+    var res = await http.get(api.server + "api/rooms/",
+        headers: {"Authorization": _jwt}).timeout(const Duration(seconds: 5));
     try {
       List<dynamic> roomList = json.decode(res.body);
       roomList.forEach((element) {

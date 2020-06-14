@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:smarthouse/exception/authentication_exception.dart';
 import 'package:smarthouse/presentations/components/device_overview_list.dart';
+import 'package:smarthouse/presentations/components/user_drawer.dart';
 import 'package:smarthouse/providers/device_provider.dart';
 import 'package:smarthouse/providers/room_provider.dart';
 import 'package:smarthouse/providers/web_socket_provider.dart';
@@ -74,6 +75,9 @@ class _DeviceOverviewPageState extends State<DeviceOverviewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        drawer: UserDrawer(
+          showErrorDialog: _showErrorDialog,
+        ),
         backgroundColor: Theme.of(context).backgroundColor,
         appBar: AppBar(
           title: Text(
