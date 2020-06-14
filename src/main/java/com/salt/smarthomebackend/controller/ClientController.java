@@ -2,32 +2,20 @@ package com.salt.smarthomebackend.controller;
 
 import com.salt.smarthomebackend.exception.ClientNotFoundException;
 import com.salt.smarthomebackend.exception.DeviceNotFoundException;
-import com.salt.smarthomebackend.exception.RoomNotFoundException;
-import com.salt.smarthomebackend.model.BaseIdentity;
 import com.salt.smarthomebackend.model.Client;
 import com.salt.smarthomebackend.model.Device;
-import com.salt.smarthomebackend.model.Room;
-import com.salt.smarthomebackend.payload.ApiResponse;
-import com.salt.smarthomebackend.payload.DeviceRequest;
+import com.salt.smarthomebackend.payload.response.ApiResponse;
+import com.salt.smarthomebackend.payload.request.DeviceRequest;
 import com.salt.smarthomebackend.repository.ClientRepository;
 import com.salt.smarthomebackend.repository.DeviceRepository;
 import com.salt.smarthomebackend.repository.RoomRepository;
-import com.salt.smarthomebackend.request.AddRoomRequest;
-import com.salt.smarthomebackend.response.AddRoomResponse;
-import com.salt.smarthomebackend.security.ClientDetailsService;
 import com.salt.smarthomebackend.security.ClientPrincipal;
-import com.salt.smarthomebackend.security.JwtAuthenticationFilter;
-import com.salt.smarthomebackend.security.JwtTokenProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 
 @RestController

@@ -1,4 +1,4 @@
-package com.salt.smarthomebackend.request;
+package com.salt.smarthomebackend.payload.request;
 
 
 import lombok.Getter;

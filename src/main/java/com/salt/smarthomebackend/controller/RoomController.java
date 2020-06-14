@@ -6,23 +6,21 @@ import com.salt.smarthomebackend.model.Room;
 import com.salt.smarthomebackend.repository.ClientRepository;
 import com.salt.smarthomebackend.repository.DeviceRepository;
 import com.salt.smarthomebackend.repository.RoomRepository;
-import com.salt.smarthomebackend.request.AddControllerRequest;
-import com.salt.smarthomebackend.request.AddDeviceToRoomRequest;
-import com.salt.smarthomebackend.request.AddRoomRequest;
-import com.salt.smarthomebackend.request.RemoveDeviceFromRoomRequest;
-import com.salt.smarthomebackend.response.AddControllerResponse;
-import com.salt.smarthomebackend.response.AddDeviceToRoomResponse;
-import com.salt.smarthomebackend.response.AddRoomResponse;
-import com.salt.smarthomebackend.response.RemoveDeviceFromRoomResponse;
+import com.salt.smarthomebackend.payload.request.AddControllerRequest;
+import com.salt.smarthomebackend.payload.request.AddDeviceToRoomRequest;
+import com.salt.smarthomebackend.payload.request.AddRoomRequest;
+import com.salt.smarthomebackend.payload.request.RemoveDeviceFromRoomRequest;
+import com.salt.smarthomebackend.payload.response.AddControllerResponse;
+import com.salt.smarthomebackend.payload.response.AddDeviceToRoomResponse;
+import com.salt.smarthomebackend.payload.response.AddRoomResponse;
+import com.salt.smarthomebackend.payload.response.RemoveDeviceFromRoomResponse;
 import com.salt.smarthomebackend.security.ClientPrincipal;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController

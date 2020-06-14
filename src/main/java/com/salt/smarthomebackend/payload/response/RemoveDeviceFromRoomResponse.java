@@ -1,4 +1,4 @@
-package com.salt.smarthomebackend.response;
+package com.salt.smarthomebackend.payload.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

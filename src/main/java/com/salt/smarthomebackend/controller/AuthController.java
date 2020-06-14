@@ -1,9 +1,9 @@
 package com.salt.smarthomebackend.controller;
 
 import com.salt.smarthomebackend.model.Client;
-import com.salt.smarthomebackend.payload.ApiResponse;
-import com.salt.smarthomebackend.payload.AuthRequest;
-import com.salt.smarthomebackend.payload.JwtAuthenticationResponse;
+import com.salt.smarthomebackend.payload.response.ApiResponse;
+import com.salt.smarthomebackend.payload.request.AuthRequest;
+import com.salt.smarthomebackend.payload.response.JwtAuthenticationResponse;
 import com.salt.smarthomebackend.repository.ClientRepository;
 import com.salt.smarthomebackend.security.JwtTokenProvider;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")

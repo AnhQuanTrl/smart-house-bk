@@ -6,9 +6,8 @@ import com.salt.smarthomebackend.model.Device;
 import com.salt.smarthomebackend.model.LightBulb;
 import com.salt.smarthomebackend.repository.DeviceRepository;
 import com.salt.smarthomebackend.repository.LightBulbRepository;
-import com.salt.smarthomebackend.request.ControlDeviceRequest;
+import com.salt.smarthomebackend.payload.request.ControlDeviceRequest;
 import com.salt.smarthomebackend.security.ClientPrincipal;
-import com.salt.smarthomebackend.security.JwtTokenProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -89,4 +88,6 @@ public class DeviceController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+
 }
