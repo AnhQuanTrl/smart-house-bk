@@ -1,5 +1,6 @@
 package com.salt.smarthomebackend.configuration;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,7 +21,12 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketSession;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,23 +36,25 @@ public class InboundMqttConfiguration {
     private String input;
     LightBulbRepository lightBulbRepository;
     LightSensorRepository lightSensorRepository;
+    SimpMessagingTemplate template;
 
-    public InboundMqttConfiguration(LightBulbRepository lightBulbRepository, LightSensorRepository lightSensorRepository) {
+    public InboundMqttConfiguration(LightBulbRepository lightBulbRepository, LightSensorRepository lightSensorRepository, SimpMessagingTemplate template, MqttPahoClientFactory mqttClientFactory) {
         this.lightBulbRepository = lightBulbRepository;
         this.lightSensorRepository = lightSensorRepository;
+        this.template = template;
+        this.mqttClientFactory = mqttClientFactory;
     }
 
     @Bean
     public MessageChannel mqttInputChannel() {
         return new DirectChannel();
     }
-    @Autowired
     MqttPahoClientFactory mqttClientFactory;
     @Bean
     public MessageProducer inbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
                 new MqttPahoMessageDrivenChannelAdapter("testClient", mqttClientFactory,
-                        "Topic/LightD");
+                        "Topic/Light", "Topic/LightD");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);
@@ -57,7 +65,48 @@ public class InboundMqttConfiguration {
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public MessageHandler handler() {
         return message -> {
-            System.out.println(message.getPayload());
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> headers = message.getHeaders();
+            if (((String) headers.get("mqtt_receivedTopic")).equals("Topic/Light")) {
+                System.out.println(message.getPayload());
+                try {
+                    List<Object> lst = mapper.readValue(message.getPayload().toString(), new TypeReference<List<Object>>() {
+                    });
+                    Map<String, Object> value = (Map<String, Object>) lst.get(0);
+                    String deviceId = (String) value.get("device_id");
+                    Integer lightValue = ((List<Integer>) value.get("values")).get(0);
+                    Optional<LightSensor> res = lightSensorRepository.findByName(deviceId);
+                    if (res.isPresent()) {
+                        res.get().setLight(lightValue);
+                        lightSensorRepository.save(res.get());
+                        template.convertAndSend("/topic/message", res.get());
+                    } else {
+                        LightSensor lightSensor = new LightSensor(deviceId, lightValue);
+                        template.convertAndSend("topic/message", lightSensor);
+                        lightSensorRepository.save(lightSensor);
+                    }
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println(message.getPayload());
+                try {
+                    List<Object> lst = mapper.readValue(message.getPayload().toString(), new TypeReference<List<Object>>() {
+                    });
+                    Map<String, Object> value = (Map<String, Object>) lst.get(0);
+                    String deviceId = (String) value.get("device_id");
+                    Integer lightValue = ((List<Integer>) value.get("values")).get(0);
+                    Optional<LightBulb> res = lightBulbRepository.findByName(deviceId);
+                    if (res.isPresent()) {
+                        res.get().setMode(lightValue != 0);
+                        lightBulbRepository.save(res.get());
+                        template.convertAndSend("/topic/message", res.get());
+                    }
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            }
+
 //                try {
 //                    Map<String, Object> map = (new ObjectMapper()).readValue(message.getPayload().toString(), Map.class);
 //                    if(map.containsKey("mode")){

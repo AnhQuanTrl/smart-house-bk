@@ -1,4 +1,4 @@
-package com.salt.smarthomebackend.payload;
+package com.salt.smarthomebackend.payload.response;
 
 public class ApiResponse {
     private Boolean success;

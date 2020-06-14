@@ -1,4 +1,4 @@
-package com.salt.smarthomebackend.payload;
+package com.salt.smarthomebackend.payload.request;
 
 import javax.validation.constraints.NotBlank;
 

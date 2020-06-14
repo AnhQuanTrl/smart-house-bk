@@ -16,6 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 public class Client extends BaseIdentity{
+
+
     @Column(unique = true)
     private String username;
     private String password;

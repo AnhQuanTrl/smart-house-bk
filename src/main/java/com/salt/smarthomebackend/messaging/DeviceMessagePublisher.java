@@ -20,9 +20,9 @@ public class DeviceMessagePublisher {
         Map<String, Object> message = new HashMap<>();
         message.put("device_id", deviceId);
         if (mode)
-            message.put("values", new String[]{"1", "255"});
+            message.put("values", new Integer[]{1, 255});
         else
-            message.put("values", new String[]{"0", "255"});
+            message.put("values", new Integer[]{0, 255});
         lst.add(message);
         String messageToSent = new ObjectMapper().writeValueAsString(lst);
         messageGateway.sendToMqtt(messageToSent);
