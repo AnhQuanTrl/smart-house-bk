@@ -31,6 +31,7 @@ import org.springframework.web.socket.WebSocketSession;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Configuration
 public class InboundMqttConfiguration {
@@ -75,25 +76,32 @@ public class InboundMqttConfiguration {
                 try {
                     List<Object> lst = mapper.readValue(message.getPayload().toString(), new TypeReference<List<Object>>() {
                     });
-                    Map<String, Object> value = (Map<String, Object>) lst.get(0);
-                    String deviceId = (String) value.get("device_id");
-                    Integer lightValue = ((List<Integer>) value.get("values")).get(0);
-                    Optional<LightSensor> res = lightSensorRepository.findByName(deviceId);
-                    if (res.isPresent()) {
-                        res.get().setLight(lightValue);
-                        lightSensorRepository.save(res.get());
-                        if (res.get().getClient() != null) {
-                            SimpUser simpUser =
-                                    simpUserRegistry.getUser(res.get().getClient().getJwt());
-                            template.convertAndSendToUser(simpUser.getName(), "/topic/message",
-                                    res.get());
+                    lst.stream().map(element -> {
+                        Map<String, Object> value = (Map<String, Object>) element;
+                        String deviceId = (String) value.get("device_id");
+                        Integer lightValue = ((List<Integer>) value.get("values")).get(0);
+                        Optional<LightSensor> res = lightSensorRepository.findByName(deviceId);
+                        if (res.isPresent()) {
+                            res.get().setLight(lightValue);
+                            lightSensorRepository.save(res.get());
+                            return res.get();
+                        } else {
+                            LightSensor lightSensor = new LightSensor(deviceId, lightValue);
+                            lightSensorRepository.save(lightSensor);
+                            return lightSensor;
                         }
-
-                    } else {
-                        LightSensor lightSensor = new LightSensor(deviceId, lightValue);
-                        template.convertAndSend("topic/message", lightSensor);
-                        lightSensorRepository.save(lightSensor);
-                    }
+                    }).collect(Collectors.toList()).forEach(element -> {
+                        if (element.getClient() != null) {
+                            simpUserRegistry.getUsers().forEach(user -> System.out.println(user.getName() + "\n"));
+                            SimpUser simpUser =
+                                    simpUserRegistry.getUser(element.getClient().getJwt());
+                            if (simpUser != null) {
+                                System.out.println(simpUser.getName());
+                                template.convertAndSendToUser(simpUser.getName(), "/topic/message",
+                                        element);
+                            }
+                        }
+                    });
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
