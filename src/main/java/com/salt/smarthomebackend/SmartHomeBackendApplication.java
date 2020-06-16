@@ -1,13 +1,8 @@
 package com.salt.smarthomebackend;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.salt.smarthomebackend.messaging.MessageGateway;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @SpringBootApplication
 public class SmartHomeBackendApplication {

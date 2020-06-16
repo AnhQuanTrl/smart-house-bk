@@ -1,7 +1,7 @@
 package com.salt.smarthomebackend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.salt.smarthomebackend.messaging.DeviceMessagePublisher;
+import com.salt.smarthomebackend.messaging.mqtt.DeviceMessagePublisher;
 import com.salt.smarthomebackend.model.Device;
 import com.salt.smarthomebackend.model.LightBulb;
 import com.salt.smarthomebackend.repository.DeviceRepository;

@@ -1,15 +1,12 @@
 package com.salt.smarthomebackend.boostrap;
 
-import com.salt.smarthomebackend.messaging.DeviceMessagePublisher;
+import com.salt.smarthomebackend.messaging.mqtt.DeviceMessagePublisher;
 import com.salt.smarthomebackend.model.*;
 import com.salt.smarthomebackend.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalTime;
-import java.util.Optional;
 
 @Component
 @Slf4j
@@ -56,6 +53,7 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         LightBulb lightD = new LightBulb("LightD", false);
+        lightBulbRepository.save(lightD);
         deviceMessagePublisher.publishMessage(lightD.getName(), lightD.getMode());
     }
     @Autowired

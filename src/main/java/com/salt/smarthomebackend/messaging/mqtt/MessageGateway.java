@@ -1,4 +1,4 @@
-package com.salt.smarthomebackend.messaging;
+package com.salt.smarthomebackend.messaging.mqtt;
 
 import org.springframework.integration.annotation.MessagingGateway;
 

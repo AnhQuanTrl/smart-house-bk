@@ -22,6 +22,8 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.user.SimpUser;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
@@ -37,7 +39,8 @@ public class InboundMqttConfiguration {
     LightBulbRepository lightBulbRepository;
     LightSensorRepository lightSensorRepository;
     SimpMessagingTemplate template;
-
+    @Autowired
+    private SimpUserRegistry simpUserRegistry;
     public InboundMqttConfiguration(LightBulbRepository lightBulbRepository, LightSensorRepository lightSensorRepository, SimpMessagingTemplate template, MqttPahoClientFactory mqttClientFactory) {
         this.lightBulbRepository = lightBulbRepository;
         this.lightSensorRepository = lightSensorRepository;
@@ -79,7 +82,13 @@ public class InboundMqttConfiguration {
                     if (res.isPresent()) {
                         res.get().setLight(lightValue);
                         lightSensorRepository.save(res.get());
-                        template.convertAndSend("/topic/message", res.get());
+                        if (res.get().getClient() != null) {
+                            SimpUser simpUser =
+                                    simpUserRegistry.getUser(res.get().getClient().getJwt());
+                            template.convertAndSendToUser(simpUser.getName(), "/topic/message",
+                                    res.get());
+                        }
+
                     } else {
                         LightSensor lightSensor = new LightSensor(deviceId, lightValue);
                         template.convertAndSend("topic/message", lightSensor);
