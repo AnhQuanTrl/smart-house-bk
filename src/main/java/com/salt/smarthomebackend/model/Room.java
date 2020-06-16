@@ -50,6 +50,14 @@ public class Room extends BaseIdentity{
         return false;
     }
 
+    public Boolean removeController(Client client){
+        if(controllers.contains(client) && !client.equals(this.client)) {
+            controllers.remove(client);
+            return true;
+        }
+        return false;
+    }
+
     @PreRemove
     private void preRemove() {
         devices.forEach(device -> device.setRoom(null));
