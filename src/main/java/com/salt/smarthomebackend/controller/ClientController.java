@@ -43,12 +43,12 @@ class ClientController {
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
-    @PostMapping("deviceRegister")
+    @PostMapping("device_register")
     Device registerDevice(@RequestBody DeviceRequest _device, @AuthenticationPrincipal ClientPrincipal clientPrincipal) throws Exception {
-        Long device_id = _device.getId();
+        String device_id = _device.getName();
         Long usr_id = clientPrincipal.getId();
         Client client = clientRepository.findById(usr_id).orElseThrow(()->new ClientNotFoundException(usr_id));
-        return deviceRepository.findById(device_id)
+        return deviceRepository.findByName(device_id)
                 .map(device -> {
                     device.setClient(client);
                     return deviceRepository.save(device);
@@ -56,12 +56,12 @@ class ClientController {
                 .orElseThrow(() -> new DeviceNotFoundException(device_id));
     }
 
-    @PostMapping("/deviceUnregister")
+    @PostMapping("/device_unregister")
     Device unregisterDevice(@RequestBody DeviceRequest _device, @AuthenticationPrincipal ClientPrincipal clientPrincipal)  throws Exception {
-        Long device_id = _device.getId();
+        String device_id = _device.getName();
         Long usr_id = clientPrincipal.getId();
         Client client = clientRepository.findById(usr_id).orElseThrow(()->new ClientNotFoundException(usr_id));
-        return deviceRepository.findById(device_id)
+        return deviceRepository.findByName(device_id)
                 .map(device -> {
                     device.setClient(null);
                     return deviceRepository.save(device);

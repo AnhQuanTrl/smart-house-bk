@@ -17,7 +17,7 @@ import java.util.List;
 @Entity
 public class Client extends BaseIdentity{
 
-
+    String jwt;
     @Column(unique = true)
     private String username;
     private String password;

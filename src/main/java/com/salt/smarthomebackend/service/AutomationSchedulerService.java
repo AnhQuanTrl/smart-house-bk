@@ -2,7 +2,7 @@ package com.salt.smarthomebackend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.salt.smarthomebackend.event.AutomationEvent;
-import com.salt.smarthomebackend.messaging.DeviceMessagePublisher;
+import com.salt.smarthomebackend.messaging.mqtt.DeviceMessagePublisher;
 import com.salt.smarthomebackend.model.Automation;
 import com.salt.smarthomebackend.model.LightBulb;
 import org.springframework.context.event.EventListener;
