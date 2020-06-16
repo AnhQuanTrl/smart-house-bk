@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:smarthouse/models/devices/device.dart';
+import 'package:smarthouse/models/devices/light_bulb.dart';
+import 'package:smarthouse/models/devices/light_sensor.dart';
 import '../utils/api.dart' as api;
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
+import 'dart:convert';
 
 class WebSocketProvider with ChangeNotifier {
   final storage = FlutterSecureStorage();
@@ -16,15 +19,30 @@ class WebSocketProvider with ChangeNotifier {
             url: '${api.wsServer}/ws',
             onConnect: onConnect,
             onWebSocketError: (dynamic error) => print(error.toString()),
-            stompConnectHeaders: {'Authorization': jwt},
+            stompConnectHeaders: {'Authorization': jwt, 'name': jwt},
             webSocketConnectHeaders: {'Authorization': jwt}));
   }
 
   dynamic onConnect(StompClient client, StompFrame frame) {
     client.subscribe(
-        destination: '/topic/message',
+        destination: '/user/topic/message',
         callback: (StompFrame frame) {
+          newDevices = [];
           print(frame.body);
+          var element = json.decode(frame.body);
+          if (element['type'] == 'LB') {
+            newDevices.add((new LightBulb(
+                id: element['id'],
+                name: element['name'],
+                mode: element['mode'])));
+          } else {
+            newDevices.add(new LightSensor(
+                id: element['id'],
+                name: element['name'],
+                value: element['light']));
+          }
+          print(newDevices[0].name);
+          notifyListeners();
         });
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:smarthouse/exception/authentication_exception.dart';
 import 'package:smarthouse/models/devices/device.dart';
 import 'package:http/http.dart' as http;
 import 'package:smarthouse/models/devices/light_bulb.dart';
@@ -14,7 +15,18 @@ class DeviceProvider with ChangeNotifier {
   final storage = FlutterSecureStorage();
   String _jwt;
   void update(WebSocketProvider webSocketProvider) {
-    devices.addAll(webSocketProvider.newDevices);
+    webSocketProvider.newDevices.forEach((element) {
+      var tmp = devices.firstWhere((obj) => obj.id == element.id);
+      if (tmp != null) {
+        if (tmp is LightSensor) {
+          tmp.value = (element as LightSensor).value;
+        } else if (tmp is LightBulb) {
+          tmp.mode = (element as LightBulb).mode;
+        }
+      } else {
+        devices.add(element);
+      }
+    });
     notifyListeners();
   }
 
@@ -27,6 +39,9 @@ class DeviceProvider with ChangeNotifier {
     try {
       var res = await http.get(api.server + "api/devices/",
           headers: {"Authorization": _jwt}).timeout(const Duration(seconds: 5));
+      if (res.statusCode != 200) {
+        throw AuthenticationException("Not Authorized");
+      }
       List<dynamic> deviceList = json.decode(res.body);
       deviceList.forEach((element) {
         if (element['type'] == 'LB') {
@@ -43,7 +58,6 @@ class DeviceProvider with ChangeNotifier {
         notifyListeners();
       });
     } catch (e) {
-      print(e);
       throw e;
     }
   }
