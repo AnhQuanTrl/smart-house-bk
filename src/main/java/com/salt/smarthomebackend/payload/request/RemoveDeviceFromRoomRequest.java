@@ -10,10 +10,10 @@ import java.util.List;
 @NoArgsConstructor
 public class RemoveDeviceFromRoomRequest {
     private Long id;
-    private List<Long> devices;
+    private List<Long> deviceIds;
 
-    public RemoveDeviceFromRoomRequest(Long id, List<Long> devices) {
+    public RemoveDeviceFromRoomRequest(Long id, List<Long> deviceIds) {
         this.id = id;
-        this.devices = devices;
+        this.deviceIds = deviceIds;
     }
 }
