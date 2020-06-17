@@ -1,7 +1,7 @@
 package com.salt.smarthomebackend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.salt.smarthomebackend.messaging.DeviceMessagePublisher;
+import com.salt.smarthomebackend.messaging.mqtt.DeviceMessagePublisher;
 import com.salt.smarthomebackend.model.Device;
 import com.salt.smarthomebackend.model.LightBulb;
 import com.salt.smarthomebackend.repository.DeviceRepository;
@@ -61,23 +61,13 @@ public class DeviceController {
             Optional<LightBulb> res = lightBulbRepository.findById(request.getId());
             Map<String, Object> response = new HashMap<>();
             if(res.isPresent()){
-                if (request.getMode()) {
-                    try {
-                        deviceMessagePublisher.publishMessage(res.get().getName(), true);
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace();
-                    }
-                    response.put("id", res.get().getId());
-                    response.put("mode", true);
-                } else {
-                    try {
-                        deviceMessagePublisher.publishMessage(res.get().getName(), false);
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace();
-                    }
-                    response.put("id", res.get().getId());
-                    response.put("mode", false);
+                try {
+                    deviceMessagePublisher.publishMessage(res.get().getName(), request.getMode());
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
                 }
+                response.put("id", res.get().getId());
+                response.put("mode", request.getMode());
                 return ResponseEntity.ok(response);
             }
             else{

@@ -3,17 +3,11 @@ package com.salt.smarthomebackend.controller;
 import com.salt.smarthomebackend.model.Client;
 import com.salt.smarthomebackend.model.Device;
 import com.salt.smarthomebackend.model.Room;
+import com.salt.smarthomebackend.payload.request.*;
+import com.salt.smarthomebackend.payload.response.*;
 import com.salt.smarthomebackend.repository.ClientRepository;
 import com.salt.smarthomebackend.repository.DeviceRepository;
 import com.salt.smarthomebackend.repository.RoomRepository;
-import com.salt.smarthomebackend.payload.request.AddControllerRequest;
-import com.salt.smarthomebackend.payload.request.AddDeviceToRoomRequest;
-import com.salt.smarthomebackend.payload.request.AddRoomRequest;
-import com.salt.smarthomebackend.payload.request.RemoveDeviceFromRoomRequest;
-import com.salt.smarthomebackend.payload.response.AddControllerResponse;
-import com.salt.smarthomebackend.payload.response.AddDeviceToRoomResponse;
-import com.salt.smarthomebackend.payload.response.AddRoomResponse;
-import com.salt.smarthomebackend.payload.response.RemoveDeviceFromRoomResponse;
 import com.salt.smarthomebackend.security.ClientPrincipal;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
@@ -144,6 +138,25 @@ public class RoomController {
         return ResponseEntity.notFound().build();
     }
 
-//    @PatchMapping(value = "/remove-controller")
-
+    @PatchMapping(value = "/remove-controller")
+    public ResponseEntity<RemoveControllerResponse> removeController(@RequestBody RemoveControllerRequest request, @AuthenticationPrincipal ClientPrincipal clientPrincipal){
+        Optional<Room> room = roomRepository.findById(request.getRoomId());
+        Optional<Client> owner = clientRepository.findByUsername(clientPrincipal.getUsername());
+        RemoveControllerResponse response = new RemoveControllerResponse(request.getRoomId(), clientPrincipal.getUsername());
+        if(room.isPresent() && owner.isPresent() && room.get().getClient().getId() == owner.get().getId()){
+            for(String controllerName:request.getControllerNames()){
+                Optional<Client> controller = clientRepository.findByUsername(controllerName);
+                if(controller.isPresent()){
+                    if(room.get().removeController(controller.get()))
+                        response.addControllerName(controllerName);
+                } else return ResponseEntity.notFound().build();
+            }
+            try {
+                roomRepository.save(room.get());
+            }
+            catch (Exception e){ e.printStackTrace(); }
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.notFound().build();
+    }
 }

@@ -21,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -49,6 +50,10 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.generateToken(authentication);
+        clientRepository.findByUsername(authRequest.getUsername()).ifPresent(client -> {
+            client.setJwt(jwt);
+            clientRepository.save(client);
+        });
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
     }
 
@@ -63,7 +68,6 @@ public class AuthController {
         Client user = new Client(authRequest.getUsername(), authRequest.getPassword());
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         Client result = clientRepository.save(user);
 
         URI location = ServletUriComponentsBuilder

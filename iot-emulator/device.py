@@ -10,7 +10,7 @@ class LightSensor:
 class Light:
     def __init__(self, id):
         self.id = id
-        self.values = [0, 0]
+        self.values = [0, 255]
 
     def change(self, value):
         self.values = value

@@ -27,6 +27,7 @@ client.on_connect = on_connect
 client.on_message = on_message
 client.connect(broker_address, 1883, 60)
 client.loop_start()
+
 while True:
     client.publish('Topic/Light', json.dumps([obj.__dict__ for obj in light_sensors]))
     for sensor in light_sensors:
