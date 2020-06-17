@@ -33,7 +33,9 @@ public abstract class Device extends BaseIdentity {
     @JsonIdentityReference(alwaysAsId = true)
     @ManyToOne(optional = true, cascade = CascadeType.MERGE)
     private Client client;
-    
+
+
+
     public Device(String name) {
         super();
         this.name = name;
