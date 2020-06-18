@@ -54,6 +54,8 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) throws Exception {
         LightBulb lightD = new LightBulb("LightD", false);
         lightBulbRepository.save(lightD);
+        LightBulb lightD2 = new LightBulb("LightD2", false);
+        lightBulbRepository.save(lightD2);
         deviceMessagePublisher.publishMessage(lightD.getName(), lightD.getMode());
     }
     @Autowired

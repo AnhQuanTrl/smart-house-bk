@@ -21,9 +21,6 @@ import java.util.List;
 public class LightBulb extends Device{
     private Boolean mode;
 
-    @OneToOne(mappedBy = "device", cascade = CascadeType.ALL)
-    private Trigger trigger;
-
     @OneToOne(mappedBy = "lightBulb", cascade = CascadeType.ALL)
     private Automation automation;
 

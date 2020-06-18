@@ -30,6 +30,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -71,7 +72,7 @@ public class InboundMqttConfiguration {
         return message -> {
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> headers = message.getHeaders();
-            if (((String) headers.get("mqtt_receivedTopic")).equals("Topic/Light")) {
+            if (Objects.equals((String) headers.get("mqtt_receivedTopic"), "Topic/Light")) {
                 System.out.println(message.getPayload());
                 try {
                     List<Object> lst = mapper.readValue(message.getPayload().toString(), new TypeReference<List<Object>>() {
@@ -110,45 +111,33 @@ public class InboundMqttConfiguration {
                 try {
                     List<Object> lst = mapper.readValue(message.getPayload().toString(), new TypeReference<List<Object>>() {
                     });
-                    Map<String, Object> value = (Map<String, Object>) lst.get(0);
-                    String deviceId = (String) value.get("device_id");
-                    Integer lightValue = ((List<Integer>) value.get("values")).get(0);
-                    Optional<LightBulb> res = lightBulbRepository.findByName(deviceId);
-                    if (res.isPresent()) {
-                        res.get().setMode(lightValue != 0);
-                        lightBulbRepository.save(res.get());
-                        template.convertAndSend("/topic/message", res.get());
-                    }
+                    lst.stream().map(element -> {
+                        Map<String, Object> value = (Map<String, Object>) element;
+                        String deviceId = (String) value.get("device_id");
+                        Integer lightValue = ((List<Integer>) value.get("values")).get(0);
+                        Optional<LightBulb> res = lightBulbRepository.findByName(deviceId);
+                        if (res.isPresent()) {
+                            res.get().setMode(lightValue > 0);
+                            lightBulbRepository.save(res.get());
+                            return res.get();
+                        }
+                        return null;
+                    }).filter(Objects::nonNull).collect(Collectors.toList()).forEach(element -> {
+                        if (element.getClient() != null) {
+                            simpUserRegistry.getUsers().forEach(user -> System.out.println(user.getName() + "\n"));
+                            SimpUser simpUser =
+                                    simpUserRegistry.getUser(element.getClient().getJwt());
+                            if (simpUser != null) {
+                                System.out.println(simpUser.getName());
+                                template.convertAndSendToUser(simpUser.getName(), "/topic/message",
+                                        element);
+                            }
+                        }
+                    });
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
             }
-
-//                try {
-//                    Map<String, Object> map = (new ObjectMapper()).readValue(message.getPayload().toString(), Map.class);
-//                    if(map.containsKey("mode")){
-//                        Optional<LightBulb> res = lightBulbRepository.findByName((String)map.get("id"));
-//                        if(res.isPresent()){
-//                            if(res.get().getMode() != (Boolean)map.get("mode")){
-//                                res.get().setMode((Boolean)map.get("mode"));
-//                                lightBulbRepository.save(res.get());
-//                                //TODO: signal front
-//                            }
-//                        }
-//                    }
-//                    else if(map.containsKey("light")){
-//                        Optional<LightSensor> res = lightSensorRepository.findByName((String)map.get("id"));
-//                        if(res.isPresent()){
-//                            if(res.get().getLight() != (Integer) map.get("light")){
-//                                res.get().setLight((Integer)map.get("light"));
-//                                lightSensorRepository.save(res.get());
-//                                //TODO: signal front
-//                            }
-//                        }
-//                    }
-//                } catch (JsonProcessingException e) {
-//                    e.printStackTrace();
-//                }
 
         };
     }

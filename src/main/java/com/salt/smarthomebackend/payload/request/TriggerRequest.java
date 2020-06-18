@@ -1,19 +1,20 @@
 package com.salt.smarthomebackend.payload.request;
 
-import javax.persistence.criteria.CriteriaBuilder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@NoArgsConstructor
 public class TriggerRequest {
     private String deviceName;
     private String sensorName;
     private Integer triggerValue;
+    private Boolean mode;
 
-    public String getDeviceName() {
-        return deviceName;
-    }
-    public String getSensorName() {
-        return sensorName;
-    }
-    public Integer getTriggerValue() {
-        return triggerValue;
+    public TriggerRequest(String deviceName, String sensorName, Integer triggerValue, Boolean mode) {
+        this.deviceName = deviceName;
+        this.sensorName = sensorName;
+        this.triggerValue = triggerValue;
+        this.mode = mode;
     }
 }

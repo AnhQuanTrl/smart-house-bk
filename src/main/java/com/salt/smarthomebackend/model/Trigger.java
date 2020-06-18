@@ -15,25 +15,26 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 public class Trigger extends BaseIdentity {
-
-    //the triggerValue to switch the device
-    @OneToOne
+    @ManyToOne
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId = true)
-    private LightBulb device;
+    private LightSensor lightSensor;
 
-    @Column
     private Integer triggerValue;
-    @Column
-    private String sensorName;
+    @ManyToOne
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
+    private LightBulb lightBulb;
+    private Boolean mode;
 
-    public Trigger(LightBulb device, String sensorName, Integer triggerVal) {
+    public Trigger(LightSensor lightSensor, Integer triggerValue, LightBulb lightBulb,
+                   Boolean mode) {
         super();
-        this.device = device;
-        this.sensorName = sensorName;
-        this.triggerValue = triggerVal;
+        this.lightSensor = lightSensor;
+        this.triggerValue = triggerValue;
+        this.lightBulb = lightBulb;
+        this.mode = mode;
     }
-
-
 }

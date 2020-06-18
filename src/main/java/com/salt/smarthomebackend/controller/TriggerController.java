@@ -1,8 +1,6 @@
 package com.salt.smarthomebackend.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.salt.smarthomebackend.messaging.DeviceMessagePublisher;
-import com.salt.smarthomebackend.model.Device;
+
 import com.salt.smarthomebackend.model.LightBulb;
 import com.salt.smarthomebackend.model.LightSensor;
 import com.salt.smarthomebackend.model.Trigger;
@@ -22,9 +20,9 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/triggers")
 public class TriggerController {
-    private LightSensorRepository lightSensorRepository;
-    private LightBulbRepository lightBulbRepository;
-    private TriggerRepository triggerRepository;
+    private final LightSensorRepository lightSensorRepository;
+    private final LightBulbRepository lightBulbRepository;
+    private final TriggerRepository triggerRepository;
 
 
     public TriggerController(LightSensorRepository lightSensorRepository, LightBulbRepository lightBulbRepositor, TriggerRepository triggerRepositoryy) {
@@ -39,13 +37,13 @@ public class TriggerController {
             Optional<LightBulb> device = lightBulbRepository.findByName(triggerRequest.getDeviceName());
             Optional<LightSensor> sensor = lightSensorRepository.findByName(triggerRequest.getSensorName());
             if(device.isPresent() && sensor.isPresent()) {
-                if (clientPrincipal.getId() == device.get().getClient().getId() && clientPrincipal.getId() == sensor.get().getClient().getId()) {
-                    Trigger trigger = new Trigger(device.get(), sensor.get().getName(), triggerRequest.getTriggerValue());
+                if (clientPrincipal.getId().equals(device.get().getClient().getId()) && clientPrincipal.getId().equals(sensor.get().getClient().getId())) {
+                    Trigger trigger = new Trigger(sensor.get(),
+                            triggerRequest.getTriggerValue(), device.get(), triggerRequest.getMode());
                     try {
                         trigger = triggerRepository.save(trigger);
-                        device.get().setTrigger(trigger);
-                        lightBulbRepository.save(device.get());
-//                    System.out.print("here");
+                        sensor.get().getTriggers().add(trigger);
+                        lightSensorRepository.save(sensor.get());
                     } catch (Exception e) {
                         System.out.println(e.getStackTrace());
                     }
