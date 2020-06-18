@@ -5,7 +5,6 @@ import 'package:smarthouse/models/devices/device.dart';
 import 'package:http/http.dart' as http;
 import 'package:smarthouse/models/devices/light_bulb.dart';
 import 'package:smarthouse/providers/web_socket_provider.dart';
-import 'package:smarthouse/services/secure_storage.dart';
 import 'dart:convert';
 import '../utils/api.dart' as api;
 import 'package:smarthouse/models/devices/light_sensor.dart';

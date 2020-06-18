@@ -23,6 +23,7 @@ class LightSensorDetailsPage extends StatelessWidget {
         appBar: AppBar(
           title: Text(lightSensor.name),
         ),
+        backgroundColor: Theme.of(context).backgroundColor,
         body: TriggerList(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -30,7 +31,7 @@ class LightSensorDetailsPage extends StatelessWidget {
                 context: context,
                 builder: (context) => AddTriggerForm(lightSensor: lightSensor));
           },
-          child: Text("Add Trigger"),
+          child: Icon(Icons.add),
         ),
       ),
     );

@@ -28,8 +28,8 @@ class _AddTriggerFormState extends State<AddTriggerForm> {
 
   Map<String, Object> _formData = {
     "deviceName": "",
-    "triggerValue": 0,
-    "mode": false
+    "triggerValue": null,
+    "releaseValue": null
   };
 
   @override
@@ -53,54 +53,55 @@ class _AddTriggerFormState extends State<AddTriggerForm> {
             ),
           ),
           Form(
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    decoration: InputDecoration(labelText: "Trigger device"),
-                    keyboardType: TextInputType.text,
-                    onSaved: (value) {
-                      _formData['deviceName'] = value;
-                    },
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      decoration: InputDecoration(labelText: "Trigger device"),
+                      keyboardType: TextInputType.text,
+                      onSaved: (value) {
+                        _formData['deviceName'] = value;
+                      },
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: DropdownButton(
-                    hint: Text('Choose Trigger Type'),
-                    items: _options,
-                    value: _formData['mode'],
-                    onChanged: (value) {
-                      setState(() {
-                        _formData['mode'] = value;
-                      });
-                    },
-                    isExpanded: true,
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      decoration: InputDecoration(labelText: "On after value"),
+                      keyboardType: TextInputType.number,
+                      onSaved: (value) {
+                        if (value.isNotEmpty)
+                          _formData['triggerValue'] = int.parse(value);
+                      },
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    decoration: InputDecoration(labelText: "At value"),
-                    keyboardType: TextInputType.number,
-                    onSaved: (value) {
-                      _formData['triggerValue'] = int.parse(value);
-                    },
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      decoration:
+                          InputDecoration(labelText: "Off before value"),
+                      keyboardType: TextInputType.number,
+                      onSaved: (value) {
+                        if (value.isNotEmpty)
+                          _formData['releaseValue'] = int.parse(value);
+                      },
+                    ),
                   ),
-                ),
-                _isLoading
-                    ? CircularProgressIndicator()
-                    : Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: RaisedButton(
-                          child: Text("Submit"),
-                          onPressed: () {
-                            _submit();
-                          },
-                        ),
-                      )
-              ],
+                  _isLoading
+                      ? CircularProgressIndicator()
+                      : Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: RaisedButton(
+                            child: Text("Submit"),
+                            onPressed: () {
+                              _submit();
+                            },
+                          ),
+                        )
+                ],
+              ),
             ),
             key: _formKey,
           )
@@ -118,10 +119,32 @@ class _AddTriggerFormState extends State<AddTriggerForm> {
       _isLoading = true;
     });
 
-    widget.lightSensor.addTrigger(_formData);
+    try {
+      await widget.lightSensor.addTrigger(_formData);
+    } catch (e) {
+      Navigator.of(context).pop();
+      _showErrorDialog(e.toString());
+    }
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pop();
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('An Error Occurred!'),
+        content: Text(message),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Okay'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
   }
 }

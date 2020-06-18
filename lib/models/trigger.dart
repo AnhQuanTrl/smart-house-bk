@@ -4,7 +4,6 @@ class Trigger {
   int id;
   String control;
   int triggerValue;
-  bool mode;
-
-  Trigger({this.id, this.control, this.triggerValue, this.mode});
+  int releaseValue;
+  Trigger({this.id, this.control, this.triggerValue, this.releaseValue});
 }

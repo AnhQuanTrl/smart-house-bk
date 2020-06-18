@@ -36,10 +36,26 @@ class LightSensor extends Device {
         arguments: id);
   }
 
+  Future<void> fetch() async {
+    triggers = [];
+    final jwt = await storage.read(key: 'jwt');
+    var res = await http.get(
+      api.server + 'api/triggers/' + id.toString(),
+      headers: {"Authorization": jwt},
+    );
+    var triggerList = json.decode(res.body) as List<dynamic>;
+    triggerList.forEach((element) {
+      triggers.add(new Trigger(
+          id: element['id'],
+          control: element['lightBulbName'],
+          triggerValue: element['triggerValue'],
+          releaseValue: element['releaseValue']));
+    });
+  }
+
   Future<void> addTrigger(Map<String, Object> data) async {
     final jwt = await storage.read(key: 'jwt');
     data['sensorName'] = name;
-    print(data);
     var body = json.encode(data);
     var res = await http.post(
       api.server + 'api/triggers/setting',
@@ -48,13 +64,13 @@ class LightSensor extends Device {
     );
     if (res.statusCode != 200) {
       print(res.statusCode);
-      throw Exception("Some error");
+      throw Exception(json.decode(res.body)['message']);
     }
     Map<String, Object> value = json.decode(res.body);
     triggers.add(Trigger(
         id: value['id'],
         triggerValue: value['triggerValue'],
-        mode: value['mode'],
+        releaseValue: value['releaseValue'],
         control: data['deviceName']));
     notifyListeners();
   }
