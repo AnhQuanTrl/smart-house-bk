@@ -1,6 +1,7 @@
 package com.salt.smarthomebackend.configuration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.salt.smarthomebackend.payload.response.LightSensorResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -99,7 +100,8 @@ public class InboundMqttConfiguration {
                             if (simpUser != null) {
                                 System.out.println(simpUser.getName());
                                 template.convertAndSendToUser(simpUser.getName(), "/topic/message",
-                                        element);
+                                        new LightSensorResponse(element.getId(),
+                                                element.getName(), element.getLight()));
                             }
                         }
                     });

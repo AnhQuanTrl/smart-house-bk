@@ -22,7 +22,7 @@ public class Trigger extends BaseIdentity {
     private LightSensor lightSensor;
 
     private Integer triggerValue;
-    @ManyToOne
+    @OneToOne
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId = true)
