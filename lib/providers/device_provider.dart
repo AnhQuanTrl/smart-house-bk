@@ -28,6 +28,7 @@ class DeviceProvider with ChangeNotifier {
         devices.add(element);
       }
     });
+    webSocketProvider.newDevices = [];
     notifyListeners();
   }
 

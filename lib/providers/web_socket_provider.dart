@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:smarthouse/models/devices/device.dart';
@@ -28,8 +30,6 @@ class WebSocketProvider with ChangeNotifier {
     client.subscribe(
         destination: '/user/topic/message',
         callback: (StompFrame frame) {
-          newDevices = [];
-          print(frame.body);
           var element = json.decode(frame.body);
           if (element['type'] == 'LB') {
             newDevices.add((new LightBulb(
@@ -42,7 +42,7 @@ class WebSocketProvider with ChangeNotifier {
                 name: element['name'],
                 value: element['light']));
           }
-          print(newDevices[0].name);
+
           notifyListeners();
         });
   }
