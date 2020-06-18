@@ -13,14 +13,15 @@ class WebSocketProvider with ChangeNotifier {
   final storage = FlutterSecureStorage();
   StompClient _stompClient;
   List<Device> newDevices = [];
-  void setStompClient(String jwt) {
+  void setStompClient(String jwt, Function onDisconnect) {
     _stompClient = StompClient(
         config: StompConfig(
             url: '${api.wsServer}/ws',
             onConnect: onConnect,
             onWebSocketError: (dynamic error) => print(error.toString()),
             stompConnectHeaders: {'Authorization': jwt, 'name': jwt},
-            webSocketConnectHeaders: {'Authorization': jwt}));
+            webSocketConnectHeaders: {'Authorization': jwt},
+            onDisconnect: onDisconnect));
   }
 
   dynamic onConnect(StompClient client, StompFrame frame) {

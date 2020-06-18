@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:smarthouse/presentations/pages/auth_page.dart';
 import 'package:smarthouse/presentations/pages/device_overview_page.dart';
 import 'package:smarthouse/presentations/pages/light_bulb_details_page.dart';
+import 'package:smarthouse/presentations/pages/light_sensor_details_page.dart';
 import 'package:smarthouse/providers/auth_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:smarthouse/providers/web_socket_provider.dart';
@@ -78,10 +79,16 @@ class MyApp extends StatelessWidget {
         onGenerateRoute: (settings) {
           if (settings.name == LightBulbDetailsPage.routeName) {
             final lightBulbId = settings.arguments as int;
-            print(lightBulbId);
             return MaterialPageRoute(
               builder: (context) {
                 return LightBulbDetailsPage(id: lightBulbId);
+              },
+            );
+          } else if (settings.name == LightSensorDetailsPage.routeName) {
+            final lightSensorId = settings.arguments as int;
+            return MaterialPageRoute(
+              builder: (context) {
+                return LightSensorDetailsPage(id: lightSensorId);
               },
             );
           }
@@ -89,7 +96,7 @@ class MyApp extends StatelessWidget {
         initialRoute: initialRoute,
         routes: {
           DeviceOverviewPage.routeName: (context) => DeviceOverviewPage(),
-          AuthPage.routeName: (context) => AuthPage()
+          AuthPage.routeName: (context) => AuthPage(),
         },
       ),
     );

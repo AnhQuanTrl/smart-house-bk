@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../room.dart';
-abstract class Device{
+
+abstract class Device with ChangeNotifier {
   int id;
   String name;
   Room room;
@@ -10,4 +11,3 @@ abstract class Device{
   Widget buildTrailing();
   void onTap(BuildContext context);
 }
-

@@ -53,7 +53,17 @@ class _DeviceOverviewPageState extends State<DeviceOverviewPage> {
       var jwt = await storage.read(key: 'jwt');
       Provider.of<WebSocketProvider>(context, listen: false)
         ..close()
-        ..setStompClient(jwt)
+        ..setStompClient(
+            jwt,
+            (context) => Builder(
+                  builder: (BuildContext context) {
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text("Socket Disconnect"),
+                      backgroundColor: Colors.red,
+                    ));
+                    return null;
+                  },
+                ))
         ..open();
       await (Provider.of<DeviceProvider>(context, listen: false)..setJwt(jwt))
           .fetch();

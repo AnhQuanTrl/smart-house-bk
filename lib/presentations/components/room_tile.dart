@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:smarthouse/models/devices/light_sensor.dart';
 import 'package:smarthouse/models/room.dart';
 
 import 'device_tile.dart';
@@ -17,7 +19,10 @@ class RoomTile extends StatelessWidget {
         : ExpansionTile(
             leading: Icon(Icons.room),
             title: Text(room.name),
-            children:
-                room.deviceList.map((device) => DeviceTile(device)).toList());
+            children: room.deviceList
+                .map((device) => ChangeNotifierProvider(
+                    create: (BuildContext context) => device,
+                    child: DeviceTile(device)))
+                .toList());
   }
 }

@@ -28,7 +28,9 @@ class DeviceOverviewList extends StatelessWidget {
           HeadingTile("Unassigned Devices"),
           ...(deviceProvider.devices ?? <LightBulb>[])
               .where((element) => element.room == null)
-              .map((device) => DeviceTile(device))
+              .map(
+                (device) => DeviceTile(device),
+              )
               .toList()
         ],
       ),

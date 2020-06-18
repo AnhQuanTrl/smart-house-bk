@@ -16,7 +16,8 @@ class DeviceProvider with ChangeNotifier {
   String _jwt;
   void update(WebSocketProvider webSocketProvider) {
     webSocketProvider.newDevices.forEach((element) {
-      var tmp = devices.firstWhere((obj) => obj.id == element.id);
+      var tmp =
+          devices.firstWhere((obj) => obj.id == element.id, orElse: () => null);
       if (tmp != null) {
         if (tmp is LightSensor) {
           tmp.value = (element as LightSensor).value;
@@ -63,17 +64,24 @@ class DeviceProvider with ChangeNotifier {
   }
 
   Future<void> changeMode(int id, bool mode) async {
+    Device device = findById(id);
+    if (device != null && device is LightBulb) {
+      device.mode = mode;
+    }
     Map<String, Object> map = {"id": id, "mode": mode};
     String body = json.encode(map);
-    var res = await http.post(api.server + "api/devices/control",
-        body: body,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": _jwt
-        }).timeout(const Duration(seconds: 5));
-    print(res.statusCode);
-    if (res.statusCode != 200) {
-      throw Exception("Network error");
+    try {
+      var res = await http.post(api.server + "api/devices/control",
+          body: body,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": _jwt
+          }).timeout(const Duration(seconds: 5));
+      if (res.statusCode != 200) {
+        throw AuthenticationException(json.decode(res.body).message);
+      }
+    } catch (e) {
+      throw e;
     }
   }
 
