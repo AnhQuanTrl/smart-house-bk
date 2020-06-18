@@ -32,7 +32,7 @@ public class AutomationSchedulerService {
                 taskScheduler.schedule(() -> {
                             try {
 
-                                deviceMessagePublisher.publishMessage(lightBulb.getName(), true);
+                                deviceMessagePublisher.publishMessage(lightBulb, true);
                             } catch (JsonProcessingException e) {
                                 e.printStackTrace();
                             }

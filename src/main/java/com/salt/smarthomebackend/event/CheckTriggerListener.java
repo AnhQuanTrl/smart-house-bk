@@ -16,13 +16,14 @@ public class CheckTriggerListener {
         if (!lightSensor.getLight().equals(lightSensor.getPreviousLight())) {
             lightSensor.getTriggers().forEach(trigger -> {
                 try {
-                    if (!trigger.getMode()) {
+                    if (trigger.getTriggerValue() != null) {
                         if (trigger.getTriggerValue() >= lightSensor.getLight() && !(trigger.getTriggerValue() >= lightSensor.getPreviousLight())) {
-                            publisher.publishMessage(trigger.getLightBulb().getName(), trigger.getMode());
+                            publisher.publishMessage(trigger.getLightBulb(), true);
                         }
-                    } else {
-                        if (trigger.getTriggerValue() <= lightSensor.getLight() && !(trigger.getTriggerValue() <= lightSensor.getPreviousLight())) {
-                            publisher.publishMessage(trigger.getLightBulb().getName(), trigger.getMode());
+                    }
+                    if (trigger.getReleaseValue() != null) {
+                        if (trigger.getReleaseValue() <= lightSensor.getLight() && !(trigger.getReleaseValue() <= lightSensor.getPreviousLight())) {
+                            publisher.publishMessage(trigger.getLightBulb(), false);
                         }
                     }
                 } catch (JsonProcessingException e) {

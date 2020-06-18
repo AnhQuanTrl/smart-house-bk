@@ -56,7 +56,7 @@ public class DataLoader implements CommandLineRunner {
         lightBulbRepository.save(lightD);
         LightBulb lightD2 = new LightBulb("LightD2", false);
         lightBulbRepository.save(lightD2);
-        deviceMessagePublisher.publishMessage(lightD.getName(), lightD.getMode());
+        deviceMessagePublisher.publishMessage(lightD, lightD.getMode());
     }
     @Autowired
     public void setDeviceMessagePublisher(DeviceMessagePublisher deviceMessagePublisher) {

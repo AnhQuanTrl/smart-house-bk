@@ -22,21 +22,20 @@ public class Trigger extends BaseIdentity {
     private LightSensor lightSensor;
 
     private Integer triggerValue;
-
+    private Integer releaseValue;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "light_bulb_id", referencedColumnName = "id", unique = true)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId = true)
     private LightBulb lightBulb;
-    private Boolean mode;
 
-    public Trigger(LightSensor lightSensor, Integer triggerValue, LightBulb lightBulb,
-                   Boolean mode) {
+    public Trigger(LightSensor lightSensor, Integer triggerValue,
+                   Integer releaseValue, LightBulb lightBulb) {
         super();
         this.lightSensor = lightSensor;
         this.triggerValue = triggerValue;
         this.lightBulb = lightBulb;
-        this.mode = mode;
+        this.releaseValue = releaseValue;
     }
 }

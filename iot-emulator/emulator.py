@@ -19,8 +19,6 @@ def on_message(client, userdata, msg):
         for light_value in light_values:
             light = list(filter(lambda x: x.device_id == light_value['device_id'], lights))[0]
             light.change(light_value['values'])
-        client.publish('Topic/LightD', msg)
-
 
 client = mqtt.Client()
 client.on_connect = on_connect

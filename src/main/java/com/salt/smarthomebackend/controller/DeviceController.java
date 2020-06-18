@@ -9,6 +9,7 @@ import com.salt.smarthomebackend.repository.LightBulbRepository;
 import com.salt.smarthomebackend.payload.request.ControlDeviceRequest;
 import com.salt.smarthomebackend.security.ClientPrincipal;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.user.SimpUser;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,8 +34,6 @@ public class DeviceController {
         List<Device> deviceLst = new ArrayList<>();
 
         for (Device d : deviceRepository.findAll()) {
-            System.out.println(d.getId());
-            System.out.println(usr_id);
             if (d.getClient() != null) {
                 if (d.getClient().getId().equals(usr_id)) {
                     deviceLst.add(d);
@@ -44,16 +43,16 @@ public class DeviceController {
 
         return deviceLst;
     }
-    @PostMapping(value = "/test/{mode}")
-    public ResponseEntity<?> test(@PathVariable String mode) {
-        try {
-            Boolean toggle = Boolean.parseBoolean(mode);
-            deviceMessagePublisher.publishMessage("LightD", toggle);
-        } catch (JsonProcessingException e) {
-            System.out.println(e.getStackTrace());
-        }
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping(value = "/test/{mode}")
+//    public ResponseEntity<?> test(@PathVariable String mode) {
+//        try {
+//            Boolean toggle = Boolean.parseBoolean(mode);
+//            deviceMessagePublisher.publishMessage("LightD", toggle);
+//        } catch (JsonProcessingException e) {
+//            System.out.println(e.getStackTrace());
+//        }
+//        return ResponseEntity.ok().build();
+//    }
 
     @PostMapping(value = "/control")
     public ResponseEntity<Map<String, Object>> controlLightBulb(@RequestBody ControlDeviceRequest request){
@@ -62,10 +61,11 @@ public class DeviceController {
             Map<String, Object> response = new HashMap<>();
             if(res.isPresent()){
                 try {
-                    deviceMessagePublisher.publishMessage(res.get().getName(), request.getMode());
+                    deviceMessagePublisher.publishMessage(res.get(), request.getMode());
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
+
                 response.put("id", res.get().getId());
                 response.put("mode", request.getMode());
                 return ResponseEntity.ok(response);

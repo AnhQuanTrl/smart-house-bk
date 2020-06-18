@@ -60,7 +60,7 @@ public class InboundMqttConfiguration {
     public MessageProducer inbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
                 new MqttPahoMessageDrivenChannelAdapter("testClient", mqttClientFactory,
-                        "Topic/Light", "Topic/LightD");
+                        "Topic/Light");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);
@@ -100,35 +100,6 @@ public class InboundMqttConfiguration {
                                 template.convertAndSendToUser(simpUser.getName(), "/topic/message",
                                         new LightSensorResponse(element.getId(),
                                                 element.getName(), element.getLight()));
-                            }
-                        }
-                    });
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                System.out.println(message.getPayload());
-                try {
-                    List<Object> lst = mapper.readValue(message.getPayload().toString(), new TypeReference<List<Object>>() {
-                    });
-                    lst.stream().map(element -> {
-                        Map<String, Object> value = (Map<String, Object>) element;
-                        String deviceId = (String) value.get("device_id");
-                        Integer lightValue = ((List<Integer>) value.get("values")).get(0);
-                        Optional<LightBulb> res = lightBulbRepository.findByName(deviceId);
-                        if (res.isPresent()) {
-                            res.get().setMode(lightValue > 0);
-                            lightBulbRepository.save(res.get());
-                            return res.get();
-                        }
-                        return null;
-                    }).filter(Objects::nonNull).collect(Collectors.toList()).forEach(element -> {
-                        if (element.getClient() != null) {
-                            SimpUser simpUser =
-                                    simpUserRegistry.getUser(element.getClient().getJwt());
-                            if (simpUser != null) {
-                                template.convertAndSendToUser(simpUser.getName(), "/topic/message",
-                                        element);
                             }
                         }
                     });
