@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 @RestController
@@ -38,11 +39,6 @@ public class TriggerController {
         List<Trigger> triggerLst = new ArrayList<>();
 
         for (Trigger trigger : triggerRepository.findAll()) {
-            System.out.println(trigger.getId());
-            System.out.println(trigger.getLightSensor().getClient().getId());
-            System.out.println(usr_id);
-            System.out.println(trigger.getLightSensor().getId());
-            System.out.println(sensorId);
             if (trigger.getLightSensor().getClient() != null && trigger.getLightSensor().getClient().getId().equals(usr_id)) {
                 if (trigger.getLightSensor().getId().equals(sensorId)) {
                     System.out.println("hhhh");
@@ -54,6 +50,7 @@ public class TriggerController {
     }
 
     @PostMapping(value = "/setting")
+    @Transactional
     public ResponseEntity<?> setTrigger(@RequestBody TriggerRequest triggerRequest, @AuthenticationPrincipal ClientPrincipal clientPrincipal) {
             Optional<LightBulb> device = lightBulbRepository.findByName(triggerRequest.getDeviceName());
             Optional<LightSensor> sensor = lightSensorRepository.findByName(triggerRequest.getSensorName());
@@ -62,11 +59,11 @@ public class TriggerController {
                     Trigger trigger = new Trigger(sensor.get(),
                             triggerRequest.getTriggerValue(), device.get(), triggerRequest.getMode());
                     try {
-                        trigger = triggerRepository.save(trigger);
+                        trigger = triggerRepository.saveAndFlush(trigger);
                         sensor.get().getTriggers().add(trigger);
                         lightSensorRepository.save(sensor.get());
                     } catch (Exception e) {
-                        System.out.println(e.getStackTrace());
+                       e.getStackTrace();
                     }
                     return ResponseEntity.ok(trigger);
                 }

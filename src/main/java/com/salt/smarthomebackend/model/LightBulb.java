@@ -20,7 +20,8 @@ import java.util.List;
 @Entity
 public class LightBulb extends Device{
     private Boolean mode;
-
+    @OneToOne(mappedBy = "lightBulb")
+    private Trigger trigger;
     @OneToOne(mappedBy = "lightBulb", cascade = CascadeType.ALL)
     private Automation automation;
 

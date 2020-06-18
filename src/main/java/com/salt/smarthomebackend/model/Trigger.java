@@ -22,7 +22,9 @@ public class Trigger extends BaseIdentity {
     private LightSensor lightSensor;
 
     private Integer triggerValue;
-    @OneToOne
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "light_bulb_id", referencedColumnName = "id", unique = true)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId = true)

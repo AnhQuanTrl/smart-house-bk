@@ -28,7 +28,6 @@ public class UserInterceptor implements ChannelInterceptor {
 
             if (raw instanceof Map) {
                 Object name = ((Map) raw).get("name");
-                System.out.println(name);
                 if (name instanceof LinkedList) {
                     accessor.setUser(new WebSocketPrincipal(((LinkedList) name).get(0).toString().substring(7)));
                 }

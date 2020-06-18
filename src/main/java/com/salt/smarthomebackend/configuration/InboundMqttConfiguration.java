@@ -94,11 +94,9 @@ public class InboundMqttConfiguration {
                         }
                     }).collect(Collectors.toList()).forEach(element -> {
                         if (element.getClient() != null) {
-                            simpUserRegistry.getUsers().forEach(user -> System.out.println(user.getName() + "\n"));
                             SimpUser simpUser =
                                     simpUserRegistry.getUser(element.getClient().getJwt());
                             if (simpUser != null) {
-                                System.out.println(simpUser.getName());
                                 template.convertAndSendToUser(simpUser.getName(), "/topic/message",
                                         new LightSensorResponse(element.getId(),
                                                 element.getName(), element.getLight()));
@@ -126,11 +124,9 @@ public class InboundMqttConfiguration {
                         return null;
                     }).filter(Objects::nonNull).collect(Collectors.toList()).forEach(element -> {
                         if (element.getClient() != null) {
-                            simpUserRegistry.getUsers().forEach(user -> System.out.println(user.getName() + "\n"));
                             SimpUser simpUser =
                                     simpUserRegistry.getUser(element.getClient().getJwt());
                             if (simpUser != null) {
-                                System.out.println(simpUser.getName());
                                 template.convertAndSendToUser(simpUser.getName(), "/topic/message",
                                         element);
                             }

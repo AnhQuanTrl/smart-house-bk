@@ -17,11 +17,11 @@ public class CheckTriggerListener {
             lightSensor.getTriggers().forEach(trigger -> {
                 try {
                     if (!trigger.getMode()) {
-                        if (trigger.getTriggerValue() <= lightSensor.getLight() && !(trigger.getTriggerValue() <= lightSensor.getPreviousLight())) {
+                        if (trigger.getTriggerValue() >= lightSensor.getLight() && !(trigger.getTriggerValue() >= lightSensor.getPreviousLight())) {
                             publisher.publishMessage(trigger.getLightBulb().getName(), trigger.getMode());
                         }
                     } else {
-                        if (trigger.getTriggerValue() >= lightSensor.getLight() && !(trigger.getTriggerValue() >= lightSensor.getPreviousLight())) {
+                        if (trigger.getTriggerValue() <= lightSensor.getLight() && !(trigger.getTriggerValue() <= lightSensor.getPreviousLight())) {
                             publisher.publishMessage(trigger.getLightBulb().getName(), trigger.getMode());
                         }
                     }
