@@ -85,4 +85,25 @@ public class TriggerController {
                 "not exist"));
     }
 
+    @DeleteMapping(value = "/{id}/delete")
+    public ResponseEntity<?> deleteTrigger(@PathVariable Long id, @AuthenticationPrincipal ClientPrincipal clientPrincipal) {
+        try {
+            Optional<Trigger> trigger = triggerRepository.findById(id);
+            if (trigger.isPresent() && trigger.get().getLightBulb().getClient().getId().equals(clientPrincipal.getId())) {
+                LightBulb lb = trigger.get().getLightBulb();
+                LightSensor ls = trigger.get().getLightSensor();
+                ls.getTriggers().remove(trigger.get());
+                lb.setTrigger(null);
+                lightBulbRepository.save(lb);
+                lightSensorRepository.save(ls);
+                triggerRepository.deleteById(id);
+                return ResponseEntity.ok(trigger.get());
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.print(e.getStackTrace());
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Trigger " +
+                "not exist"));
+    }
+
 }

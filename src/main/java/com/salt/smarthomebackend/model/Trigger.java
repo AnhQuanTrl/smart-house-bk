@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Setter
 @Getter
@@ -23,8 +24,8 @@ public class Trigger extends BaseIdentity {
 
     private Integer triggerValue;
     private Integer releaseValue;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn
+    @OneToOne
+    @JoinColumn(unique = true)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId = true)
