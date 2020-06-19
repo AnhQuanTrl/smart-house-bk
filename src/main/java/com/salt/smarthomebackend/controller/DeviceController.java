@@ -65,7 +65,8 @@ public class DeviceController {
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
-
+                res.get().setMode(request.getMode());
+                lightBulbRepository.save(res.get());
                 response.put("id", res.get().getId());
                 response.put("mode", request.getMode());
                 return ResponseEntity.ok(response);

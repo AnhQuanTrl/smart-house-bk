@@ -10,10 +10,7 @@ import org.springframework.messaging.simp.user.SimpUser;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class DeviceMessagePublisher {
@@ -34,8 +31,6 @@ public class DeviceMessagePublisher {
         else
             message.put("values", new Integer[]{0, 255});
         lst.add(message);
-        lightBulb.setMode(mode);
-        lightBulbRepository.save(lightBulb);
         if (lightBulb.getClient() != null) {
             SimpUser simpUser =
                     simpUserRegistry.getUser(lightBulb.getClient().getJwt());

@@ -16,23 +16,18 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Entity
-@EntityListeners(CheckTriggerListener.class)
 public class LightSensor extends Device {
 
     private Integer light;
-    @OneToMany(mappedBy = "lightSensor", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "lightSensor", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId = true)
     private List<Trigger> triggers = new ArrayList<>();
-    @Transient Integer previousLight;
+    Integer previousLight;
     public LightSensor(String name, Integer light) {
         super(name);
         this.light = light;
-    }
-    @PostLoad
-    void initPrev() {
-        previousLight = light;
     }
 
 

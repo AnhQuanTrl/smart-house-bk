@@ -24,7 +24,7 @@ public class Trigger extends BaseIdentity {
     private Integer triggerValue;
     private Integer releaseValue;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "light_bulb_id", referencedColumnName = "id", unique = true)
+    @JoinColumn
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId = true)

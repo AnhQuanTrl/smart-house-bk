@@ -1,6 +1,8 @@
 package com.salt.smarthomebackend.configuration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.salt.smarthomebackend.event.TriggerEvent;
+import com.salt.smarthomebackend.messaging.mqtt.DeviceMessagePublisher;
 import com.salt.smarthomebackend.payload.response.LightSensorResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +45,8 @@ public class InboundMqttConfiguration {
     LightSensorRepository lightSensorRepository;
     SimpMessagingTemplate template;
     @Autowired
+    DeviceMessagePublisher publisher;
+    @Autowired
     private SimpUserRegistry simpUserRegistry;
     public InboundMqttConfiguration(LightBulbRepository lightBulbRepository, LightSensorRepository lightSensorRepository, SimpMessagingTemplate template, MqttPahoClientFactory mqttClientFactory) {
         this.lightBulbRepository = lightBulbRepository;
@@ -84,6 +88,7 @@ public class InboundMqttConfiguration {
                         Integer lightValue = ((List<Integer>) value.get("values")).get(0);
                         Optional<LightSensor> res = lightSensorRepository.findByName(deviceId);
                         if (res.isPresent()) {
+                            res.get().setPreviousLight(res.get().getLight());
                             res.get().setLight(lightValue);
                             lightSensorRepository.save(res.get());
                             return res.get();
@@ -102,6 +107,40 @@ public class InboundMqttConfiguration {
                                                 element.getName(), element.getLight()));
                             }
                         }
+                        LightSensor ls = lightSensorRepository.findById(element.getId()).get();
+                        if ( ls.getTriggers() == null) {
+                            return;
+                        }
+                        ls .getTriggers().forEach(trigger -> {
+                            try {
+                                if (trigger.getTriggerValue() != null) {
+                                    if (trigger.getTriggerValue() >=  ls .getLight() && !(trigger.getTriggerValue() >=  ls.getPreviousLight())) {
+                                        Optional<LightBulb> lightBulb =
+                                                lightBulbRepository.findById(trigger.getLightBulb().getId());
+                                        if (lightBulb.isPresent()) {
+                                            lightBulb.get().setMode(true);
+                                            lightBulbRepository.save(lightBulb.get());
+                                            publisher.publishMessage(lightBulb.get(), true);
+                                        }
+                                    }
+                                }
+                                if (trigger.getReleaseValue() != null) {
+                                    if (trigger.getReleaseValue() <=  ls.getLight() && !(trigger.getReleaseValue() <=  ls.getPreviousLight())) {
+                                        Optional<LightBulb> lightBulb =
+                                                lightBulbRepository.findById(trigger.getLightBulb().getId());
+                                        if (lightBulb.isPresent()) {
+                                            lightBulb.get().setMode(false);
+                                            lightBulbRepository.save(lightBulb.get());
+                                            publisher.publishMessage(lightBulb.get(), false);
+
+                                        }
+                                    }
+                                }
+                            } catch (JsonProcessingException e) {
+                                e.printStackTrace();
+                            }
+                        });
+
                     });
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
