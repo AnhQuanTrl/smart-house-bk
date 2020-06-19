@@ -111,31 +111,41 @@ public class InboundMqttConfiguration {
                         if ( ls.getTriggers() == null) {
                             return;
                         }
-                        ls .getTriggers().forEach(trigger -> {
+                        ls.getTriggers().forEach(trigger -> {
                             try {
-                                if (trigger.getTriggerValue() != null) {
-                                    if (trigger.getTriggerValue() >=  ls .getLight() && !(trigger.getTriggerValue() >=  ls.getPreviousLight())) {
-                                        Optional<LightBulb> lightBulb =
-                                                lightBulbRepository.findById(trigger.getLightBulb().getId());
-                                        if (lightBulb.isPresent()) {
-                                            lightBulb.get().setMode(true);
-                                            lightBulbRepository.save(lightBulb.get());
-                                            publisher.publishMessage(lightBulb.get(), true);
-                                        }
+                                if (trigger.getTriggerValue() >=  ls .getLight() && !(trigger.getTriggerValue() >=  ls.getPreviousLight())) {
+                                    Optional<LightBulb> lightBulb =
+                                            lightBulbRepository.findById(trigger.getLightBulb().getId());
+                                    if (lightBulb.isPresent()) {
+                                        lightBulb.get().setValue(255);
+                                        lightBulbRepository.save(lightBulb.get());
+                                        publisher.publishMessage(lightBulb.get(), 255);
                                     }
                                 }
-                                if (trigger.getReleaseValue() != null) {
-                                    if (trigger.getReleaseValue() <=  ls.getLight() && !(trigger.getReleaseValue() <=  ls.getPreviousLight())) {
+                                else if (trigger.getReleaseValue() <=  ls.getLight() && !(trigger.getReleaseValue() <=  ls.getPreviousLight())) {
                                         Optional<LightBulb> lightBulb =
                                                 lightBulbRepository.findById(trigger.getLightBulb().getId());
                                         if (lightBulb.isPresent()) {
-                                            lightBulb.get().setMode(false);
+                                            lightBulb.get().setValue(0);
                                             lightBulbRepository.save(lightBulb.get());
-                                            publisher.publishMessage(lightBulb.get(), false);
+                                            publisher.publishMessage(lightBulb.get(), 0);
 
                                         }
                                     }
+                                else if (trigger.getTriggerValue() <= ls.getLight() && ls.getLight() <= trigger.getReleaseValue()){
+                                    Optional<LightBulb> lightBulb =
+                                            lightBulbRepository.findById(trigger.getLightBulb().getId());
+                                    if (lightBulb.isPresent()) {;
+                                        Integer value =
+                                                (int) ((trigger.getReleaseValue().doubleValue() - ls.getLight()) / (trigger.getReleaseValue() - trigger.getTriggerValue()) * 255);
+                                        lightBulb.get().setValue(value);
+                                        lightBulbRepository.save(lightBulb.get());
+                                        publisher.publishMessage(lightBulb.get(), value);
+
+                                    }
                                 }
+
+
                             } catch (JsonProcessingException e) {
                                 e.printStackTrace();
                             }

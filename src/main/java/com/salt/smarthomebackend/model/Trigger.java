@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 @Setter
@@ -16,15 +17,17 @@ import java.util.Optional;
 @NoArgsConstructor
 @Entity
 public class Trigger extends BaseIdentity {
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId = true)
     private LightSensor lightSensor;
 
+    @NotNull
     private Integer triggerValue;
+    @NotNull
     private Integer releaseValue;
-    @OneToOne
+    @OneToOne(optional = false)
     @JoinColumn(unique = true)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")

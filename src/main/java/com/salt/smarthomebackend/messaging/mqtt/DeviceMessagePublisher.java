@@ -22,14 +22,11 @@ public class DeviceMessagePublisher {
     private SimpUserRegistry simpUserRegistry;
     @Autowired
     LightBulbRepository lightBulbRepository;
-    public void publishMessage(LightBulb lightBulb, boolean mode) throws JsonProcessingException {
+    public void publishMessage(LightBulb lightBulb, Integer value) throws JsonProcessingException {
         List<Map<String, Object>> lst = new LinkedList<>();
         Map<String, Object> message = new HashMap<>();
         message.put("device_id", lightBulb.getName());
-        if (mode)
-            message.put("values", new Integer[]{1, 255});
-        else
-            message.put("values", new Integer[]{0, 255});
+        message.put("values", new Integer[]{1, value});
         lst.add(message);
         if (lightBulb.getClient() != null) {
             SimpUser simpUser =

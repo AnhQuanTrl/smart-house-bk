@@ -55,7 +55,6 @@ public class TriggerController {
     }
 
     @PostMapping(value = "/setting")
-    @Transactional
     public ResponseEntity<?> setTrigger(@RequestBody TriggerRequest triggerRequest, @AuthenticationPrincipal ClientPrincipal clientPrincipal) {
             Optional<LightBulb> device = lightBulbRepository.findByName(triggerRequest.getDeviceName());
             Optional<LightSensor> sensor = lightSensorRepository.findByName(triggerRequest.getSensorName());

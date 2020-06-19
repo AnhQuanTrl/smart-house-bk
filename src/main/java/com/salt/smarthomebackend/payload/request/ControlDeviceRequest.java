@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ControlDeviceRequest {
     private Long id;
-    private Boolean mode;
+    private Integer value;
 
-    public ControlDeviceRequest(Long id, Boolean mode) {
+    public ControlDeviceRequest(Long id, Integer value) {
         this.id = id;
-        this.mode = mode;
+        this.value = value;
     }
 }

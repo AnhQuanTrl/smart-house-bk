@@ -19,15 +19,15 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 public class LightBulb extends Device{
-    private Boolean mode;
+    private Integer value;
     @OneToOne(mappedBy = "lightBulb")
     private Trigger trigger;
     @OneToOne(mappedBy = "lightBulb", cascade = CascadeType.ALL)
     private Automation automation;
 
-    public LightBulb(String name, Boolean mode) {
+    public LightBulb(String name, Integer value) {
         super(name);
-        this.mode = mode;
+        this.value = value;
     }
 
 

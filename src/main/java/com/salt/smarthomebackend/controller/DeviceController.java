@@ -43,16 +43,6 @@ public class DeviceController {
 
         return deviceLst;
     }
-//    @PostMapping(value = "/test/{mode}")
-//    public ResponseEntity<?> test(@PathVariable String mode) {
-//        try {
-//            Boolean toggle = Boolean.parseBoolean(mode);
-//            deviceMessagePublisher.publishMessage("LightD", toggle);
-//        } catch (JsonProcessingException e) {
-//            System.out.println(e.getStackTrace());
-//        }
-//        return ResponseEntity.ok().build();
-//    }
 
     @PostMapping(value = "/control")
     public ResponseEntity<Map<String, Object>> controlLightBulb(@RequestBody ControlDeviceRequest request){
@@ -61,14 +51,14 @@ public class DeviceController {
             Map<String, Object> response = new HashMap<>();
             if(res.isPresent()){
                 try {
-                    deviceMessagePublisher.publishMessage(res.get(), request.getMode());
+                    deviceMessagePublisher.publishMessage(res.get(), request.getValue());
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
-                res.get().setMode(request.getMode());
+                res.get().setValue(request.getValue());
                 lightBulbRepository.save(res.get());
                 response.put("id", res.get().getId());
-                response.put("mode", request.getMode());
+                response.put("value", request.getValue());
                 return ResponseEntity.ok(response);
             }
             else{
