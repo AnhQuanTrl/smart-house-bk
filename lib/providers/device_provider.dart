@@ -21,7 +21,8 @@ class DeviceProvider with ChangeNotifier {
         if (tmp is LightSensor) {
           tmp.value = (element as LightSensor).value;
         } else if (tmp is LightBulb) {
-          tmp.mode = (element as LightBulb).mode;
+          tmp.value = (element as LightBulb).value;
+          tmp.notifyListeners();
         }
       } else {
         devices.add(element);
@@ -49,7 +50,7 @@ class DeviceProvider with ChangeNotifier {
           devices.add((new LightBulb(
               id: element['id'],
               name: element['name'],
-              mode: element['mode'])));
+              value: element['value'])));
         } else {
           devices.add(new LightSensor(
               id: element['id'],
@@ -58,28 +59,6 @@ class DeviceProvider with ChangeNotifier {
         }
         notifyListeners();
       });
-    } catch (e) {
-      throw e;
-    }
-  }
-
-  Future<void> changeMode(int id, bool mode) async {
-    Device device = findById(id);
-    if (device != null && device is LightBulb) {
-      device.mode = mode;
-    }
-    Map<String, Object> map = {"id": id, "mode": mode};
-    String body = json.encode(map);
-    try {
-      var res = await http.post(api.server + "api/devices/control",
-          body: body,
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": _jwt
-          }).timeout(const Duration(seconds: 5));
-      if (res.statusCode != 200) {
-        throw AuthenticationException(json.decode(res.body).message);
-      }
     } catch (e) {
       throw e;
     }

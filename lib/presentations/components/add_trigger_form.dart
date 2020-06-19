@@ -121,6 +121,7 @@ class _AddTriggerFormState extends State<AddTriggerForm> {
 
     try {
       await widget.lightSensor.addTrigger(_formData);
+      Navigator.of(context).pop();
     } catch (e) {
       Navigator.of(context).pop();
       _showErrorDialog(e.toString());

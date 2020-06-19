@@ -29,9 +29,13 @@ class DeviceOverviewList extends StatelessWidget {
           ...(deviceProvider.devices ?? <LightBulb>[])
               .where((element) => element.room == null)
               .map(
-                (device) => DeviceTile(device),
-              )
-              .toList()
+            (device) {
+              return ChangeNotifierProvider.value(
+                value: device,
+                child: DeviceTile(),
+              );
+            },
+          ).toList()
         ],
       ),
     );

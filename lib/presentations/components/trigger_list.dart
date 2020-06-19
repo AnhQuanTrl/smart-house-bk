@@ -25,37 +25,43 @@ class _TriggerListState extends State<TriggerList> {
     LightSensor lightSensor = Provider.of<LightSensor>(context);
     List<Trigger> triggers = lightSensor.triggers;
     return _isLoading
-        ? CircularProgressIndicator()
+        ? Center(child: CircularProgressIndicator())
         : ListView.builder(
             itemCount: triggers.length,
-            itemBuilder: (_, i) => ListTile(
-              trailing: Container(
-                width: 150,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 4.0),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(Icons.arrow_upward),
-                          Text(triggers[i].triggerValue.toString())
-                        ],
+            itemBuilder: (_, i) => Dismissible(
+              key: UniqueKey(),
+              onDismissed: (_) {
+                lightSensor.deleteTrigger(triggers[i].id);
+              },
+              child: ListTile(
+                trailing: Container(
+                  width: 150,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4.0),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.arrow_upward),
+                            Text(triggers[i].triggerValue.toString())
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 4.0),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(Icons.arrow_downward),
-                          Text(triggers[i].releaseValue.toString())
-                        ],
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4.0),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.arrow_downward),
+                            Text(triggers[i].releaseValue.toString())
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+                title: Text(triggers[i].control),
               ),
-              title: Text(triggers[i].control),
             ),
           );
   }

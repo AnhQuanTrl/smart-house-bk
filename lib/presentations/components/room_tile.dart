@@ -20,9 +20,8 @@ class RoomTile extends StatelessWidget {
             leading: Icon(Icons.room),
             title: Text(room.name),
             children: room.deviceList
-                .map((device) => ChangeNotifierProvider(
-                    create: (BuildContext context) => device,
-                    child: DeviceTile(device)))
+                .map((device) => ChangeNotifierProvider.value(
+                    value: device, child: DeviceTile()))
                 .toList());
   }
 }

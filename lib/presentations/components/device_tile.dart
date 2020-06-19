@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:smarthouse/models/devices/device.dart';
+import 'package:provider/provider.dart';
 
 class DeviceTile extends StatelessWidget {
-  final Device device;
-
-  const DeviceTile(this.device);
+  const DeviceTile();
   @override
   Widget build(BuildContext context) {
+    Device device = context.watch<Device>();
     return ListTile(
       leading: device.buildLeading(),
       title: device.buildTitle(),

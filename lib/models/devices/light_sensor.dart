@@ -74,4 +74,16 @@ class LightSensor extends Device {
         control: data['deviceName']));
     notifyListeners();
   }
+
+  Future<void> deleteTrigger(int id) async {
+    final jwt = await storage.read(key: 'jwt');
+    var res = await http.delete(
+        api.server + 'api/triggers/' + id.toString() + '/delete',
+        headers: {"Authorization": jwt});
+    if (res.statusCode != 200) {
+      throw Exception("Not Found");
+    }
+    triggers.removeWhere((element) => element.id == id);
+    notifyListeners();
+  }
 }
