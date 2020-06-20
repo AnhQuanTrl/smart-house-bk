@@ -52,9 +52,11 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        LightBulb lightD = new LightBulb("LightD", false);
+        LightBulb lightD = new LightBulb("LightD", 0);
         lightBulbRepository.save(lightD);
-        deviceMessagePublisher.publishMessage(lightD.getName(), lightD.getMode());
+        LightBulb lightD2 = new LightBulb("LightD2", 0);
+        lightBulbRepository.save(lightD2);
+        deviceMessagePublisher.publishMessage(lightD, lightD.getValue());
     }
     @Autowired
     public void setDeviceMessagePublisher(DeviceMessagePublisher deviceMessagePublisher) {

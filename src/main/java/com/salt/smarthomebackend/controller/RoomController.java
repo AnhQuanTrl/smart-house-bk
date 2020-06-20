@@ -54,40 +54,59 @@ public class RoomController {
     }
 
     @PatchMapping(value = "/{id}/update")
-    public ResponseEntity<?> editRoom(@PathVariable Long id, @RequestBody Room roomInfo) {
-        Optional<Room> res = roomRepository.findById(id);
-        return res.map(room -> {
-            room.setName(roomInfo.getName());
-            roomRepository.save(room);
-            return ResponseEntity.ok().build();
-        }).orElseGet(() ->  ResponseEntity.notFound().build());
+    public ResponseEntity<?> editName(@PathVariable Long id, @RequestBody String roomName, @AuthenticationPrincipal ClientPrincipal clientPrincipal) {
+        try {
+            Optional<Room> room = roomRepository.findById(id);
+            if(room.isPresent() && clientPrincipal.getId().equals(room.get().getClient().getId())) {
+                System.out.println(roomName);
+                room.get().setName(roomName);
+                System.out.println(room.get().getName());
+
+                Room r = roomRepository.save(room.get());
+                return ResponseEntity.ok(r);
+            }
+        } catch (IllegalArgumentException | EmptyResultDataAccessException e){
+            System.out.print(e.getStackTrace());
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping(value = "/{id}/delete")
-    public ResponseEntity<?> deleteRoom(@PathVariable Long id) {
+    public ResponseEntity<?> deleteRoom(@PathVariable Long id, @AuthenticationPrincipal ClientPrincipal clientPrincipal) {
         try {
-            roomRepository.deleteById(id);
-            return ResponseEntity.ok().build();
+            Optional<Room> room = roomRepository.findById(id);
+            if(room.isPresent() && clientPrincipal.getId().equals(room.get().getClient().getId())) {
+                roomRepository.deleteById(id);
+                return ResponseEntity.ok(room.get());
+            }
         } catch (IllegalArgumentException | EmptyResultDataAccessException e){
-            return ResponseEntity.notFound().build();
+            System.out.print(e.getStackTrace());
         }
+        return ResponseEntity.notFound().build();
     }
 
     @PatchMapping(value = "/add-device")
-    public ResponseEntity<AddDeviceToRoomResponse> addDeviceToRoom(@RequestBody AddDeviceToRoomRequest request){
+    public ResponseEntity<AddDeviceToRoomResponse> addDeviceToRoom(@RequestBody AddDeviceToRoomRequest request, @AuthenticationPrincipal ClientPrincipal clientPrincipal){
         Optional<Room> res = roomRepository.findById(request.getId());
         AddDeviceToRoomResponse response = new AddDeviceToRoomResponse(request.getId());
         if(res.isPresent()){
-            for (Long deviceId:request.getDeviceIds()) {
-                Optional<Device> device = deviceRepository.findById(deviceId);
-                if(device.isPresent()){
-                    device.get().setRoom(res.get());
+            if(clientPrincipal.getId().equals(res.get().getClient().getId())) {
+                for (Long deviceId : request.getDeviceIds()) {
+                    Optional<Device> device = deviceRepository.findById(deviceId);
+                    if (device.isPresent() && device.get().getClient() != null) {
+                        System.out.println(clientPrincipal.getId());
+                        System.out.println(device.get().getClient().getId());
+                        if(clientPrincipal.getId().equals(device.get().getClient().getId())) {
+                            device.get().setRoom(res.get());
+                            try {
+                                deviceRepository.save(device.get());
+                                response.addDevice(deviceId);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                 }
-                try{
-                    deviceRepository.save(device.get());
-                    response.addDevice(deviceId);
-                }
-                catch (Exception e){ e.printStackTrace(); }
             }
             return ResponseEntity.ok(response);
         }
@@ -95,20 +114,26 @@ public class RoomController {
     }
 
     @PatchMapping(value = "/remove-device")
-    public ResponseEntity<RemoveDeviceFromRoomResponse> removeDeviceFromRoom(@RequestBody RemoveDeviceFromRoomRequest request){
+    public ResponseEntity<RemoveDeviceFromRoomResponse> removeDeviceFromRoom(@RequestBody RemoveDeviceFromRoomRequest request,  @AuthenticationPrincipal ClientPrincipal clientPrincipal){
         Optional<Room> res = roomRepository.findById(request.getId());
         RemoveDeviceFromRoomResponse response = new RemoveDeviceFromRoomResponse(request.getId());
         if(res.isPresent()){
-            for(Long deviceId:request.getDeviceIds()){
-                Optional<Device> device = deviceRepository.findById(deviceId);
-                if(device.isPresent()){
-                    device.get().setRoom(null);
+            if(clientPrincipal.getId().equals(res.get().getClient().getId())) {
+                for (Long deviceId : request.getDeviceIds()) {
+                    Optional<Device> device = deviceRepository.findById(deviceId);
+                    if (device.isPresent() && device.get().getClient() != null) {
+                        if(clientPrincipal.getId().equals(device.get().getClient().getId())) {
+                            device.get().setRoom(null);
+                            try {
+                                deviceRepository.save(device.get());
+                                response.addDevice(deviceId);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
                 }
-                try{
-                    deviceRepository.save(device.get());
-                    response.addDevice(deviceId);
-                }
-                catch (Exception e){ e.printStackTrace(); }
             }
             return ResponseEntity.ok(response);
         }
@@ -125,8 +150,10 @@ public class RoomController {
             for(String controllerName:request.getControllerNames()){
                 Optional<Client> controller = clientRepository.findByUsername(controllerName);
                 if(controller.isPresent()){
-                    if(room.get().addController(controller.get()))
+                    if(room.get().addController(controller.get())) {
+                        System.out.print("here");
                         response.addControllerName(controllerName);
+                    }
                 } else return ResponseEntity.notFound().build();
             }
             try {
