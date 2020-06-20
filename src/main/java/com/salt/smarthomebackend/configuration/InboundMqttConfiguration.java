@@ -76,8 +76,6 @@ public class InboundMqttConfiguration {
     public MessageHandler handler() {
         return message -> {
             ObjectMapper mapper = new ObjectMapper();
-            Map<String, Object> headers = message.getHeaders();
-            if (Objects.equals((String) headers.get("mqtt_receivedTopic"), "Topic/Light")) {
                 System.out.println(message.getPayload());
                 try {
                     List<Object> lst = mapper.readValue(message.getPayload().toString(), new TypeReference<List<Object>>() {
@@ -85,7 +83,8 @@ public class InboundMqttConfiguration {
                     lst.stream().map(element -> {
                         Map<String, Object> value = (Map<String, Object>) element;
                         String deviceId = (String) value.get("device_id");
-                        Integer lightValue = ((List<Integer>) value.get("values")).get(0);
+                        Integer lightValue =
+                                Integer.parseInt(((List<String>) value.get("values")).get(0));
                         Optional<LightSensor> res = lightSensorRepository.findByName(deviceId);
                         if (res.isPresent()) {
                             res.get().setPreviousLight(res.get().getLight());
@@ -155,8 +154,6 @@ public class InboundMqttConfiguration {
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
-            }
-
         };
     }
 

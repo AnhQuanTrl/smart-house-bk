@@ -3,8 +3,8 @@ import time
 import json
 from device import *
 broker_address = 'localhost'
-light_sensors = [LightSensor("Light"), LightSensor("Light2")]
-lights = [Light("LightD"), Light("LightD2")]
+light_sensors = [LightSensor("Light")]
+lights = [Light("LightD")]
 
 
 def on_connect(client, userdata, flags, rc):

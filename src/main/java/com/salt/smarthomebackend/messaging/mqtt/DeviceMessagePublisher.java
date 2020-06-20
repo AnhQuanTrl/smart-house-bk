@@ -26,7 +26,7 @@ public class DeviceMessagePublisher {
         List<Map<String, Object>> lst = new LinkedList<>();
         Map<String, Object> message = new HashMap<>();
         message.put("device_id", lightBulb.getName());
-        message.put("values", new Integer[]{1, value});
+        message.put("values", new String[]{"1", value.toString()});
         lst.add(message);
         if (lightBulb.getClient() != null) {
             SimpUser simpUser =
