@@ -2,6 +2,7 @@ package com.salt.smarthomebackend.model;
 
 //this is only for reference. Corresponding members should re-implement it
 
+import com.salt.smarthomebackend.helper.Constant;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -17,5 +18,4 @@ public class LightSensor extends Device {
         super(name);
         this.light = light;
     }
-
 }

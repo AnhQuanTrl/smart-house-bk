@@ -1,6 +1,9 @@
 package com.salt.smarthomebackend.configuration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.salt.smarthomebackend.helper.Constant;
+import com.salt.smarthomebackend.messaging.mqtt.DeviceMessagePublisher;
+import com.salt.smarthomebackend.model.Device;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,13 +43,15 @@ public class InboundMqttConfiguration {
     LightBulbRepository lightBulbRepository;
     LightSensorRepository lightSensorRepository;
     SimpMessagingTemplate template;
+    DeviceMessagePublisher publisher;
     @Autowired
     private SimpUserRegistry simpUserRegistry;
-    public InboundMqttConfiguration(LightBulbRepository lightBulbRepository, LightSensorRepository lightSensorRepository, SimpMessagingTemplate template, MqttPahoClientFactory mqttClientFactory) {
+    public InboundMqttConfiguration(DeviceMessagePublisher publisher, LightBulbRepository lightBulbRepository, LightSensorRepository lightSensorRepository, SimpMessagingTemplate template, MqttPahoClientFactory mqttClientFactory) {
         this.lightBulbRepository = lightBulbRepository;
         this.lightSensorRepository = lightSensorRepository;
         this.template = template;
         this.mqttClientFactory = mqttClientFactory;
+        this.publisher = publisher;
     }
 
     @Bean
@@ -83,6 +88,20 @@ public class InboundMqttConfiguration {
                         Optional<LightSensor> res = lightSensorRepository.findByName(deviceId);
                         if (res.isPresent()) {
                             res.get().setLight(lightValue);
+//                            if (res.get().getRoom() != null && res.get().getRoom().getAutomatic()){
+//                                Boolean mode = res.get().getLight() < Constant.NIGHT_THRESHOLD ? true : false;
+//                                for(Device device:res.get().getRoom().getDevices()){
+//                                    if(device instanceof LightBulb){
+//                                        ((LightBulb) device).setMode(mode);
+//                                        lightBulbRepository.save((LightBulb)device);
+//                                        try {
+//                                            publisher.publishMessage(device.getName(), ((LightBulb)device).getMode());
+//                                        } catch (JsonProcessingException e) {
+//                                            e.printStackTrace();
+//                                        }
+//                                    }
+//                                }
+//                            }
                             lightSensorRepository.save(res.get());
                             return res.get();
                         } else {

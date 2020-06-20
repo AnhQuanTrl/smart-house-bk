@@ -36,10 +36,13 @@ public class Room extends BaseIdentity{
     @JsonIdentityReference(alwaysAsId = true)
     private List<Client> controllers = new ArrayList<Client>();
 
+    private Boolean automatic;
+
     public Room(String name, Client client) {
         this.name = name;
         this.client = client;
         this.controllers.add(client);
+        this.automatic = true;
     }
 
     public Boolean addController(Client client){
@@ -56,6 +59,22 @@ public class Room extends BaseIdentity{
             return true;
         }
         return false;
+    }
+
+    public void turnOn(){
+        for (Device device:devices) {
+            if (device instanceof LightBulb){
+                ((LightBulb) device).setMode(true);
+            }
+        }
+    }
+
+    public void turnOff(){
+        for (Device device:devices) {
+            if (device instanceof LightBulb){
+                ((LightBulb) device).setMode(false);
+            }
+        }
     }
 
     @PreRemove
