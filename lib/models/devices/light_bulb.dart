@@ -11,9 +11,11 @@ class LightBulb extends Device {
   final storage = FlutterSecureStorage();
 
   int value;
+  Map<String, List<Map<String, int>>> statistic = {};
   void setValue(int newValue) {
     value = newValue;
     notifyListeners();
+    changeValue(newValue);
   }
 
   LightBulb({this.value, @required String name, @required int id})
@@ -63,8 +65,35 @@ class LightBulb extends Device {
         print(res.statusCode);
         throw AuthenticationException(json.decode(res.body).message);
       }
-      await Future.delayed(Duration(milliseconds: 100));
-      setValue(newValue);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> getStat() async {
+    statistic = {};
+    final jwt = await storage.read(key: 'jwt');
+    try {
+      var res = await http.get(api.server + "api/devices/stat/$id",
+          headers: {"Authorization": jwt}).timeout(const Duration(seconds: 5));
+      if (res.statusCode != 200) {
+        print(res.statusCode);
+        throw AuthenticationException(json.decode(res.body).message);
+      }
+      print(res.body);
+      Map<String, dynamic> mapper = json.decode(res.body);
+      mapper.forEach((key, value) {
+        statistic[key] = [];
+        List<dynamic> lst = value;
+        lst.forEach((element) {
+          Map<String, int> el = {};
+          element.forEach((key, value) {
+            el[key] = value as int;
+          });
+          statistic[key].add(el);
+        });
+      });
+      notifyListeners();
     } catch (e) {
       throw e;
     }

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:smarthouse/models/devices/device.dart';
-import 'package:smarthouse/models/devices/light_bulb.dart';
 import 'package:smarthouse/models/devices/light_sensor.dart';
-import 'package:smarthouse/models/trigger.dart';
+import 'package:smarthouse/presentations/components/light_sensor_body.dart';
 import 'package:smarthouse/presentations/components/add_trigger_form.dart';
-import 'package:smarthouse/presentations/components/trigger_list.dart';
 import 'package:smarthouse/providers/device_provider.dart';
 
 class LightSensorDetailsPage extends StatelessWidget {
@@ -21,10 +18,10 @@ class LightSensorDetailsPage extends StatelessWidget {
       value: lightSensor,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(lightSensor.name),
+          title: Text("Light Sensor"),
         ),
         backgroundColor: Theme.of(context).backgroundColor,
-        body: TriggerList(),
+        body: LightSensorBody(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             showDialog(

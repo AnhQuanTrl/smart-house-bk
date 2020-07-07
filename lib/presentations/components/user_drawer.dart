@@ -46,7 +46,7 @@ class UserDrawer extends StatelessWidget {
 
   final Function showErrorDialog;
 
-  TextEditingController controller = TextEditingController();
+  final TextEditingController controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {

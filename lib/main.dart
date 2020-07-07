@@ -68,12 +68,13 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(
           textTheme: TextTheme(
-              headline3: TextStyle(fontWeight: FontWeight.bold),
+              headline6:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
               bodyText2:
                   TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
-          primaryColor: Colors.lightBlue,
-          backgroundColor: Colors.lightBlue[50],
-          accentColor: Colors.deepOrangeAccent,
+          primaryColor: Colors.cyanAccent,
+          backgroundColor: Colors.white,
+          accentColor: Colors.orange,
         ),
         debugShowCheckedModeBanner: false,
         onGenerateRoute: (settings) {

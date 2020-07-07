@@ -21,6 +21,11 @@ class DeviceProvider with ChangeNotifier {
         if (tmp is LightSensor) {
           tmp.value = (element as LightSensor).value;
         } else if (tmp is LightBulb) {
+          // print(tmp.value);
+          // print((element as LightBulb).value);
+          if (tmp.value == (element as LightBulb).value) {
+            return;
+          }
           tmp.value = (element as LightBulb).value;
           tmp.notifyListeners();
         }

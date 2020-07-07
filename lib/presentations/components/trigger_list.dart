@@ -26,7 +26,7 @@ class _TriggerListState extends State<TriggerList> {
     List<Trigger> triggers = lightSensor.triggers;
     return _isLoading
         ? Center(child: CircularProgressIndicator())
-        : ListView.builder(
+        : ListView.separated(
             itemCount: triggers.length,
             itemBuilder: (_, i) => Dismissible(
               key: UniqueKey(),
@@ -62,6 +62,9 @@ class _TriggerListState extends State<TriggerList> {
                 ),
                 title: Text(triggers[i].control),
               ),
+            ),
+            separatorBuilder: (context, index) => Divider(
+              color: Colors.grey,
             ),
           );
   }
