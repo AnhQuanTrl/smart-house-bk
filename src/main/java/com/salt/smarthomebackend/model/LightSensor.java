@@ -2,6 +2,7 @@ package com.salt.smarthomebackend.model;
 
 //this is only for reference. Corresponding members should re-implement it
 
+import com.salt.smarthomebackend.helper.Constant;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -29,6 +30,4 @@ public class LightSensor extends Device {
         super(name);
         this.light = light;
     }
-
-
 }

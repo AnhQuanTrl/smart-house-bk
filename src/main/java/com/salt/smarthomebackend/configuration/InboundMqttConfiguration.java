@@ -92,6 +92,20 @@ public class InboundMqttConfiguration {
                         if (res.isPresent()) {
                             res.get().setPreviousLight(res.get().getLight());
                             res.get().setLight(lightValue);
+//                            if (res.get().getRoom() != null && res.get().getRoom().getAutomatic()){
+//                                Boolean mode = res.get().getLight() < Constant.NIGHT_THRESHOLD ? true : false;
+//                                for(Device device:res.get().getRoom().getDevices()){
+//                                    if(device instanceof LightBulb){
+//                                        ((LightBulb) device).setMode(mode);
+//                                        lightBulbRepository.save((LightBulb)device);
+//                                        try {
+//                                            publisher.publishMessage(device.getName(), ((LightBulb)device).getMode());
+//                                        } catch (JsonProcessingException e) {
+//                                            e.printStackTrace();
+//                                        }
+//                                    }
+//                                }
+//                            }
                             lightSensorRepository.save(res.get());
                             return res.get();
                         } else {
