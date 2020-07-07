@@ -8,11 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
+
 @Component
 @Slf4j
 public class DataLoader implements CommandLineRunner {
     private LightSensorRepository lightSensorRepository;
     private LightBulbRepository lightBulbRepository;
+    private LightBulbHistoryRepository lightBulbHistoryRepository;
     private ClientRepository clientRepository;
     private RoomRepository roomRepository;
     private DeviceRepository deviceRepository;
@@ -48,15 +55,31 @@ public class DataLoader implements CommandLineRunner {
         this.automationRepository = automationRepository;
     }
 
-
+    @Autowired
+    public void setLightBulbHistoryRepository(
+            LightBulbHistoryRepository lightBulbHistoryRepository) {
+        this.lightBulbHistoryRepository = lightBulbHistoryRepository;
+    }
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
-        LightBulb lightD = new LightBulb("LightD", 0);
+        Optional<LightBulb> optionalLightBulb = lightBulbRepository.findByName("LightD");
+        LightBulb lightD;
+        if (optionalLightBulb.isPresent()) {
+            lightD = optionalLightBulb.get();
+            lightD.setValue(0);
+        }
+        else {
+            lightD = new LightBulb("LightD", 0);
+            LightBulbHistory lightBulbHistory = new LightBulbHistory();
+            lightD.setLightBulbHistory(lightBulbHistory);
+        }
+        Map<Timestamp, Integer> timestampIntegerMap =  lightD.getLightBulbHistory().getEntries();
+        timestampIntegerMap.put(new Timestamp(new Date().getTime()), 0);
+        lightD.getLightBulbHistory().setLightBulb(lightD);
         lightBulbRepository.save(lightD);
-        LightBulb lightD2 = new LightBulb("LightD2", 0);
-        lightBulbRepository.save(lightD2);
-        deviceMessagePublisher.publishMessage(lightD, lightD.getValue());
+        deviceMessagePublisher.publishMessage(lightD);
     }
     @Autowired
     public void setDeviceMessagePublisher(DeviceMessagePublisher deviceMessagePublisher) {

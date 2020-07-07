@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.salt.smarthomebackend.event.TriggerEvent;
 import com.salt.smarthomebackend.messaging.mqtt.DeviceMessagePublisher;
 import com.salt.smarthomebackend.payload.response.LightSensorResponse;
+import com.salt.smarthomebackend.repository.TriggerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,10 +32,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -43,14 +42,18 @@ public class InboundMqttConfiguration {
     private String input;
     LightBulbRepository lightBulbRepository;
     LightSensorRepository lightSensorRepository;
+    TriggerRepository triggerRepository;
     SimpMessagingTemplate template;
     @Autowired
     DeviceMessagePublisher publisher;
     @Autowired
     private SimpUserRegistry simpUserRegistry;
-    public InboundMqttConfiguration(LightBulbRepository lightBulbRepository, LightSensorRepository lightSensorRepository, SimpMessagingTemplate template, MqttPahoClientFactory mqttClientFactory) {
+    public InboundMqttConfiguration(LightBulbRepository lightBulbRepository,
+                                    LightSensorRepository lightSensorRepository,
+                                    SimpMessagingTemplate template, MqttPahoClientFactory mqttClientFactory, TriggerRepository triggerRepository) {
         this.lightBulbRepository = lightBulbRepository;
         this.lightSensorRepository = lightSensorRepository;
+        this.triggerRepository = triggerRepository;
         this.template = template;
         this.mqttClientFactory = mqttClientFactory;
     }
@@ -112,39 +115,40 @@ public class InboundMqttConfiguration {
                         }
                         ls.getTriggers().forEach(trigger -> {
                             try {
-                                if (trigger.getTriggerValue() >=  ls .getLight() && !(trigger.getTriggerValue() >=  ls.getPreviousLight())) {
-                                    Optional<LightBulb> lightBulb =
-                                            lightBulbRepository.findById(trigger.getLightBulb().getId());
-                                    if (lightBulb.isPresent()) {
-                                        lightBulb.get().setValue(255);
-                                        lightBulbRepository.save(lightBulb.get());
-                                        publisher.publishMessage(lightBulb.get(), 255);
+                                Optional<LightBulb> lightBulb =
+                                        lightBulbRepository.findById(trigger.getLightBulb().getId());
+                                if (!lightBulb.isPresent()) {
+                                    return;
+                                }
+                                Integer value = null;
+                                if (trigger.isInit()) {
+                                    if (trigger.getTriggerValue() >=  ls .getLight()) {
+                                        value = 255;
+                                    } else if (trigger.getTriggerValue() <=  ls .getLight()) {
+                                        value = 0;
+                                    } else {
+                                        value = (int) ((trigger.getReleaseValue().doubleValue() - ls.getLight()) / (trigger.getReleaseValue() - trigger.getTriggerValue()) * 255);
                                     }
+                                    lightBulb.get().setValue(value);
+                                    trigger.setInit(false);
+                                    triggerRepository.save(trigger);
+                                }
+                                else if (trigger.getTriggerValue() >=  ls .getLight() && !(trigger.getTriggerValue() >=  ls.getPreviousLight())) {
+                                    value = 255;
                                 }
                                 else if (trigger.getReleaseValue() <=  ls.getLight() && !(trigger.getReleaseValue() <=  ls.getPreviousLight())) {
-                                        Optional<LightBulb> lightBulb =
-                                                lightBulbRepository.findById(trigger.getLightBulb().getId());
-                                        if (lightBulb.isPresent()) {
-                                            lightBulb.get().setValue(0);
-                                            lightBulbRepository.save(lightBulb.get());
-                                            publisher.publishMessage(lightBulb.get(), 0);
-
-                                        }
-                                    }
-                                else if (trigger.getTriggerValue() <= ls.getLight() && ls.getLight() <= trigger.getReleaseValue()){
-                                    Optional<LightBulb> lightBulb =
-                                            lightBulbRepository.findById(trigger.getLightBulb().getId());
-                                    if (lightBulb.isPresent()) {;
-                                        Integer value =
-                                                (int) ((trigger.getReleaseValue().doubleValue() - ls.getLight()) / (trigger.getReleaseValue() - trigger.getTriggerValue()) * 255);
-                                        lightBulb.get().setValue(value);
-                                        lightBulbRepository.save(lightBulb.get());
-                                        publisher.publishMessage(lightBulb.get(), value);
-
-                                    }
+                                    value = 0;
                                 }
-
-
+                                else if (trigger.getTriggerValue() <= ls.getLight() && ls.getLight() <= trigger.getReleaseValue()){
+                                    value =
+                                            (int) ((trigger.getReleaseValue().doubleValue() - ls.getLight()) / (trigger.getReleaseValue() - trigger.getTriggerValue()) * 255);
+                                }
+                                if (value != null) {
+                                    lightBulb.get().setValue(value);
+                                    lightBulb.get().getLightBulbHistory().getEntries().put(new Timestamp(new Date().getTime()), value);
+                                }
+                                lightBulbRepository.save(lightBulb.get());
+                                publisher.publishMessage(lightBulb.get());
                             } catch (JsonProcessingException e) {
                                 e.printStackTrace();
                             }

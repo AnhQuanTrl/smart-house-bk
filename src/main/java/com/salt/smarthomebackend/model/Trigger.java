@@ -23,6 +23,7 @@ public class Trigger extends BaseIdentity {
     @JsonIdentityReference(alwaysAsId = true)
     private LightSensor lightSensor;
 
+    private boolean isInit = true;
     @NotNull
     private Integer triggerValue;
     @NotNull

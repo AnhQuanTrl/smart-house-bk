@@ -21,12 +21,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users/")
 class ClientController {
-    private ClientRepository clientRepository;
-    private DeviceRepository deviceRepository;
+    private final ClientRepository clientRepository;
+    private final DeviceRepository deviceRepository;
     private RoomRepository roomRepository;
 
 
-    ClientController(ClientRepository clientRepository, DeviceRepository deviceRepository, RoomRepository roomRepository) {
+    ClientController(ClientRepository clientRepository, DeviceRepository deviceRepository,
+                     RoomRepository roomRepository) {
         this.clientRepository = clientRepository;
         this.deviceRepository = deviceRepository;
         this.roomRepository = roomRepository;
@@ -38,16 +39,18 @@ class ClientController {
     }
 
     @PostMapping("/logout")
-    ResponseEntity<Object>  clientLogout() {
+    ResponseEntity<Object> clientLogout() {
         ApiResponse res = new ApiResponse(true, "Sucessfully log out");
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
     @PostMapping("device_register")
-    Device registerDevice(@RequestBody DeviceRequest _device, @AuthenticationPrincipal ClientPrincipal clientPrincipal) throws Exception {
+    Device registerDevice(@RequestBody DeviceRequest _device,
+                          @AuthenticationPrincipal ClientPrincipal clientPrincipal) throws Exception {
         String device_id = _device.getName();
         Long usr_id = clientPrincipal.getId();
-        Client client = clientRepository.findById(usr_id).orElseThrow(()->new ClientNotFoundException(usr_id));
+        Client client =
+                clientRepository.findById(usr_id).orElseThrow(() -> new ClientNotFoundException(usr_id));
         return deviceRepository.findByName(device_id)
                 .map(device -> {
                     device.setClient(client);
@@ -57,10 +60,12 @@ class ClientController {
     }
 
     @PostMapping("/device_unregister")
-    Device unregisterDevice(@RequestBody DeviceRequest _device, @AuthenticationPrincipal ClientPrincipal clientPrincipal)  throws Exception {
+    Device unregisterDevice(@RequestBody DeviceRequest _device,
+                            @AuthenticationPrincipal ClientPrincipal clientPrincipal) throws Exception {
         String device_id = _device.getName();
         Long usr_id = clientPrincipal.getId();
-        Client client = clientRepository.findById(usr_id).orElseThrow(()->new ClientNotFoundException(usr_id));
+        Client client =
+                clientRepository.findById(usr_id).orElseThrow(() -> new ClientNotFoundException(usr_id));
         return deviceRepository.findByName(device_id)
                 .map(device -> {
                     device.setClient(null);
