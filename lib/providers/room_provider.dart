@@ -20,7 +20,37 @@ class RoomProvider with ChangeNotifier {
     this.deviceProvider = deviceProvider;
   }
 
-  void addRoom(Room room) {}
+  Future addRoom(Room room) async {
+    Map body = {'name': room.name};
+    var res = await http.post(api.server + "api/rooms/create",
+        body: json.encode(body),
+        headers: {
+          "Authorization": _jwt,
+          'Content-type': 'application/json'
+        }).timeout(const Duration(seconds: 5));
+
+    if (res.statusCode == 200) {
+      rooms.add(room);
+      notifyListeners();
+    } else {
+      var e = (res.statusCode);
+      throw ('error on addRoom' + e.toString());
+    }
+  }
+
+  Future addDeviceToRoom(Room room, Device device) async {
+    Map body = {
+      'id': room.id,
+      'deviceIds': [device.id]
+    };
+    var res = await http.patch(api.server + "api/add-device",
+        body: json.encode(body),
+        headers: {
+          "Authorization": _jwt,
+          'Content-type': 'application/json'
+        }).timeout(const Duration(seconds: 5));
+    room.deviceList.add(device);
+  }
 
   Future<void> fetch() async {
     rooms = [];
