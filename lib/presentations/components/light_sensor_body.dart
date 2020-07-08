@@ -24,8 +24,10 @@ class LightSensorBody extends StatelessWidget {
           ),
           Expanded(
             child: Card(
+              elevation: 20.0,
               margin: EdgeInsets.all(15),
               child: TriggerList(),
+              color: Colors.white,
             ),
           ),
         ],

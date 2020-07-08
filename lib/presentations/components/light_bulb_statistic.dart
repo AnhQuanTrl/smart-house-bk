@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smarthouse/models/devices/light_bulb.dart';
-import 'package:smarthouse/presentations/components/chart/time_series_chart.dart';
+import 'package:smarthouse/presentations/components/chart/custom_time_series_chart.dart';
+import 'package:smarthouse/presentations/components/week_statistic.dart';
+
+import 'day_statistic.dart';
 
 class LightBulbStatistic extends StatefulWidget {
   @override
@@ -30,7 +33,6 @@ class _LightBulbStatisticState extends State<LightBulbStatistic>
 
   @override
   Widget build(BuildContext context) {
-    LightBulb lb = Provider.of<LightBulb>(context, listen: false);
     int day = DateTime.now().day;
     return Container(
       width: double.infinity,
@@ -49,41 +51,8 @@ class _LightBulbStatisticState extends State<LightBulbStatistic>
             child: TabBarView(
               controller: _tabController,
               children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Container(
-                      height: 250,
-                      margin: EdgeInsets.all(10),
-                      child: TimeSeriesChart(
-                        animate: true,
-                        data: lb.statistic[day.toString()],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Text(
-                        "Daily Usage",
-                        style: Theme.of(context).textTheme.headline4,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Consumer<LightBulb>(
-                        builder: (BuildContext context, LightBulb value,
-                            Widget child) {
-                          List<Map<String, int>> data =
-                              value.statistic[DateTime.now().day];
-                          data.sort((a, b) => a["time"].compareTo(b["time"]));
-                          return Text(
-                            "Daily Usage",
-                            style: Theme.of(context).textTheme.headline4,
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                Text("dad"),
+                DayStatistic(),
+                WeekStatistic(),
               ],
             ),
           )

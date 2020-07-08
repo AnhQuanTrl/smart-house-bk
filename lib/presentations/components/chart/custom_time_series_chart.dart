@@ -3,12 +3,12 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import "package:collection/collection.dart";
 import 'dart:math';
 
-class TimeSeriesChart extends StatelessWidget {
+class CustomTimeSeriesChart extends StatelessWidget {
   final List<Map<String, int>> data;
   final bool animate;
 
   List<charts.Series<dynamic, DateTime>> seriesList;
-  TimeSeriesChart({this.data, this.animate}) {
+  CustomTimeSeriesChart({this.data, this.animate}) {
     seriesList = constructSeriesList(data);
   }
 

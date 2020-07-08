@@ -5,7 +5,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:smarthouse/models/devices/device.dart';
 import 'package:smarthouse/models/room.dart';
 import 'package:http/http.dart' as http;
-import 'package:smarthouse/services/secure_storage.dart';
 import '../utils/api.dart' as api;
 import 'device_provider.dart';
 

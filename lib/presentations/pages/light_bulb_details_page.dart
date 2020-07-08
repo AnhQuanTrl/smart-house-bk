@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smarthouse/models/devices/light_bulb.dart';
-import 'package:smarthouse/presentations/components/chart/time_series_chart.dart';
+import 'package:smarthouse/presentations/components/chart/custom_time_series_chart.dart';
 import 'package:smarthouse/presentations/components/light_bulb_information.dart';
 import 'package:smarthouse/presentations/components/light_bulb_statistic.dart';
 import 'package:smarthouse/providers/device_provider.dart';

@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
               bodyText2:
                   TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
           primaryColor: Colors.cyanAccent,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.white.withOpacity(0.5),
           accentColor: Colors.orange,
         ),
         debugShowCheckedModeBanner: false,
