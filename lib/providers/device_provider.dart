@@ -81,7 +81,26 @@ class DeviceProvider with ChangeNotifier {
         body: body,
         headers: {"Content-Type": "application/json", "Authorization": _jwt});
     if (res.statusCode != 200) {
-      throw Exception("Something wrong");
+      if (res.statusCode == 404) {
+        throw Exception("Device nout found");
+      } else {
+        throw Exception("Something wrong");
+      }
+    }
+  }
+
+  Future<void> unregisterDevice(String deviceId) async {
+    Map<String, String> map = {"name": deviceId};
+    String body = json.encode(map);
+    var res = await http.post(api.server + 'api/users/device_unregister',
+        body: body,
+        headers: {"Content-Type": "application/json", "Authorization": _jwt});
+    if (res.statusCode != 200) {
+      if (res.statusCode == 404) {
+        throw Exception("Device nout found");
+      } else {
+        throw Exception("Something wrong");
+      }
     }
   }
 }

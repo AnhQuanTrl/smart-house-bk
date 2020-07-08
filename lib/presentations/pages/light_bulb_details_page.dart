@@ -48,6 +48,15 @@ class _LightBulbDetailsPageState extends State<LightBulbDetailsPage> {
           title: Text(
             "Light Bulb",
           ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () {
+                context.read<DeviceProvider>().unregisterDevice(lb.name);
+                Navigator.of(context).pop();
+              },
+            )
+          ],
         ),
         body: _isLoading
             ? Center(child: CircularProgressIndicator())

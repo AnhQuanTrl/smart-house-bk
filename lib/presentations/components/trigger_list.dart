@@ -29,7 +29,7 @@ class _TriggerListState extends State<TriggerList> {
         : ListView.separated(
             itemCount: triggers.length,
             itemBuilder: (_, i) => Dismissible(
-              key: UniqueKey(),
+              key: ValueKey(triggers[i].id),
               onDismissed: (_) {
                 lightSensor.deleteTrigger(triggers[i].id);
               },

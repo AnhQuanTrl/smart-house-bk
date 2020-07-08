@@ -17,9 +17,15 @@ class LightSensorDetailsPage extends StatelessWidget {
     return ChangeNotifierProvider.value(
       value: lightSensor,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text("Light Sensor"),
-        ),
+        appBar: AppBar(title: Text("Light Sensor"), actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () {
+              context.read<DeviceProvider>().unregisterDevice(lightSensor.name);
+              Navigator.of(context).pop();
+            },
+          )
+        ]),
         backgroundColor: Theme.of(context).backgroundColor,
         body: LightSensorBody(),
         floatingActionButton: FloatingActionButton(
