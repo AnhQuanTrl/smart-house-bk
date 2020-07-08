@@ -39,8 +39,8 @@ public class RoomController {
         return res.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
     @PostMapping(value = "/create")
-    public ResponseEntity<AddRoomResponse> createRoom(@RequestBody AddRoomRequest request) {
-        Optional<Client> client = clientRepository.findByUsername(request.getClientName());
+    public ResponseEntity<AddRoomResponse> createRoom(@AuthenticationPrincipal ClientPrincipal authenticationPrincipal, @RequestBody AddRoomRequest request) {
+        Optional<Client> client = clientRepository.findById(authenticationPrincipal.getId());
         if (client.isPresent()){
             Room newRoom = new Room(request.getName(), client.get());
             try {

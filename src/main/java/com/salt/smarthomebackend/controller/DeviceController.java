@@ -4,17 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.salt.smarthomebackend.messaging.mqtt.DeviceMessagePublisher;
 import com.salt.smarthomebackend.model.Device;
 import com.salt.smarthomebackend.model.LightBulb;
-import com.salt.smarthomebackend.payload.request.DeviceRequest;
 import com.salt.smarthomebackend.payload.response.ApiResponse;
 import com.salt.smarthomebackend.payload.response.HistoryEntryResponse;
 import com.salt.smarthomebackend.repository.DeviceRepository;
 import com.salt.smarthomebackend.repository.LightBulbRepository;
 import com.salt.smarthomebackend.payload.request.ControlDeviceRequest;
 import com.salt.smarthomebackend.security.ClientPrincipal;
-import javafx.scene.effect.Light;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.user.SimpUser;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,6 +55,7 @@ public class DeviceController {
             @AuthenticationPrincipal ClientPrincipal clientPrincipal,
             @RequestBody ControlDeviceRequest request) {
         try {
+            System.out.println("ada");
             Optional<LightBulb> res = lightBulbRepository.findById(request.getId());
             Map<String, Object> response = new HashMap<>();
             if (res.isPresent()) {

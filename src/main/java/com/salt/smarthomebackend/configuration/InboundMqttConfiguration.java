@@ -32,6 +32,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -92,20 +93,6 @@ public class InboundMqttConfiguration {
                         if (res.isPresent()) {
                             res.get().setPreviousLight(res.get().getLight());
                             res.get().setLight(lightValue);
-//                            if (res.get().getRoom() != null && res.get().getRoom().getAutomatic()){
-//                                Boolean mode = res.get().getLight() < Constant.NIGHT_THRESHOLD ? true : false;
-//                                for(Device device:res.get().getRoom().getDevices()){
-//                                    if(device instanceof LightBulb){
-//                                        ((LightBulb) device).setMode(mode);
-//                                        lightBulbRepository.save((LightBulb)device);
-//                                        try {
-//                                            publisher.publishMessage(device.getName(), ((LightBulb)device).getMode());
-//                                        } catch (JsonProcessingException e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                    }
-//                                }
-//                            }
                             lightSensorRepository.save(res.get());
                             return res.get();
                         } else {
@@ -123,7 +110,7 @@ public class InboundMqttConfiguration {
                                                 element.getName(), element.getLight()));
                             }
                         }
-                        LightSensor ls = lightSensorRepository.findById(element.getId()).get();
+                        LightSensor ls = element;
                         if ( ls.getTriggers() == null) {
                             return;
                         }
@@ -143,7 +130,6 @@ public class InboundMqttConfiguration {
                                     } else {
                                         value = (int) ((trigger.getReleaseValue().doubleValue() - ls.getLight()) / (trigger.getReleaseValue() - trigger.getTriggerValue()) * 255);
                                     }
-                                    lightBulb.get().setValue(value);
                                     trigger.setInit(false);
                                     triggerRepository.save(trigger);
                                 }
@@ -160,6 +146,8 @@ public class InboundMqttConfiguration {
                                 if (value != null) {
                                     lightBulb.get().setValue(value);
                                     lightBulb.get().getLightBulbHistory().getEntries().put(new Timestamp(new Date().getTime()), value);
+                                } else {
+                                    return;
                                 }
                                 lightBulbRepository.save(lightBulb.get());
                                 publisher.publishMessage(lightBulb.get());

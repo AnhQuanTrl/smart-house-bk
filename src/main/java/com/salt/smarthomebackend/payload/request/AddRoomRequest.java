@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddRoomRequest {
     private String name;
-    private String clientName;
 
-    public AddRoomRequest(String name, String clientName) {
+    public AddRoomRequest(String name) {
         this.name = name;
-        this.clientName = clientName;
     }
 }

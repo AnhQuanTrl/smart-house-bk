@@ -17,7 +17,7 @@ public class LightBulbHistory extends BaseIdentity {
     @OneToOne
     private LightBulb lightBulb;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "history_entry", joinColumns = {@JoinColumn(name = "history_id",
             referencedColumnName = "id")})
     @MapKeyColumn(name = "time")

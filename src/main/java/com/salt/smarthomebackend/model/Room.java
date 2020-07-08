@@ -61,21 +61,21 @@ public class Room extends BaseIdentity{
         return false;
     }
 
-    public void turnOn(){
-        for (Device device:devices) {
-            if (device instanceof LightBulb){
-                ((LightBulb) device).setMode(true);
-            }
-        }
-    }
-
-    public void turnOff(){
-        for (Device device:devices) {
-            if (device instanceof LightBulb){
-                ((LightBulb) device).setMode(false);
-            }
-        }
-    }
+//    public void turnOn(){
+//        for (Device device:devices) {
+//            if (device instanceof LightBulb){
+//                ((LightBulb) device).setMode(true);
+//            }
+//        }
+//    }
+//
+//    public void turnOff(){
+//        for (Device device:devices) {
+//            if (device instanceof LightBulb){
+//                ((LightBulb) device).setMode(false);
+//            }
+//        }
+//    }
 
     @PreRemove
     private void preRemove() {

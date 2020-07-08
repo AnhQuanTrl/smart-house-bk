@@ -62,7 +62,6 @@ public class DataLoader implements CommandLineRunner {
     }
 
     @Override
-    @Transactional
     public void run(String... args) throws Exception {
         Optional<LightBulb> optionalLightBulb = lightBulbRepository.findByName("LightD");
         LightBulb lightD;

@@ -2,19 +2,20 @@ package com.salt.smarthomebackend.controller;
 
 import com.salt.smarthomebackend.exception.ClientNotFoundException;
 import com.salt.smarthomebackend.exception.DeviceNotFoundException;
-import com.salt.smarthomebackend.model.Client;
-import com.salt.smarthomebackend.model.Device;
+import com.salt.smarthomebackend.model.*;
 import com.salt.smarthomebackend.payload.response.ApiResponse;
 import com.salt.smarthomebackend.payload.request.DeviceRequest;
 import com.salt.smarthomebackend.repository.ClientRepository;
 import com.salt.smarthomebackend.repository.DeviceRepository;
 import com.salt.smarthomebackend.repository.RoomRepository;
+import com.salt.smarthomebackend.repository.TriggerRepository;
 import com.salt.smarthomebackend.security.ClientPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,13 +25,15 @@ class ClientController {
     private final ClientRepository clientRepository;
     private final DeviceRepository deviceRepository;
     private RoomRepository roomRepository;
+    private TriggerRepository triggerRepository;
 
 
     ClientController(ClientRepository clientRepository, DeviceRepository deviceRepository,
-                     RoomRepository roomRepository) {
+                     RoomRepository roomRepository, TriggerRepository triggerRepository) {
         this.clientRepository = clientRepository;
         this.deviceRepository = deviceRepository;
         this.roomRepository = roomRepository;
+        this.triggerRepository = triggerRepository;
     }
 
     @GetMapping(value = "/")
@@ -69,6 +72,12 @@ class ClientController {
         return deviceRepository.findByName(device_id)
                 .map(device -> {
                     device.setClient(null);
+                    if (device instanceof LightSensor) {
+                        ((LightSensor) device).getTriggers().forEach(trigger -> {
+                            triggerRepository.delete(trigger);
+                        });
+                        ((LightSensor) device).setTriggers(new ArrayList<Trigger>());
+                    }
                     return deviceRepository.save(device);
                 })
                 .orElseThrow(() -> new DeviceNotFoundException(device_id));
