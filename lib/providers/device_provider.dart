@@ -82,7 +82,7 @@ class DeviceProvider with ChangeNotifier {
         headers: {"Content-Type": "application/json", "Authorization": _jwt});
     if (res.statusCode != 200) {
       if (res.statusCode == 404) {
-        throw Exception("Device nout found");
+        throw Exception("Device not found");
       } else {
         throw Exception("Something wrong");
       }

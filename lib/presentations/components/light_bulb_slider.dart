@@ -10,7 +10,8 @@ class LightBulbSlider extends StatelessWidget {
 
     return Slider(
       value: lb.value / MAX_LIGHT,
-      onChanged: (newRating) {
+      onChanged: (x) {},
+      onChangeEnd: (newRating) {
         lb.setValue((newRating * MAX_LIGHT).toInt());
       },
       divisions: 10,
