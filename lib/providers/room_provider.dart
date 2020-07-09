@@ -38,18 +38,26 @@ class RoomProvider with ChangeNotifier {
     }
   }
 
+  void removeDevice(Room room, Device device) {
+    room.deviceList.remove(device);
+    notifyListeners();
+  }
+
   Future addDeviceToRoom(Room room, Device device) async {
     Map body = {
       'id': room.id,
       'deviceIds': [device.id]
     };
-    var res = await http.patch(api.server + "api/add-device",
+    var res = await http.patch(api.server + "api/rooms/add-device",
         body: json.encode(body),
         headers: {
           "Authorization": _jwt,
           'Content-type': 'application/json'
         }).timeout(const Duration(seconds: 5));
-    room.deviceList.add(device);
+    if (res.statusCode == 200) {
+      room.deviceList.add(device);
+    }
+    notifyListeners();
   }
 
   Future<void> fetch() async {
@@ -57,6 +65,7 @@ class RoomProvider with ChangeNotifier {
     var res = await http.get(api.server + "api/rooms/",
         headers: {"Authorization": _jwt}).timeout(const Duration(seconds: 5));
     try {
+      print(res.body);
       List<dynamic> roomList = json.decode(res.body);
       roomList.forEach((element) {
         Room room = new Room(element['name'], null, id: element['id']);
@@ -72,6 +81,7 @@ class RoomProvider with ChangeNotifier {
   }
 
   List<Device> populateDevice(List<int> deviceIds, Room room) {
+    print(deviceIds);
     return deviceIds.map((id) {
       Device device = deviceProvider.findById(id);
       print(deviceProvider.devices);

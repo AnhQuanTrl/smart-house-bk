@@ -4,14 +4,17 @@ import 'package:provider/provider.dart';
 import '../../providers/device_provider.dart';
 
 class DeviceTile extends StatelessWidget {
-  const DeviceTile();
+  final Device device;
+  final Function dismissed;
+  const DeviceTile(this.device, {this.dismissed});
   @override
   Widget build(BuildContext context) {
-    Device device = context.watch<Device>();
     return Dismissible(
       key: ValueKey(device.id),
-      onDismissed: (_) =>
-          context.read<DeviceProvider>().unregisterDevice(device.name),
+      onDismissed: (_) {
+        if (dismissed != null) dismissed();
+        context.read<DeviceProvider>().unregisterDevice(device.name);
+      },
       child: ListTile(
         leading: device.buildLeading(),
         title: device.buildTitle(),

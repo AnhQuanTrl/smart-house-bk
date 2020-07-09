@@ -6,6 +6,7 @@ import 'package:smarthouse/providers/device_provider.dart';
 import 'package:smarthouse/providers/room_provider.dart';
 
 import 'device_tile.dart';
+import 'draggable_device_tile.dart';
 import 'heading_tile.dart';
 import 'room_tile.dart';
 
@@ -23,7 +24,7 @@ class DeviceOverviewList extends StatelessWidget {
         children: <Widget>[
           HeadingTile("Rooms"),
           ...(roomProvider.rooms ?? <Room>[])
-              .map((room) => RoomTile(room))
+              .map((room) => RoomTile(room, refresh))
               .toList(),
           HeadingTile("Unassigned Devices"),
           ...(deviceProvider.devices ?? <LightBulb>[])
@@ -32,7 +33,7 @@ class DeviceOverviewList extends StatelessWidget {
             (device) {
               return ChangeNotifierProvider.value(
                 value: device,
-                child: DeviceTile(),
+                child: DraggableDeviceTile(),
               );
             },
           ).toList()

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:smarthouse/presentations/pages/auth_page.dart';
 import 'package:smarthouse/providers/device_provider.dart';
 
 class UserDrawer extends StatelessWidget {
   UserDrawer({this.showErrorDialog});
-
+  final storage = FlutterSecureStorage();
   void showRegisterDialog(
       BuildContext context, TextEditingController controller) {
     showModalBottomSheet(
@@ -23,7 +25,6 @@ class UserDrawer extends StatelessWidget {
                         bottom: MediaQuery.of(context).viewInsets.bottom),
                     child: TextField(
                       decoration: InputDecoration(labelText: "DeviceId"),
-                      autofocus: true,
                       controller: controller,
                     ),
                   ),
@@ -70,10 +71,8 @@ class UserDrawer extends StatelessWidget {
           leading: Icon(Icons.exit_to_app),
           title: Text('Logout'),
           onTap: () {
-            // Update the state of the app
-            // ...
-            // Then close the drawer
-            Navigator.pop(context);
+            storage.delete(key: "jwt");
+            Navigator.of(context).pushNamed(AuthPage.routeName);
           },
         ),
       ]),

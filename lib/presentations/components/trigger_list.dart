@@ -26,45 +26,51 @@ class _TriggerListState extends State<TriggerList> {
     List<Trigger> triggers = lightSensor.triggers;
     return _isLoading
         ? Center(child: CircularProgressIndicator())
-        : ListView.separated(
+        : ListView.builder(
             itemCount: triggers.length,
             itemBuilder: (_, i) => Dismissible(
               key: ValueKey(triggers[i].id),
               onDismissed: (_) {
                 lightSensor.deleteTrigger(triggers[i].id);
               },
-              child: ListTile(
-                trailing: Container(
-                  width: 150,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 4.0),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(Icons.arrow_upward),
-                            Text(triggers[i].triggerValue.toString())
-                          ],
-                        ),
+              child: Container(
+                margin: EdgeInsets.only(top: 10),
+                padding: EdgeInsets.all(7.5),
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 10)
+                ]),
+                child: Card(
+                  child: ListTile(
+                    trailing: Container(
+                      width: 150,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 4.0),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(Icons.arrow_upward),
+                                Text(triggers[i].triggerValue.toString())
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 4.0),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(Icons.arrow_downward),
+                                Text(triggers[i].releaseValue.toString())
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 4.0),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(Icons.arrow_downward),
-                            Text(triggers[i].releaseValue.toString())
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
+                    title: Text(triggers[i].control),
                   ),
                 ),
-                title: Text(triggers[i].control),
               ),
-            ),
-            separatorBuilder: (context, index) => Divider(
-              color: Colors.grey,
             ),
           );
   }

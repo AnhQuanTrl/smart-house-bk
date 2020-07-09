@@ -33,7 +33,6 @@ class _LightBulbStatisticState extends State<LightBulbStatistic>
 
   @override
   Widget build(BuildContext context) {
-    int day = DateTime.now().day;
     return Container(
       width: double.infinity,
       child: Column(

@@ -8,36 +8,39 @@ class LightSensorBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LightSensor ls = Provider.of<LightSensor>(context);
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Text(
-              ls.name,
-              style: Theme.of(context).textTheme.headline3,
+    return SingleChildScrollView(
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                ls.name,
+                style: Theme.of(context).textTheme.headline3,
+              ),
             ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          CircularPercentIndicator(
-            radius: 60.0,
-            lineWidth: 5.0,
-            percent: ls.value / 255,
-            center: Text("Luminous intensity"),
-            progressColor: Theme.of(context).accentColor,
-          ),
-          Expanded(
-            child: Card(
-              elevation: 20.0,
-              margin: EdgeInsets.all(15),
+            SizedBox(
+              height: 10,
+            ),
+            CircularPercentIndicator(
+              radius: 200.0,
+              lineWidth: 10.0,
+              percent: ls.value / 255,
+              center: Text(
+                "Luminous intensity",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 25),
+              ),
+              progressColor: Theme.of(context).accentColor,
+            ),
+            Expanded(
               child: TriggerList(),
-              color: Colors.white,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

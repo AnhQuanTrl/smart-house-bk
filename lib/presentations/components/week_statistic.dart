@@ -73,6 +73,8 @@ class _WeekStatisticState extends State<WeekStatistic> {
         zeroIndex != -1;
         zeroIndex =
             data.indexWhere((element) => element["value"] == 0, start)) {
+      print(DateTime.fromMillisecondsSinceEpoch(data[zeroIndex]["time"]));
+      print(DateTime.fromMillisecondsSinceEpoch(data[start]["time"]));
       duration += DateTime.fromMillisecondsSinceEpoch(data[zeroIndex]["time"])
           .difference(DateTime.fromMillisecondsSinceEpoch(data[start]["time"]));
       start = zeroIndex + 1;
@@ -82,13 +84,12 @@ class _WeekStatisticState extends State<WeekStatistic> {
 
   Map<String, int> getWeekHourUsed(LightBulb lightBulb, int minus) {
     Map<String, int> mapper = {};
-    for (DateTime date = DateTime.now().subtract(Duration(days: minus * 7));
+    for (DateTime date = DateTime.now().subtract(Duration(days: minus * 7 - 1));
         date.compareTo(DateTime.now().subtract(Duration(
               days: (minus - 1) * 7,
             ))) <
             0;
         date = date.add(Duration(days: 1))) {
-      print(date);
       mapper[DateFormat('EEE').format(date)] =
           getNumberOfHoursUsed(lightBulb, date.day);
     }

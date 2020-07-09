@@ -80,13 +80,17 @@ class DeviceProvider with ChangeNotifier {
     var res = await http.post(api.server + 'api/users/device_register',
         body: body,
         headers: {"Content-Type": "application/json", "Authorization": _jwt});
+    print(res.statusCode);
     if (res.statusCode != 200) {
       if (res.statusCode == 404) {
         throw Exception("Device not found");
+      } else if (res.statusCode == 400) {
+        throw Exception("Device already owned");
       } else {
         throw Exception("Something wrong");
       }
     }
+    await fetch();
   }
 
   Future<void> unregisterDevice(String deviceId) async {
@@ -97,7 +101,7 @@ class DeviceProvider with ChangeNotifier {
         headers: {"Content-Type": "application/json", "Authorization": _jwt});
     if (res.statusCode != 200) {
       if (res.statusCode == 404) {
-        throw Exception("Device nout found");
+        throw Exception("Device not found");
       } else {
         throw Exception("Something wrong");
       }
