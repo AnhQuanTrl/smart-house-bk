@@ -76,9 +76,4 @@ public class Room extends BaseIdentity{
 //            }
 //        }
 //    }
-
-    @PreRemove
-    private void preRemove() {
-        devices.forEach(device -> device.setRoom(null));
-    }
 }

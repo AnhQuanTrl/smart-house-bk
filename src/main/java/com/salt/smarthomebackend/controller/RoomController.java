@@ -10,12 +10,14 @@ import com.salt.smarthomebackend.repository.DeviceRepository;
 import com.salt.smarthomebackend.repository.RoomRepository;
 import com.salt.smarthomebackend.security.ClientPrincipal;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/rooms")
@@ -29,14 +31,25 @@ public class RoomController {
         this.clientRepository = clientRepository;
     }
     @GetMapping(value = "/")
-    public List<Room> allRoom() {
-        return roomRepository.findAll();
+    public List<Room> allRoom(@AuthenticationPrincipal ClientPrincipal clientPrincipal) {
+        return roomRepository.findAll().stream().filter(room -> room.getClient().getId().equals(clientPrincipal.getId())).collect(
+                Collectors.toList());
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Room> oneRoom(@PathVariable Long id) {
+    public ResponseEntity<?> oneRoom(@PathVariable Long id,
+                                        @AuthenticationPrincipal ClientPrincipal clientPrincipal) {
         Optional<Room> res = roomRepository.findById(id);
-        return res.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if (!res.isPresent()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            if (res.get().getClient().getId().equals(clientPrincipal.getId())) {
+                return ResponseEntity.ok(res.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false,
+                        "Room not belong to you"));
+            }
+        }
     }
     @PostMapping(value = "/create")
     public ResponseEntity<AddRoomResponse> createRoom(@AuthenticationPrincipal ClientPrincipal authenticationPrincipal, @RequestBody AddRoomRequest request) {
@@ -74,10 +87,18 @@ public class RoomController {
     @DeleteMapping(value = "/{id}/delete")
     public ResponseEntity<?> deleteRoom(@PathVariable Long id, @AuthenticationPrincipal ClientPrincipal clientPrincipal) {
         try {
-            Optional<Room> room = roomRepository.findById(id);
-            if(room.isPresent() && clientPrincipal.getId().equals(room.get().getClient().getId())) {
+            Optional<Room> optionalRoom = roomRepository.findById(id);
+            if(optionalRoom.isPresent() && clientPrincipal.getId().equals(optionalRoom.get().getClient().getId())) {
+                Room room = optionalRoom.get();
+                List<Long> deviceIds = room.getDevices().stream().map(device -> device.getId()).collect(
+                        Collectors.toList());
+                deviceIds.forEach(deviceId -> {
+                    Device device = deviceRepository.findById(deviceId).get();
+                    device.setRoom(null);
+                    deviceRepository.save(device);
+                });
                 roomRepository.deleteById(id);
-                return ResponseEntity.ok(room.get());
+                return ResponseEntity.ok().build();
             }
         } catch (IllegalArgumentException | EmptyResultDataAccessException e){
             System.out.print(e.getStackTrace());
@@ -96,7 +117,7 @@ public class RoomController {
                     if (device.isPresent() && device.get().getClient() != null) {
                         System.out.println(clientPrincipal.getId());
                         System.out.println(device.get().getClient().getId());
-                        if(clientPrincipal.getId().equals(device.get().getClient().getId())) {
+                        if(clientPrincipal  .getId().equals(device.get().getClient().getId())) {
                             device.get().setRoom(res.get());
                             try {
                                 deviceRepository.save(device.get());
