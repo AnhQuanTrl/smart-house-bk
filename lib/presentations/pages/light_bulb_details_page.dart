@@ -19,7 +19,6 @@ class LightBulbDetailsPage extends StatefulWidget {
 class _LightBulbDetailsPageState extends State<LightBulbDetailsPage> {
   int _selectedIndex = 0;
   bool _isLoading = true;
-  bool _showTab = false;
 
   LightBulb lb;
   @override

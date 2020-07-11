@@ -7,6 +7,7 @@ import 'package:smarthouse/presentations/pages/light_bulb_details_page.dart';
 import 'package:smarthouse/presentations/pages/light_sensor_details_page.dart';
 import 'package:smarthouse/providers/auth_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:smarthouse/providers/dialog_provider.dart';
 import 'package:smarthouse/providers/web_socket_provider.dart';
 import './utils/api.dart' as api;
 import 'package:smarthouse/providers/device_provider.dart';
@@ -49,6 +50,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        Provider<DialogProvider>(
+          create: (context) => DialogProvider(),
+        ),
         ChangeNotifierProvider(
           create: (_) => AuthProvider(),
         ),

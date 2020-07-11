@@ -27,7 +27,7 @@ class LightSensorBody extends StatelessWidget {
             ),
             CircularPercentIndicator(
               radius: 200.0,
-              lineWidth: 10.0,
+              lineWidth: 20.0,
               percent: ls.value / 255,
               center: Text(
                 "Luminous intensity",

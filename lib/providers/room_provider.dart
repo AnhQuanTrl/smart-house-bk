@@ -38,26 +38,87 @@ class RoomProvider with ChangeNotifier {
     }
   }
 
+  Future<void> removeRoom(Room room) async {
+    room.deviceList.forEach((element) {
+      element.room = null;
+    });
+    rooms.remove(room);
+    notifyListeners();
+    var res = await http.delete(api.server + "api/rooms/${room.id}/delete",
+        headers: {
+          "Authorization": _jwt,
+          'Content-type': 'application/json'
+        }).timeout(const Duration(seconds: 5));
+    if (res.statusCode != 200) {
+      throw Exception("Something wrong");
+    }
+  }
+
   void removeDevice(Room room, Device device) {
+    room.deviceList.remove(device);
+    device.room = null;
+    notifyListeners();
+  }
+
+  void removeDeviceWithoutSetNull(Room room, Device device) {
     room.deviceList.remove(device);
     notifyListeners();
   }
 
-  Future addDeviceToRoom(Room room, Device device) async {
+  Room findRoomById(int id) {
+    return rooms.firstWhere((element) => element.id == id);
+  }
+
+  Future<void> addDeviceToRoom(Room room, Device device) async {
     Map body = {
       'id': room.id,
       'deviceIds': [device.id]
     };
+    Room oldRoom = rooms.firstWhere(
+        (element) => element.deviceList.contains(device),
+        orElse: () => null);
+    if (oldRoom != null) {
+      oldRoom.deviceList.remove(device);
+    }
+    room.deviceList.add(device);
+    device.room = room;
+    notifyListeners();
     var res = await http.patch(api.server + "api/rooms/add-device",
         body: json.encode(body),
         headers: {
           "Authorization": _jwt,
           'Content-type': 'application/json'
         }).timeout(const Duration(seconds: 5));
+    print("here");
+
     if (res.statusCode == 200) {
-      room.deviceList.add(device);
+    } else {
+      throw Exception("Something Wrong");
     }
-    notifyListeners();
+  }
+
+  Future<void> removeDeviceFromRoom(Device device) async {
+    Room room = rooms.firstWhere(
+        (element) => element.deviceList.contains(device),
+        orElse: () => null);
+    if (room == null) {
+      return;
+    }
+    Map body = {
+      'id': room.id,
+      'deviceIds': [device.id]
+    };
+    removeDevice(room, device);
+    var res = await http.patch(api.server + "api/rooms/remove-device",
+        body: json.encode(body),
+        headers: {
+          "Authorization": _jwt,
+          'Content-type': 'application/json'
+        }).timeout(const Duration(seconds: 5));
+    if (res.statusCode == 200) {
+    } else {
+      throw Exception("Something Wrong");
+    }
   }
 
   Future<void> fetch() async {
@@ -84,7 +145,6 @@ class RoomProvider with ChangeNotifier {
     print(deviceIds);
     return deviceIds.map((id) {
       Device device = deviceProvider.findById(id);
-      print(deviceProvider.devices);
       if (device != null) {
         device.room = room;
       }

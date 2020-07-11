@@ -62,7 +62,6 @@ class LightBulb extends Device {
             "Authorization": jwt
           }).timeout(const Duration(seconds: 5));
       if (res.statusCode != 200) {
-        print(res.statusCode);
         throw AuthenticationException(json.decode(res.body).message);
       }
     } catch (e) {
@@ -77,10 +76,8 @@ class LightBulb extends Device {
       var res = await http.get(api.server + "api/devices/stat/$id",
           headers: {"Authorization": jwt}).timeout(const Duration(seconds: 5));
       if (res.statusCode != 200) {
-        print(res.statusCode);
         throw AuthenticationException(json.decode(res.body).message);
       }
-      print(res.body);
       Map<String, dynamic> mapper = json.decode(res.body);
       mapper.forEach((key, value) {
         statistic[key] = [];
@@ -92,6 +89,7 @@ class LightBulb extends Device {
           });
           statistic[key].add(el);
         });
+        statistic[key].sort((a, b) => a["time"].compareTo(b["time"]));
       });
       notifyListeners();
     } catch (e) {

@@ -16,6 +16,8 @@ class _DayStatisticState extends State<DayStatistic> {
   @override
   Widget build(BuildContext context) {
     LightBulb lb = Provider.of<LightBulb>(context, listen: false);
+    Map<String, int> lastMap =
+        lb.statistic[date.subtract(Duration(days: 1)).day]?.last;
     return Column(
       children: <Widget>[
         Padding(
@@ -27,7 +29,8 @@ class _DayStatisticState extends State<DayStatistic> {
         ),
         Padding(
           padding: EdgeInsets.symmetric(vertical: 20),
-          child: getNumberOfHoursUsed(lb, context, date.day),
+          child: getNumberOfHoursUsed(lb, context, date.day,
+              (lastMap != null && lastMap['value'] != 0) ? true : false),
         ),
         RaisedButton(
             child: Row(
@@ -53,6 +56,9 @@ class _DayStatisticState extends State<DayStatistic> {
                   initialDate: DateTime.now(),
                   firstDate: DateTime.now().subtract(Duration(days: 30)),
                   lastDate: DateTime.now());
+              if (chosenDate == null) {
+                return;
+              }
               setState(() {
                 date = chosenDate;
               });
@@ -62,31 +68,55 @@ class _DayStatisticState extends State<DayStatistic> {
           margin: EdgeInsets.all(10),
           child: CustomTimeSeriesChart(
             animate: true,
+            currentDate: date,
             data: lb.statistic[date.day.toString()],
+            firstValue: lastMap != null ? lastMap.values.elementAt(0) : 0,
           ),
         ),
       ],
     );
   }
 
-  Widget getNumberOfHoursUsed(LightBulb value, BuildContext context, int day) {
+  Widget getNumberOfHoursUsed(
+      LightBulb value, BuildContext context, int day, bool firstFlg) {
     List<Map<String, int>> data = value.statistic[day.toString()];
+    if (data == null) {
+      return Text("0 Hours");
+    }
     data.sort((a, b) => a["time"].compareTo(b["time"]));
     int zeroIndex;
     int start = 0;
     Duration duration = Duration();
+    if (firstFlg == true) {
+      DateTime currentDateTime =
+          DateTime.fromMillisecondsSinceEpoch(data[0]["time"]);
+      duration += currentDateTime.difference(DateTime(currentDateTime.year,
+          currentDateTime.month, currentDateTime.day, 0, 0, 1));
+    }
+
     for (zeroIndex = data.indexWhere((element) => element["value"] == 0, start);
         zeroIndex != -1;
         zeroIndex =
             data.indexWhere((element) => element["value"] == 0, start)) {
-      print(zeroIndex);
+      print(DateTime.fromMillisecondsSinceEpoch(data[start]["time"]));
+      print(DateTime.fromMillisecondsSinceEpoch(data[zeroIndex]["time"]));
       duration += DateTime.fromMillisecondsSinceEpoch(data[zeroIndex]["time"])
           .difference(DateTime.fromMillisecondsSinceEpoch(data[start]["time"]));
-      print(duration);
       start = zeroIndex + 1;
     }
+    int lastZeroIndex = data.lastIndexWhere((element) => element["value"] == 0);
+    if (lastZeroIndex < data.length - 1) {
+      DateTime lastTime =
+          DateTime.fromMillisecondsSinceEpoch(data[lastZeroIndex + 1]["time"]);
+      print(lastTime);
+
+      DateTime last = day == DateTime.now().day
+          ? DateTime.now()
+          : DateTime(lastTime.year, lastTime.month, lastTime.day, 23, 59, 59);
+      duration += last.difference(lastTime);
+    }
     return Text(
-      "${duration.inHours} hours",
+      "${duration.inMinutes % 60 >= 45 ? duration.inHours + 1 : duration.inHours} hours",
       style: Theme.of(context).textTheme.headline4,
     );
   }

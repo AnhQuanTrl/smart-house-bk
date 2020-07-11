@@ -17,26 +17,34 @@ class DeviceOverviewList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     RoomProvider roomProvider = Provider.of<RoomProvider>(context);
+    roomProvider.rooms.forEach((element) {
+      print(element.deviceList);
+    });
     DeviceProvider deviceProvider = Provider.of<DeviceProvider>(context);
     return RefreshIndicator(
       onRefresh: refresh,
-      child: ListView(
+      child: Column(
         children: <Widget>[
-          HeadingTile("Rooms"),
-          ...(roomProvider.rooms ?? <Room>[])
-              .map((room) => RoomTile(room, refresh))
-              .toList(),
-          HeadingTile("Unassigned Devices"),
-          ...(deviceProvider.devices ?? <LightBulb>[])
-              .where((element) => element.room == null)
-              .map(
-            (device) {
-              return ChangeNotifierProvider.value(
-                value: device,
-                child: DraggableDeviceTile(),
-              );
-            },
-          ).toList()
+          ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              HeadingTile("Rooms"),
+              ...(roomProvider.rooms ?? <Room>[])
+                  .map((room) => RoomTile(room, refresh))
+                  .toList(),
+              HeadingTile("Unassigned Devices"),
+              ...(deviceProvider.devices ?? <LightBulb>[])
+                  .where((element) => element.room == null)
+                  .map(
+                (device) {
+                  return ChangeNotifierProvider.value(
+                    value: device,
+                    child: DraggableDeviceTile(),
+                  );
+                },
+              ).toList(),
+            ],
+          ),
         ],
       ),
     );

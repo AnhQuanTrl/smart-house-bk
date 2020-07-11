@@ -9,38 +9,53 @@ class UserDrawer extends StatelessWidget {
   final storage = FlutterSecureStorage();
   void showRegisterDialog(
       BuildContext context, TextEditingController controller) {
+    print(MediaQuery.of(context).viewInsets.bottom);
     showModalBottomSheet(
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(5.0))),
         context: context,
         isScrollControlled: true,
         builder: (context) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom),
-                    child: TextField(
-                      decoration: InputDecoration(labelText: "DeviceId"),
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SizedBox(height: 20),
+                    TextField(
+                      style: TextStyle(fontSize: 20),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.all(15),
+                        hintText: "Enter Device Id",
+                        hintStyle: TextStyle(fontSize: 20),
+                      ),
                       controller: controller,
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  FlatButton(
-                    child: Text('Register'),
-                    onPressed: () {
-                      Provider.of<DeviceProvider>(context, listen: false)
-                          .registerDevice(controller.text)
-                          .catchError((e) {
-                        showErrorDialog(e.toString());
-                      });
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
+                    SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: FlatButton(
+                        child: Text(
+                          'Register',
+                          style: TextStyle(fontSize: 20, color: Colors.cyan),
+                        ),
+                        onPressed: () {
+                          Provider.of<DeviceProvider>(context, listen: false)
+                              .registerDevice(controller.text)
+                              .catchError((e) {
+                            showErrorDialog(e.toString());
+                          });
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ),
               ),
             ));
   }

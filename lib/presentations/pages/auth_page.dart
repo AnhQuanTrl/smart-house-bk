@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:smarthouse/exception/authentication_exception.dart';
 import 'package:smarthouse/models/devices/device.dart';
 import 'package:smarthouse/providers/auth_provider.dart';
+import 'package:smarthouse/providers/dialog_provider.dart';
 
 import 'device_overview_page.dart';
 import 'home_page.dart';
@@ -36,6 +37,8 @@ class _AuthPageState extends State<AuthPage> {
     setState(() {
       _isLoading = true;
     });
+    DialogProvider provider =
+        Provider.of<DialogProvider>(context, listen: false);
     try {
       if (_isLogin) {
         // Log user in
@@ -55,9 +58,9 @@ class _AuthPageState extends State<AuthPage> {
       }
     } on AuthenticationException catch (error) {
       var errorMessage = error.toString();
-      _showErrorDialog(errorMessage);
+      provider.showErrorDialog(errorMessage, context);
     } catch (error) {
-      _showErrorDialog("Unknown error");
+      provider.showErrorDialog("Unknown error", context);
     }
     setState(() {
       _isLoading = false;

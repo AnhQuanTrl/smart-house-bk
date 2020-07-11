@@ -10,10 +10,10 @@ class DeviceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: ValueKey(device.id),
-      onDismissed: (_) {
+      key: UniqueKey(),
+      onDismissed: (_) async {
         if (dismissed != null) dismissed();
-        context.read<DeviceProvider>().unregisterDevice(device.name);
+        await context.read<DeviceProvider>().unregisterDevice(device.name);
       },
       child: ListTile(
         leading: device.buildLeading(),

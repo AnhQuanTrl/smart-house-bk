@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import "package:collection/collection.dart";
-import 'dart:math';
 
 class CustomTimeSeriesChart extends StatelessWidget {
   final List<Map<String, int>> data;
   final bool animate;
-
+  final int firstValue;
+  final DateTime currentDate;
   List<charts.Series<dynamic, DateTime>> seriesList;
-  CustomTimeSeriesChart({this.data, this.animate}) {
+  CustomTimeSeriesChart(
+      {this.data, this.animate, this.firstValue, this.currentDate}) {
     seriesList = constructSeriesList(data);
   }
 
@@ -24,6 +25,9 @@ class CustomTimeSeriesChart extends StatelessWidget {
     return new charts.TimeSeriesChart(
       seriesList,
       animate: animate,
+      defaultRenderer: new charts.BarRendererConfig<DateTime>(),
+      defaultInteractions: false,
+      behaviors: [new charts.SelectNearest(), new charts.DomainHighlighter()],
       domainAxis: charts.DateTimeAxisSpec(
         tickFormatterSpec: charts.AutoDateTimeTickFormatterSpec(
           hour: charts.TimeFormatterSpec(
@@ -35,48 +39,75 @@ class CustomTimeSeriesChart extends StatelessWidget {
     );
   }
 
-  // Create one series with sample hard coded data.
-  // static List<charts.Series<TimeSeriesSales, DateTime>> _createSampleData() {
-  //   final data = [
-  //     new TimeSeriesSales(new DateTime(2017, 9, 19), 5),
-  //     new TimeSeriesSales(new DateTime(2017, 9, 26), 25),
-  //     new TimeSeriesSales(new DateTime(2017, 10, 3), 100),
-  //     new TimeSeriesSales(new DateTime(2017, 10, 10), 75),
-  //   ];
-
-  //   return [
-  //     new charts.Series<TimeSeriesSales, DateTime>(
-  //       id: 'Sales',
-  //       colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-  //       domainFn: (TimeSeriesSales sales, _) => sales.time,
-  //       measureFn: (TimeSeriesSales sales, _) => sales.sales,
-  //       data: data,
-  //     )
-  //   ];
-  // }
+  int getAverageValueByHour(List<Map<String, Object>> data, int firstValue) {
+    if (data == null) {
+      return firstValue;
+    }
+    DateTime current = data[0]["time"] as DateTime;
+    int currentSum = (current.minute * 60 + current.second) * firstValue;
+    for (int i = 1; i < data.length; i++) {
+      DateTime next = data[i]["time"] as DateTime;
+      currentSum +=
+          next.difference(current).inSeconds * (data[i - 1]["value"] as int);
+      current = next;
+    }
+    currentSum += ((60 - current.minute - 1) * 60 + (60 - current.second)) *
+        (data.last["value"] as int);
+    return currentSum ~/ 3600;
+  }
 
   List<charts.Series<TimeSeriesValue, DateTime>> constructSeriesList(
       List<Map<String, int>> data) {
-    final Map<int, List<Map<String, Object>>> groupByHour = groupBy(
-        (data..sort((a, b) => a["time"].compareTo(b["time"]))).map((mapper) => {
+    if (data == null) {
+      data = [];
+    }
+    List<Map<String, Object>> newData = data
+        .map((mapper) => {
               "time": DateTime.fromMillisecondsSinceEpoch(mapper["time"]),
               "value": mapper["value"]
-            }),
-        (Map<String, Object> obj) => ((obj["time"]) as DateTime).minute);
+            })
+        .toList();
+    newData = [
+      {
+        "time": DateTime(
+            currentDate.year, currentDate.month, currentDate.day, 0, 0, 0),
+        "value": firstValue
+      },
+      ...newData
+    ];
+    final Map<int, List<Map<String, Object>>> groupByHour = groupBy(
+        newData, (Map<String, Object> obj) => ((obj["time"]) as DateTime).hour);
     List<Map<String, Object>> mapList = [];
-    groupByHour.forEach((key, value) {
+    int maxHour = DateTime.now().difference(currentDate).inHours < 24
+        ? DateTime.now().hour
+        : 24;
+    print(maxHour);
+    for (int key = 0; key < maxHour; key++) {
+      int first = firstValue;
+      if (key != 0) {
+        for (int i = key; i > 0; i--) {
+          if (groupByHour[i] != null) {
+            first = groupByHour[i].last["value"];
+            break;
+          }
+        }
+      }
+      List<Map<String, Object>> value = groupByHour[key] ?? null;
       mapList.add({
-        "time": value[0]["time"],
-        "value": value.fold(0,
-                (previousValue, element) => previousValue + element["value"]) /
-            value.length
+        "time": DateTime(
+            currentDate.year, currentDate.month, currentDate.day, key, 0, 0),
+        "value": getAverageValueByHour(
+          value,
+          first,
+        )
       });
-    });
+    }
+
     final List<TimeSeriesValue> lst = mapList
         .map(
           (mapper) => TimeSeriesValue(
             mapper["time"],
-            (mapper["value"] as double).toInt(),
+            mapper["value"],
           ),
         )
         .toList();

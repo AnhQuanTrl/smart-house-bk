@@ -80,7 +80,6 @@ class DeviceProvider with ChangeNotifier {
     var res = await http.post(api.server + 'api/users/device_register',
         body: body,
         headers: {"Content-Type": "application/json", "Authorization": _jwt});
-    print(res.statusCode);
     if (res.statusCode != 200) {
       if (res.statusCode == 404) {
         throw Exception("Device not found");
@@ -90,10 +89,21 @@ class DeviceProvider with ChangeNotifier {
         throw Exception("Something wrong");
       }
     }
-    await fetch();
+    Map<String, Object> mapper = json.decode(res.body);
+    if (mapper['type'] == 'LB') {
+      devices.add(LightBulb(
+          id: mapper['id'], name: mapper['name'], value: mapper['value']));
+    } else {
+      devices.add(LightSensor(
+          id: mapper['id'], name: mapper['name'], value: mapper['light']));
+    }
+    notifyListeners();
   }
 
   Future<void> unregisterDevice(String deviceId) async {
+    devices.remove(devices.firstWhere((element) => element.name == deviceId,
+        orElse: () => null));
+    notifyListeners();
     Map<String, String> map = {"name": deviceId};
     String body = json.encode(map);
     var res = await http.post(api.server + 'api/users/device_unregister',
