@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:smarthouse/exception/logic_exception.dart';
 import 'package:smarthouse/models/devices/device.dart';
 import 'package:smarthouse/models/trigger.dart';
 import 'package:smarthouse/presentations/pages/light_sensor_details_page.dart';
@@ -36,6 +37,11 @@ class LightSensor extends Device {
         arguments: id);
   }
 
+  void changeValue(int newValue) {
+    value = newValue;
+    notifyListeners();
+  }
+
   Future<void> fetch() async {
     triggers = [];
     final jwt = await storage.read(key: 'jwt');
@@ -63,8 +69,11 @@ class LightSensor extends Device {
       headers: {"Content-Type": "application/json", "Authorization": jwt},
     );
     if (res.statusCode != 200) {
-      print(res.statusCode);
-      throw Exception(json.decode(res.body)['message']);
+      if (res.statusCode == 500) {
+        throw Exception("Something wrong");
+      } else {
+        throw LogicException(json.decode(res.body)['message']);
+      }
     }
     Map<String, Object> value = json.decode(res.body);
     triggers.add(Trigger(
@@ -81,7 +90,7 @@ class LightSensor extends Device {
         api.server + 'api/triggers/' + id.toString() + '/delete',
         headers: {"Authorization": jwt});
     if (res.statusCode != 200) {
-      throw Exception("Not Found");
+      throw LogicException("Not Found");
     }
     triggers.removeWhere((element) => element.id == id);
     notifyListeners();

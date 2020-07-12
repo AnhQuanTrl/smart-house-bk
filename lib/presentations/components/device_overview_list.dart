@@ -17,9 +17,7 @@ class DeviceOverviewList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     RoomProvider roomProvider = Provider.of<RoomProvider>(context);
-    roomProvider.rooms.forEach((element) {
-      print(element.deviceList);
-    });
+    roomProvider.rooms.forEach((element) {});
     DeviceProvider deviceProvider = Provider.of<DeviceProvider>(context);
     return RefreshIndicator(
       onRefresh: refresh,

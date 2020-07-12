@@ -74,7 +74,7 @@ class _DeviceOverviewPageState extends State<DeviceOverviewPage> {
       Navigator.of(context).pushReplacementNamed(AuthPage.routeName);
     } catch (e) {
       Provider.of<DialogProvider>(context, listen: false)
-          .showErrorDialog(e.toString(), context);
+          .showCustomDialog(e.toString(), context, isSuccess: false);
     } finally {
       setState(() {
         _isLoading = false;

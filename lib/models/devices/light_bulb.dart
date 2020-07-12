@@ -38,7 +38,7 @@ class LightBulb extends Device {
       children: <Widget>[
         Icon(
           Icons.brightness_1,
-          color: value > 0 ? Colors.deepOrangeAccent : Colors.grey,
+          color: value > 0 ? Colors.orange : Colors.grey,
         ),
         Text(value.toString())
       ],

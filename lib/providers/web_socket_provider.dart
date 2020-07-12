@@ -31,7 +31,6 @@ class WebSocketProvider with ChangeNotifier {
         destination: '/user/topic/message',
         callback: (StompFrame frame) {
           var element = json.decode(frame.body);
-          print(frame.body);
           if (element['type'] == 'LB') {
             newDevices.add((new LightBulb(
                 id: element['id'],

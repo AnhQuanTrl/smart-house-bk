@@ -20,12 +20,21 @@ class _AuthPageState extends State<AuthPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isLogin = true;
   final passwordController = new TextEditingController();
+  final usernameController = new TextEditingController();
   bool _isLoading = false;
   Map<String, String> _authData = {'username': '', 'password': ''};
   void _switchPage() {
+    usernameController.clear();
+    passwordController.clear();
     setState(() {
       _isLogin = !_isLogin;
     });
+  }
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    super.dispose();
   }
 
   void _submit() async {
@@ -54,141 +63,139 @@ class _AuthPageState extends State<AuthPage> {
           _authData['username'],
           _authData['password'],
         );
-        _showSuccessDialog("Successful Signup");
+        provider.showCustomDialog("Successful Signup", context,
+            isSuccess: true);
       }
     } on AuthenticationException catch (error) {
       var errorMessage = error.toString();
-      provider.showErrorDialog(errorMessage, context);
+      provider.showCustomDialog(errorMessage, context, isSuccess: false);
     } catch (error) {
-      provider.showErrorDialog("Unknown error", context);
+      provider.showCustomDialog("Unknown error", context, isSuccess: false);
     }
     setState(() {
       _isLoading = false;
     });
   }
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('An Error Occurred!'),
-        content: Text(message),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Okay'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-          )
-        ],
-      ),
-    );
-  }
-
-  void _showSuccessDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Success'),
-        content: Text(message),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Okay'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-          )
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      appBar: AppBar(
-        title: Text(
-          _isLogin ? "Login" : "Signup",
-        ),
-      ),
+      backgroundColor: Colors.grey[300],
       body: Center(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Form(
-                key: _formKey,
-                child: Card(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
-                    child: Column(
-                      children: <Widget>[
-                        TextFormField(
-                          decoration: InputDecoration(labelText: 'Username'),
-                          keyboardType: TextInputType.text,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return "Empty username";
-                            }
-                          },
-                          onSaved: (value) => _authData['username'] = value,
-                        ),
-                        TextFormField(
-                          decoration: InputDecoration(labelText: 'Password'),
-                          controller: passwordController,
-                          obscureText: true,
-                          keyboardType: TextInputType.text,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return "Empty password";
-                            }
-                          },
-                          onSaved: (value) => _authData['password'] = value,
-                        ),
-                        if (!_isLogin)
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minWidth: MediaQuery.of(context).size.width,
+              minHeight: MediaQuery.of(context).size.height,
+            ),
+            child: IntrinsicHeight(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Form(
+                    key: _formKey,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.0),
+                          color: Colors.white),
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.only(
+                          top: 20, bottom: 5, right: 20, left: 20),
+                      child: Column(
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text("Smart",
+                                  style: TextStyle(
+                                      color: Colors.cyan[800],
+                                      fontFamily: "Righteous",
+                                      fontSize: 25)),
+                              Text("HOME",
+                                  style: TextStyle(
+                                      color: Colors.cyan[800],
+                                      fontFamily: "Righteous",
+                                      fontSize: 60)),
+                              Align(
+                                child: Text('Control your life!'),
+                                alignment: Alignment.bottomRight,
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
                           TextFormField(
-                            enabled: !_isLogin,
-                            decoration:
-                                InputDecoration(labelText: 'Confirm Password'),
+                            controller: usernameController,
+                            decoration: InputDecoration(labelText: 'Username'),
                             keyboardType: TextInputType.text,
-                            obscureText: true,
                             validator: (value) {
-                              if (value != passwordController.text) {
-                                return 'Mismatch Password';
+                              if (value.isEmpty) {
+                                return "Empty username";
                               }
                             },
+                            onSaved: (value) => _authData['username'] = value,
                           ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        if (_isLoading)
-                          CircularProgressIndicator()
-                        else
-                          RaisedButton(
-                            child: _isLogin ? Text('LOGIN') : Text('SIGNUP'),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 30.0,
-                              vertical: 8.0,
-                            ),
-                            onPressed: _submit,
+                          TextFormField(
+                            decoration: InputDecoration(labelText: 'Password'),
+                            controller: passwordController,
+                            obscureText: true,
+                            keyboardType: TextInputType.text,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return "Empty password";
+                              }
+                            },
+                            onSaved: (value) => _authData['password'] = value,
                           ),
-                        FlatButton(
-                          onPressed: _switchPage,
-                          child:
-                              Text('${_isLogin ? 'SIGNUP' : 'LOGIN'} INSTEAD!'),
-                        )
-                      ],
+                          if (!_isLogin)
+                            TextFormField(
+                              enabled: !_isLogin,
+                              decoration: InputDecoration(
+                                  labelText: 'Confirm Password'),
+                              keyboardType: TextInputType.text,
+                              obscureText: true,
+                              validator: (value) {
+                                if (value != passwordController.text) {
+                                  return 'Mismatch Password';
+                                }
+                              },
+                            ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          if (_isLoading)
+                            CircularProgressIndicator()
+                          else
+                            RaisedButton(
+                              color: Colors.orange,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Text(
+                                _isLogin ? 'LOGIN' : 'SIGNUP',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 17),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 25.0,
+                                vertical: 12.0,
+                              ),
+                              onPressed: _submit,
+                            ),
+                          FlatButton(
+                            onPressed: _switchPage,
+                            child: Text(
+                                '${_isLogin ? 'SIGNUP' : 'LOGIN'} INSTEAD!'),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

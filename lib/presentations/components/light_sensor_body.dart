@@ -28,13 +28,13 @@ class LightSensorBody extends StatelessWidget {
             CircularPercentIndicator(
               radius: 200.0,
               lineWidth: 20.0,
-              percent: ls.value / 255,
+              percent: ls.value / 1024,
               center: Text(
-                "Luminous intensity",
+                "Intensity",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 25),
               ),
-              progressColor: Theme.of(context).accentColor,
+              progressColor: Colors.orange,
             ),
             Expanded(
               child: TriggerList(),

@@ -37,7 +37,6 @@ Future<void> main() async {
       } catch (e) {}
     }
   }
-  print(initialRoute);
   return runApp(MyApp(
     initialRoute: initialRoute,
   ));
@@ -78,7 +77,7 @@ class MyApp extends StatelessWidget {
                   TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
           primaryColor: Colors.cyanAccent,
           backgroundColor: Colors.white,
-          accentColor: Colors.orange,
+          accentColor: Colors.orangeAccent,
         ),
         debugShowCheckedModeBanner: false,
         onGenerateRoute: (settings) {

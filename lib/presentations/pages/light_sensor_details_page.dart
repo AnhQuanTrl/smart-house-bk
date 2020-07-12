@@ -29,12 +29,15 @@ class LightSensorDetailsPage extends StatelessWidget {
         backgroundColor: Theme.of(context).backgroundColor,
         body: LightSensorBody(),
         floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.orangeAccent,
           onPressed: () {
             showDialog(
                 context: context,
                 builder: (context) => AddTriggerForm(lightSensor: lightSensor));
           },
-          child: Icon(Icons.add),
+          child: Icon(
+            Icons.add,
+          ),
         ),
       ),
     );

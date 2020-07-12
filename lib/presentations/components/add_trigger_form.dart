@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smarthouse/models/devices/light_sensor.dart';
 import 'package:smarthouse/models/trigger.dart';
+import 'package:smarthouse/providers/dialog_provider.dart';
 
 class AddTriggerForm extends StatefulWidget {
   final LightSensor lightSensor;
@@ -35,82 +36,87 @@ class _AddTriggerFormState extends State<AddTriggerForm> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      content: Stack(
-        overflow: Overflow.visible,
-        children: <Widget>[
-          Visibility(
-            visible: !_isLoading,
-            child: Positioned(
-              right: -40.0,
-              top: -40.0,
-              child: InkResponse(
-                onTap: () => Navigator.of(context).pop(),
-                child: CircleAvatar(
-                  child: Icon(Icons.close),
-                  backgroundColor: Colors.red,
+      contentPadding: EdgeInsets.only(top: 0, bottom: 10),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+      content: Form(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: Text(
+                    "Add New Trigger",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  ),
                 ),
-              ),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.0),
+                  child: TextFormField(
+                    decoration: InputDecoration(labelText: "Trigger device"),
+                    keyboardType: TextInputType.text,
+                    onSaved: (value) {
+                      _formData['deviceName'] = value;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.0),
+                  child: TextFormField(
+                    decoration: InputDecoration(labelText: "On after value"),
+                    keyboardType: TextInputType.number,
+                    onSaved: (value) {
+                      if (value.isNotEmpty)
+                        _formData['triggerValue'] = int.parse(value);
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.0),
+                  child: TextFormField(
+                    decoration: InputDecoration(labelText: "Off before value"),
+                    keyboardType: TextInputType.number,
+                    onSaved: (value) {
+                      if (value.isNotEmpty)
+                        _formData['releaseValue'] = int.parse(value);
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                _isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : Center(
+                        child: FlatButton(
+                          child: Text(
+                            "Submit",
+                            style: TextStyle(
+                                fontSize: 20, color: Colors.orangeAccent),
+                          ),
+                          onPressed: () {
+                            _submit();
+                          },
+                        ),
+                      )
+              ],
             ),
           ),
-          Form(
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      decoration: InputDecoration(labelText: "Trigger device"),
-                      keyboardType: TextInputType.text,
-                      onSaved: (value) {
-                        _formData['deviceName'] = value;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      decoration: InputDecoration(labelText: "On after value"),
-                      keyboardType: TextInputType.number,
-                      onSaved: (value) {
-                        if (value.isNotEmpty)
-                          _formData['triggerValue'] = int.parse(value);
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      decoration:
-                          InputDecoration(labelText: "Off before value"),
-                      keyboardType: TextInputType.number,
-                      onSaved: (value) {
-                        if (value.isNotEmpty)
-                          _formData['releaseValue'] = int.parse(value);
-                      },
-                    ),
-                  ),
-                  _isLoading
-                      ? CircularProgressIndicator()
-                      : Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: RaisedButton(
-                            child: Text("Submit"),
-                            onPressed: () {
-                              _submit();
-                            },
-                          ),
-                        )
-                ],
-              ),
-            ),
-            key: _formKey,
-          )
-        ],
+        ),
+        key: _formKey,
       ),
     );
   }
 
   Future<void> _submit() async {
+    DialogProvider dialogProvider =
+        Provider.of<DialogProvider>(context, listen: false);
     if (!_formKey.currentState.validate()) {
       return;
     }
@@ -124,28 +130,10 @@ class _AddTriggerFormState extends State<AddTriggerForm> {
       Navigator.of(context).pop();
     } catch (e) {
       Navigator.of(context).pop();
-      _showErrorDialog(e.toString());
+      dialogProvider.showCustomDialog(e.toString(), context, isSuccess: false);
     }
     setState(() {
       _isLoading = false;
     });
-  }
-
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('An Error Occurred!'),
-        content: Text(message),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Okay'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-          )
-        ],
-      ),
-    );
   }
 }

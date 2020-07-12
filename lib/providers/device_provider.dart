@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:smarthouse/exception/authentication_exception.dart';
+import 'package:smarthouse/exception/logic_exception.dart';
 import 'package:smarthouse/models/devices/device.dart';
 import 'package:http/http.dart' as http;
 import 'package:smarthouse/models/devices/light_bulb.dart';
@@ -19,10 +20,9 @@ class DeviceProvider with ChangeNotifier {
           devices.firstWhere((obj) => obj.id == element.id, orElse: () => null);
       if (tmp != null) {
         if (tmp is LightSensor) {
-          tmp.value = (element as LightSensor).value;
+          tmp.changeValue((element as LightSensor).value);
         } else if (tmp is LightBulb) {
-          // print(tmp.value);
-          // print((element as LightBulb).value);
+          ;
           if (tmp.value == (element as LightBulb).value) {
             return;
           }
@@ -82,11 +82,11 @@ class DeviceProvider with ChangeNotifier {
         headers: {"Content-Type": "application/json", "Authorization": _jwt});
     if (res.statusCode != 200) {
       if (res.statusCode == 404) {
-        throw Exception("Device not found");
+        throw LogicException("Device not found");
       } else if (res.statusCode == 400) {
-        throw Exception("Device already owned");
+        throw LogicException("Device already owned");
       } else {
-        throw Exception("Something wrong");
+        throw LogicException("Something wrong");
       }
     }
     Map<String, Object> mapper = json.decode(res.body);
@@ -111,9 +111,9 @@ class DeviceProvider with ChangeNotifier {
         headers: {"Content-Type": "application/json", "Authorization": _jwt});
     if (res.statusCode != 200) {
       if (res.statusCode == 404) {
-        throw Exception("Device not found");
+        throw LogicException("Device not found");
       } else {
-        throw Exception("Something wrong");
+        throw LogicException("Something wrong");
       }
     }
   }

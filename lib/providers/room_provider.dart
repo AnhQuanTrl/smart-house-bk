@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:smarthouse/exception/logic_exception.dart';
 import 'package:smarthouse/models/devices/device.dart';
 import 'package:smarthouse/models/room.dart';
 import 'package:http/http.dart' as http;
@@ -50,7 +51,7 @@ class RoomProvider with ChangeNotifier {
           'Content-type': 'application/json'
         }).timeout(const Duration(seconds: 5));
     if (res.statusCode != 200) {
-      throw Exception("Something wrong");
+      throw LogicException("Something wrong");
     }
   }
 
@@ -89,11 +90,10 @@ class RoomProvider with ChangeNotifier {
           "Authorization": _jwt,
           'Content-type': 'application/json'
         }).timeout(const Duration(seconds: 5));
-    print("here");
 
     if (res.statusCode == 200) {
     } else {
-      throw Exception("Something Wrong");
+      throw LogicException("Something Wrong");
     }
   }
 
@@ -126,13 +126,11 @@ class RoomProvider with ChangeNotifier {
     var res = await http.get(api.server + "api/rooms/",
         headers: {"Authorization": _jwt}).timeout(const Duration(seconds: 5));
     try {
-      print(res.body);
       List<dynamic> roomList = json.decode(res.body);
       roomList.forEach((element) {
         Room room = new Room(element['name'], null, id: element['id']);
         room.deviceList =
             populateDevice(List<int>.from(element['devices']), room);
-        print(room.deviceList);
         rooms.add(room);
       });
       notifyListeners();
@@ -142,7 +140,6 @@ class RoomProvider with ChangeNotifier {
   }
 
   List<Device> populateDevice(List<int> deviceIds, Room room) {
-    print(deviceIds);
     return deviceIds.map((id) {
       Device device = deviceProvider.findById(id);
       if (device != null) {

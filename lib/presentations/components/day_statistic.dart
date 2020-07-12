@@ -28,20 +28,27 @@ class _DayStatisticState extends State<DayStatistic> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 20),
+          padding: EdgeInsets.only(bottom: 20),
           child: getNumberOfHoursUsed(lb, context, date.day,
               (lastMap != null && lastMap['value'] != 0) ? true : false),
         ),
         RaisedButton(
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Icon(Icons.date_range),
-                    Text('${DateFormat.yMMMd().format(date)}'),
-                  ],
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.date_range),
+                      Text('${DateFormat.yMMMd().format(date)}'),
+                    ],
+                    mainAxisAlignment: MainAxisAlignment.center,
+                  ),
+                ),
+                SizedBox(
+                  width: 40,
                 ),
                 Text('Choose Day'),
               ],
@@ -49,7 +56,6 @@ class _DayStatisticState extends State<DayStatistic> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5.0),
             ),
-            elevation: 4.0,
             onPressed: () async {
               DateTime chosenDate = await showDatePicker(
                   context: context,
@@ -98,8 +104,6 @@ class _DayStatisticState extends State<DayStatistic> {
         zeroIndex != -1;
         zeroIndex =
             data.indexWhere((element) => element["value"] == 0, start)) {
-      print(DateTime.fromMillisecondsSinceEpoch(data[start]["time"]));
-      print(DateTime.fromMillisecondsSinceEpoch(data[zeroIndex]["time"]));
       duration += DateTime.fromMillisecondsSinceEpoch(data[zeroIndex]["time"])
           .difference(DateTime.fromMillisecondsSinceEpoch(data[start]["time"]));
       start = zeroIndex + 1;
@@ -108,7 +112,6 @@ class _DayStatisticState extends State<DayStatistic> {
     if (lastZeroIndex < data.length - 1) {
       DateTime lastTime =
           DateTime.fromMillisecondsSinceEpoch(data[lastZeroIndex + 1]["time"]);
-      print(lastTime);
 
       DateTime last = day == DateTime.now().day
           ? DateTime.now()

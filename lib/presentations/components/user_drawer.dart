@@ -3,13 +3,15 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:smarthouse/presentations/pages/auth_page.dart';
 import 'package:smarthouse/providers/device_provider.dart';
+import 'package:smarthouse/providers/dialog_provider.dart';
 
 class UserDrawer extends StatelessWidget {
   UserDrawer({this.showErrorDialog});
   final storage = FlutterSecureStorage();
   void showRegisterDialog(
       BuildContext context, TextEditingController controller) {
-    print(MediaQuery.of(context).viewInsets.bottom);
+    DialogProvider dialogProvider =
+        Provider.of<DialogProvider>(context, listen: false);
     showModalBottomSheet(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(5.0))),
@@ -19,45 +21,50 @@ class UserDrawer extends StatelessWidget {
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom),
               child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    SizedBox(height: 20),
-                    TextField(
-                      style: TextStyle(fontSize: 20),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.all(15),
-                        hintText: "Enter Device Id",
-                        hintStyle: TextStyle(fontSize: 20),
-                      ),
-                      controller: controller,
-                    ),
-                    SizedBox(height: 20),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: FlatButton(
-                        child: Text(
-                          'Register',
-                          style: TextStyle(fontSize: 20, color: Colors.cyan),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      SizedBox(height: 20),
+                      TextField(
+                        style: TextStyle(fontSize: 20),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.all(15),
+                          hintText: "Enter Device Id",
+                          hintStyle: TextStyle(fontSize: 20),
                         ),
-                        onPressed: () {
-                          Provider.of<DeviceProvider>(context, listen: false)
-                              .registerDevice(controller.text)
-                              .catchError((e) {
-                            showErrorDialog(e.toString());
-                          });
-                          Navigator.of(context).pop();
-                        },
+                        controller: controller,
                       ),
-                    ),
-                    SizedBox(height: 20),
-                  ],
+                      SizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: FlatButton(
+                          child: Text(
+                            'Register',
+                            style: TextStyle(fontSize: 20, color: Colors.cyan),
+                          ),
+                          onPressed: () {
+                            Provider.of<DeviceProvider>(context, listen: false)
+                                .registerDevice(controller.text)
+                                .catchError((e) {
+                              dialogProvider.showCustomDialog(
+                                  e.toString(), context,
+                                  isSuccess: false);
+                            });
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                    ],
+                  ),
                 ),
               ),
-            ));
+            )).then((value) => controller.clear());
   }
 
   final Function showErrorDialog;

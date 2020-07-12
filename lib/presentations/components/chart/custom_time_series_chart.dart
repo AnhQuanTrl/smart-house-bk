@@ -79,9 +79,8 @@ class CustomTimeSeriesChart extends StatelessWidget {
         newData, (Map<String, Object> obj) => ((obj["time"]) as DateTime).hour);
     List<Map<String, Object>> mapList = [];
     int maxHour = DateTime.now().difference(currentDate).inHours < 24
-        ? DateTime.now().hour
+        ? DateTime.now().hour + 1
         : 24;
-    print(maxHour);
     for (int key = 0; key < maxHour; key++) {
       int first = firstValue;
       if (key != 0) {
